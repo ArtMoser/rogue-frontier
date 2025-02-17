@@ -1,6 +1,7 @@
 import { View, Text, StyleSheet, Pressable, Image } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { characters } from '../data/characters';
 
 type Character = {
   id: number;
@@ -12,54 +13,39 @@ type Character = {
   image: string;
 };
 
-const characters: Character[] = [
-  {
-    id: 1,
-    name: 'Warrior',
-    type: 'Melee',
-    hp: 100,
-    attack: 15,
-    defense: 10,
-    image: 'https://images.unsplash.com/photo-1594207691760-5d027b11f416?q=80&w=200'
-  },
-  {
-    id: 2,
-    name: 'Mage',
-    type: 'Magic',
-    hp: 70,
-    attack: 20,
-    defense: 5,
-    image: 'https://images.unsplash.com/photo-1577963196272-65f3e138dc54?q=80&w=200'
-  },
-  {
-    id: 3,
-    name: 'Rogue',
-    type: 'Agility',
-    hp: 80,
-    attack: 18,
-    defense: 7,
-    image: 'https://images.unsplash.com/photo-1612404730960-5c71577fca11?q=80&w=200'
-  }
-];
-
 export default function CharacterSelectScreen() {
   const router = useRouter();
   const params = useLocalSearchParams();
   const level = Number(params.level);
+  const team = params.team ? JSON.parse(params.team): [];
   const isFirstBattle = params.isFirstBattle === 'true';
+  debugger;
   
   const [selectedCharacter, setSelectedCharacter] = useState<Character | null>(null);
+  const [availableCharacters, setAvailableCharacters] = useState<Character[]>(characters);
 
   const handleCharacterSelect = (character: Character) => {
     setSelectedCharacter(character);
   };
 
+  useEffect(() => {
+    const getRandomCharacters = () => {
+      const shuffled = [...characters].sort(() => 0.5 - Math.random());
+      return shuffled.slice(0, 3);
+    };
+
+    setAvailableCharacters(getRandomCharacters());
+  }, []);
+
   const handleConfirm = () => {
     if (selectedCharacter) {
+      debugger;
+      team.push(selectedCharacter);
+
       router.push({
-        pathname: '/battle',
+        pathname: 'screens/battle',
         params: {
-          characterId: selectedCharacter.id,
+          team: JSON.stringify(team),
           level: level,
           battleCount: isFirstBattle ? 1 : Math.floor((level - 1) / 5) * 5 + 1
         }
@@ -73,7 +59,7 @@ export default function CharacterSelectScreen() {
       <Text style={styles.subtitle}>Level {level} Adventure</Text>
       
       <View style={styles.charactersContainer}>
-        {characters.map((character) => (
+        {availableCharacters.map((character) => (
           <Pressable
             key={character.id}
             style={[
