@@ -30,6 +30,7 @@ export default function CharacterSelectScreen() {
   useEffect(() => {
     const getRandomCharacters = () => {
       const shuffled = [...characters].sort(() => 0.5 - Math.random());
+      console.log(JSON.stringify(shuffled));
       return shuffled.slice(0, 3);
     };
 
@@ -66,7 +67,7 @@ export default function CharacterSelectScreen() {
             ]}
             onPress={() => handleCharacterSelect(character)}
           >
-            <Image source={{ uri: character.image }} style={styles.characterImage} />
+            <Image source={ character.image } style={styles.characterImage} />
             <Text style={styles.characterName}>{character.name}</Text>
             <Text style={styles.characterType}>{character.type}</Text>
             <View style={styles.statsContainer}>

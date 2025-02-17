@@ -230,7 +230,7 @@ export default function BattleScreen() {
                 ]}
                 onPress={() => currentTurn === 'player' && enemy.hp > 0 && setSelectedTarget(index)}
               >
-                <Image source={{ uri: enemy.image }} style={styles.characterImage} />
+                <Image source={enemy.image} style={styles.characterImage} />
                 <Text style={styles.enemyName}>{enemy.name}</Text>
                 <Text style={styles.enemyHp}>HP: {enemy.hp}/{enemy.maxHp}</Text>
               </Pressable>
@@ -248,7 +248,7 @@ export default function BattleScreen() {
             >
               {character.attacked ? (
                 <View style={[styles.characterCard, styles.disabledCharacter]}>
-                  <Image source={{ uri: character.image }} style={styles.characterImage} />
+                  <Image source={character.image} style={[styles.characterImage, styles.enemyImage]} />
                   <Text style={styles.characterName}>{character.name}</Text>
                   <Text style={styles.characterHp}>HP: {character.hp}/{character.maxHp}</Text>
                 </View>
@@ -261,7 +261,7 @@ export default function BattleScreen() {
                   ]}
                   onPress={() => currentTurn === 'player' && setSelectedCharacter(index)}
                 >
-                  <Image source={{ uri: character.image }} style={styles.characterImage} />
+                  <Image source={character.image} style={styles.characterImage} />
                   <Text style={styles.characterName}>{character.name}</Text>
                   <Text style={styles.characterHp}>HP: {character.hp}/{character.maxHp}</Text>
                 </Pressable>
@@ -342,6 +342,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderWidth: 2,
     borderColor: '#3a2a2a',
+  },
+  enemyImage: { 
+   transform: [{ scaleX: -1 }]
   },
   selected: {
     borderColor: '#4CAF50',

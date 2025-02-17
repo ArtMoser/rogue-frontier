@@ -8,7 +8,7 @@ export const characters = [
       attack: 15,
       defense: 10,
       attacked: false,
-      image: "https://images.unsplash.com/photo-1612404730960-5c71577fca11?q=80&w=200"
+      image: require('../assets/characters/rogue.png')
     },
     {
       id: 2,
@@ -19,7 +19,7 @@ export const characters = [
       attack: 25,
       defense: 5,
       attacked: false,
-      image: "https://images.unsplash.com/photo-1612404730960-5c71577fca11?q=80&w=200"
+      image: require('../assets/characters/rogue.png')
     },
     {
       id: 3,
@@ -30,7 +30,7 @@ export const characters = [
       attack: 20,
       defense: 8,
       attacked: false,
-      image: "https://images.unsplash.com/photo-1612404730960-5c71577fca11?q=80&w=200"
+      image: require('../assets/characters/rogue.png')
     },
     {
       id: 4,
@@ -41,7 +41,7 @@ export const characters = [
       attack: 12,
       defense: 15,
       attacked: false,
-      image: "https://images.unsplash.com/photo-1612404730960-5c71577fca11?q=80&w=200"
+      image: require('../assets/characters/rogue.png')
     },
     {
       id: 5,
@@ -52,7 +52,7 @@ export const characters = [
       attack: 12,
       defense: 15,
       attacked: false,
-      image: "https://images.unsplash.com/photo-1612404730960-5c71577fca11?q=80&w=200"
+      image: require('../assets/characters/rogue.png')
     },
     {
       id: 6,
@@ -63,7 +63,7 @@ export const characters = [
       attack: 12,
       defense: 15,
       attacked: false,
-      image: "https://images.unsplash.com/photo-1612404730960-5c71577fca11?q=80&w=200"
+      image: require('../assets/characters/rogue.png')
     },
     {
       id: 7,
@@ -74,7 +74,7 @@ export const characters = [
       attack: 12,
       defense: 15,
       attacked: false,
-      image: "https://images.unsplash.com/photo-1612404730960-5c71577fca11?q=80&w=200"
+      image: require('../assets/characters/rogue.png')
     },
     {
       id: 8,
@@ -85,7 +85,7 @@ export const characters = [
       attack: 12,
       defense: 15,
       attacked: false,
-      image: "https://images.unsplash.com/photo-1612404730960-5c71577fca11?q=80&w=200"
+      image: require('../assets/characters/rogue.png')
     },
     {
       id: 9,
@@ -96,7 +96,7 @@ export const characters = [
       attack: 12,
       defense: 15,
       attacked: false,
-      image: "https://images.unsplash.com/photo-1612404730960-5c71577fca11?q=80&w=200"
+      image: require('../assets/characters/rogue.png')
     },
     {
       id: 10,
@@ -107,7 +107,7 @@ export const characters = [
       attack: 12,
       defense: 15,
       attacked: false,
-      image: "https://images.unsplash.com/photo-1612404730960-5c71577fca11?q=80&w=200"
+      image: require('../assets/characters/rogue.png')
     }
   ];
   
@@ -121,7 +121,7 @@ export const characters = [
         attack: 10,
         defense: 10,
         attacked: false,
-        image: "https://images.unsplash.com/photo-1612404730960-5c71577fca11?q=80&w=200"
+        image: require('../assets/characters/rogue.png')
     },
     {
         id: 1002,
@@ -132,7 +132,7 @@ export const characters = [
         attack: 15,
         defense: 5,
         attacked: false,
-        image: "https://images.unsplash.com/photo-1612404730960-5c71577fca11?q=80&w=200"
+        image: require('../assets/characters/rogue.png')
     },
     {
         id: 1003,
@@ -143,7 +143,7 @@ export const characters = [
         attack: 5,
         defense: 5,
         attacked: false,
-        image: "https://images.unsplash.com/photo-1612404730960-5c71577fca11?q=80&w=200"
+        image: require('../assets/characters/rogue.png')
     },
     {
         id: 1004,
@@ -154,7 +154,7 @@ export const characters = [
         attack: 9,
         defense: 5,
         attacked: false,
-        image: "https://images.unsplash.com/photo-1612404730960-5c71577fca11?q=80&w=200"
+        image: require('../assets/characters/rogue.png')
     }
   ];
   
