@@ -19,7 +19,6 @@ export default function CharacterSelectScreen() {
   const level = Number(params.level);
   const team = params.team ? JSON.parse(params.team): [];
   const isFirstBattle = params.isFirstBattle === 'true';
-  debugger;
   
   const [selectedCharacter, setSelectedCharacter] = useState<Character | null>(null);
   const [availableCharacters, setAvailableCharacters] = useState<Character[]>(characters);
@@ -39,7 +38,6 @@ export default function CharacterSelectScreen() {
 
   const handleConfirm = () => {
     if (selectedCharacter) {
-      debugger;
       team.push(selectedCharacter);
 
       router.push({

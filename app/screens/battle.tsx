@@ -2,6 +2,8 @@ import { View, Text, StyleSheet, Pressable, Animated, Image } from 'react-native
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useState, useEffect } from 'react';
 
+import { enemiesTierOne } from '../data/characters';
+
 type Character = {
   id: number;
   name: string;
@@ -39,16 +41,13 @@ export default function BattleScreen() {
   useEffect(() => {
     setParty(team);
 
+    const getRandomEnemies = (enemiesArray, enemyCount) => {
+      const shuffled = [...enemiesArray].sort(() => 0.5 - Math.random());
+      return shuffled.slice(0, enemyCount);
+    };
+    
     const enemyCount = team.length;
-    const newEnemies = Array(enemyCount).fill(null).map((_, index) => ({
-      id: index,
-      name: `Enemy ${index + 1}`,
-      hp: 10 + level * 5,
-      maxHp: 10 + level * 5,
-      attack: 12 + Math.floor(level / 2),
-      defense: 8 + Math.floor(level / 3)
-    }));
-    setEnemies(newEnemies);
+    setEnemies(getRandomEnemies(enemiesTierOne, enemyCount));
 
     setCurrentTurn('player');
     setSelectedCharacter(null);
@@ -117,8 +116,16 @@ export default function BattleScreen() {
     setSelectedCharacter(null);
     setSelectedTarget(null);
 
+    let hasEnemiesAlive = false;
+    for(let enemie of updatedEnemies) {
+      if(enemie.hp > 0) {
+        hasEnemiesAlive = true;
+        break;
+      }
+    }
+
     for(let teamUnit of partyMembers) {
-      if(!teamUnit.attacked) {
+      if(!teamUnit.attacked && hasEnemiesAlive) {
         return;
       }
     }
@@ -223,6 +230,7 @@ export default function BattleScreen() {
                 ]}
                 onPress={() => currentTurn === 'player' && enemy.hp > 0 && setSelectedTarget(index)}
               >
+                <Image source={{ uri: enemy.image }} style={styles.characterImage} />
                 <Text style={styles.enemyName}>{enemy.name}</Text>
                 <Text style={styles.enemyHp}>HP: {enemy.hp}/{enemy.maxHp}</Text>
               </Pressable>
