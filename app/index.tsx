@@ -7,7 +7,9 @@ export default function StartScreen() {
   const startGame = () => {
     router.push({
       pathname: 'screens/character-select',
-      params: { level: 1, isFirstBattle: true }
+      params: { 
+        level: 1, 
+        isFirstBattle: true }
     });
   };
 

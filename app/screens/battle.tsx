@@ -28,6 +28,7 @@ export default function BattleScreen() {
   const team = JSON.parse(params.team);
   const level = Number(params.level);
   const battleCount = Number(params.battleCount);
+  const generalBattleCount = Number(params.generalBattleCount);
 
   const [party, setParty] = useState<Character[]>([]);
   const [enemies, setEnemies] = useState<Enemy[]>([]);
@@ -182,14 +183,28 @@ export default function BattleScreen() {
   
 
   const handleVictory = () => {
-    if (battleCount % 5 === 0) {
+    if (generalBattleCount % 2 === 0 && generalBattleCount < 10 && team.length < 4) {
       // Level up and character selection
       router.push({
         pathname: 'screens/character-select',
         params: { 
           team : JSON.stringify(team),
           level: level + 1,
-          isFirstBattle: "false"
+          isFirstBattle: "false",
+          battleCount: battleCount + 1,
+          generalBattleCount: generalBattleCount + 1
+        }
+      });
+    } else if (generalBattleCount % 5 === 0) {
+      // Level up and upgrade selection
+      router.push({
+        pathname: 'screens/upgrade-select',
+        params: { 
+          team : JSON.stringify(team),
+          level: level + 1,
+          isFirstBattle: "false",
+          battleCount: battleCount + 1,
+          generalBattleCount: generalBattleCount + 1
         }
       });
     } else {
@@ -199,7 +214,8 @@ export default function BattleScreen() {
         params: {
           team : JSON.stringify(team),
           level : level,
-          battleCount: battleCount + 1
+          battleCount: battleCount + 1,
+          generalBattleCount: generalBattleCount + 1
         }
       });
     }
@@ -230,7 +246,7 @@ export default function BattleScreen() {
                 ]}
                 onPress={() => currentTurn === 'player' && enemy.hp > 0 && setSelectedTarget(index)}
               >
-                <Image source={enemy.image} style={styles.characterImage} />
+                <Image source={enemy.image} style={styles.characterImage, styles.enemyImage} />
                 <Text style={styles.enemyName}>{enemy.name}</Text>
                 <Text style={styles.enemyHp}>HP: {enemy.hp}/{enemy.maxHp}</Text>
               </Pressable>
@@ -248,7 +264,7 @@ export default function BattleScreen() {
             >
               {character.attacked ? (
                 <View style={[styles.characterCard, styles.disabledCharacter]}>
-                  <Image source={character.image} style={[styles.characterImage, styles.enemyImage]} />
+                  <Image source={character.image} style={[styles.characterImage]} />
                   <Text style={styles.characterName}>{character.name}</Text>
                   <Text style={styles.characterHp}>HP: {character.hp}/{character.maxHp}</Text>
                 </View>
@@ -320,25 +336,22 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   characterCard: {
-    backgroundColor: '#2a2a2a',
-    padding: 10,
+    //backgroundColor: '#2a2a2a',
     borderRadius: 8,
-    width: 150,
+    width: 120,
     alignItems: 'center',
     borderWidth: 2,
     borderColor: '#2a2a2a',
   },
   characterImage: {
-    width: 100,
+    width: 120,
     height: 100,
-    borderRadius: 50,
     marginBottom: 10,
   },
   enemyCard: {
-    backgroundColor: '#3a2a2a',
-    padding: 10,
+    //backgroundColor: '#3a2a2a',
     borderRadius: 8,
-    width: 150,
+    width: 120,
     alignItems: 'center',
     borderWidth: 2,
     borderColor: '#3a2a2a',
@@ -356,11 +369,12 @@ const styles = StyleSheet.create({
     opacity: 0.5,
   },
   activeTurn: {
-    backgroundColor: '#2a3a2a',
+    //backgroundColor: '#2a3a2a',
+    borderColor: '#2a3a2a'
   },
   characterName: {
     color: '#ffffff',
-    fontSize: 16,
+    fontSize: 12,
     fontWeight: 'bold',
     marginBottom: 5,
   },
@@ -370,7 +384,7 @@ const styles = StyleSheet.create({
   },
   enemyName: {
     color: '#ffffff',
-    fontSize: 16,
+    fontSize: 12,
     fontWeight: 'bold',
     marginBottom: 5,
   },

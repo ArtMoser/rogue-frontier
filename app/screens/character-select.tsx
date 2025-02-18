@@ -19,6 +19,7 @@ export default function CharacterSelectScreen() {
   const level = Number(params.level);
   const team = params.team ? JSON.parse(params.team): [];
   const isFirstBattle = params.isFirstBattle === 'true';
+  const generalBattleCount = Number(params.generalBattleCount);
   
   const [selectedCharacter, setSelectedCharacter] = useState<Character | null>(null);
   const [availableCharacters, setAvailableCharacters] = useState<Character[]>(characters);
@@ -29,13 +30,16 @@ export default function CharacterSelectScreen() {
 
   useEffect(() => {
     const getRandomCharacters = () => {
-      const shuffled = [...characters].sort(() => 0.5 - Math.random());
-      console.log(JSON.stringify(shuffled));
+      const filteredCharacters = characters.filter(character => 
+        !team.some(teamMember => teamMember.id === character.id)
+      );
+
+      const shuffled = [...filteredCharacters].sort(() => 0.5 - Math.random());
       return shuffled.slice(0, 3);
     };
 
     setAvailableCharacters(getRandomCharacters());
-  }, []);
+  }, [team]);
 
   const handleConfirm = () => {
     if (selectedCharacter) {
@@ -46,7 +50,8 @@ export default function CharacterSelectScreen() {
         params: {
           team: JSON.stringify(team),
           level: level,
-          battleCount: isFirstBattle ? 1 : Math.floor((level - 1) / 5) * 5 + 1
+          battleCount: isFirstBattle ? 1 : Math.floor((level - 1) / 5) * 5 + 1,
+          generalBattleCount: isFirstBattle ? 1 : generalBattleCount
         }
       });
     }
