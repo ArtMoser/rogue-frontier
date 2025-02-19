@@ -30,16 +30,20 @@ export default function CharacterSelectScreen() {
 
   useEffect(() => {
     const getRandomCharacters = () => {
-      const filteredCharacters = characters.filter(character => 
-        !team.some(teamMember => teamMember.id === character.id)
-      );
+      let filteredCharacters = characters;
 
-      const shuffled = [...filteredCharacters].sort(() => 0.5 - Math.random());
+      if (team.length > 0) {
+        filteredCharacters = characters.filter(charItem => 
+          !team.some(teamMember => teamMember.id === charItem.id)
+        );
+      }
+
+      const shuffled = [...filteredCharacters].sort();
       return shuffled.slice(0, 3);
     };
 
     setAvailableCharacters(getRandomCharacters());
-  }, [team]);
+  }, []);
 
   const handleConfirm = () => {
     if (selectedCharacter) {
