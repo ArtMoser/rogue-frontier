@@ -2,6 +2,7 @@ import { View, Text, StyleSheet, Pressable, Image } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { characters } from '../data/characters';
+import { useFocusEffect } from '@react-navigation/native';
 
 type Character = {
   id: number;
@@ -28,7 +29,7 @@ export default function CharacterSelectScreen() {
     setSelectedCharacter(character);
   };
 
-  useEffect(() => {
+  useFocusEffect(() => {
     const getRandomCharacters = () => {
       let filteredCharacters = characters;
 

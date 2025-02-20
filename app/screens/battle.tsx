@@ -3,6 +3,7 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useState, useEffect } from 'react';
 
 import { enemiesTierOne } from '../data/characters';
+import HealthBar from "../components/healthBar";
 
 type Character = {
   id: number;
@@ -183,7 +184,7 @@ export default function BattleScreen() {
   
 
   const handleVictory = () => {
-    if (generalBattleCount % 2 === 0 && generalBattleCount < 10 && team.length < 4) {
+    if (generalBattleCount % 10 === 0 && team.length < 4) {
       // Level up and character selection
       router.push({
         pathname: 'screens/character-select',
@@ -241,14 +242,14 @@ export default function BattleScreen() {
               <Pressable
                 style={[
                   styles.enemyCard,
-                  selectedTarget === index && styles.selected,
+                  selectedTarget === index && styles.selectedEnemy,
                   enemy.hp <= 0 && styles.defeated
                 ]}
                 onPress={() => currentTurn === 'player' && enemy.hp > 0 && setSelectedTarget(index)}
               >
                 <Image source={enemy.image} style={styles.characterImage, styles.enemyImage} />
                 <Text style={styles.enemyName}>{enemy.name}</Text>
-                <Text style={styles.enemyHp}>HP: {enemy.hp}/{enemy.maxHp}</Text>
+                <HealthBar hp={enemy.hp} maxHp={enemy.maxHp} isEnemy={true} />
               </Pressable>
             </Animated.View>
           ))}
@@ -266,7 +267,7 @@ export default function BattleScreen() {
                 <View style={[styles.characterCard, styles.disabledCharacter]}>
                   <Image source={character.image} style={[styles.characterImage]} />
                   <Text style={styles.characterName}>{character.name}</Text>
-                  <Text style={styles.characterHp}>HP: {character.hp}/{character.maxHp}</Text>
+                  <HealthBar hp={character.hp} maxHp={character.maxHp} isEnemy={false} />
                 </View>
               ) : (
                 <Pressable
@@ -279,7 +280,7 @@ export default function BattleScreen() {
                 >
                   <Image source={character.image} style={styles.characterImage} />
                   <Text style={styles.characterName}>{character.name}</Text>
-                  <Text style={styles.characterHp}>HP: {character.hp}/{character.maxHp}</Text>
+                  <HealthBar hp={character.hp} maxHp={character.maxHp} isEnemy={false} />
                 </Pressable>
               )}
             </Animated.View>
@@ -336,31 +337,30 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   characterCard: {
-    //backgroundColor: '#2a2a2a',
     borderRadius: 8,
     width: 120,
     alignItems: 'center',
-    borderWidth: 2,
-    borderColor: '#2a2a2a',
   },
   characterImage: {
     width: 120,
     height: 100,
-    marginBottom: 10,
+    marginBottom: 10
   },
   enemyCard: {
-    //backgroundColor: '#3a2a2a',
     borderRadius: 8,
     width: 120,
     alignItems: 'center',
-    borderWidth: 2,
-    borderColor: '#3a2a2a',
   },
   enemyImage: { 
    transform: [{ scaleX: -1 }]
   },
   selected: {
-    borderColor: '#4CAF50',
+    borderColor: 'transparent',
+    filter: 'drop-shadow(0 0 5px white)'
+  },
+  selectedEnemy: {
+    borderColor: 'transparent',
+    filter: 'drop-shadow(0 0 5px red)'
   },
   defeated: {
     opacity: 0.5,
@@ -369,7 +369,6 @@ const styles = StyleSheet.create({
     opacity: 0.5,
   },
   activeTurn: {
-    //backgroundColor: '#2a3a2a',
     borderColor: '#2a3a2a'
   },
   characterName: {

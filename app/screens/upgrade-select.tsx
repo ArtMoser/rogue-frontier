@@ -40,23 +40,20 @@ export default function UpgradeSelectScreen() {
 
   const handleConfirm = () => {
     let teamUpdated = [...team];
-    console.log('### teamUpdated before => ' + JSON.stringify(teamUpdated));
     for(let character of teamUpdated) {
-      let updatedAttributeValue;
+
       if(selectedUpgrade.type == 'literal') {
-        character[selectedUpgrade.attribute] += selectedUpgrade.value;
-        updatedAttributeValue = selectedUpgrade.value;
-      } else if(selectedUpgrade.type == 'percentage') {
+        character[selectedUpgrade.attribute] = character[selectedUpgrade.attribute] + selectedUpgrade.value;
+      } 
+      
+      if(selectedUpgrade.type == 'percentage') {
         character[selectedUpgrade.attribute] = character[selectedUpgrade.attribute] + (character[selectedUpgrade.attribute] * selectedUpgrade.value);
-        updatedAttributeValue = character[selectedUpgrade.attribute];
       }
 
       if(selectedUpgrade.coAttribute) {
-        character[coAttribute] = updatedAttributeValue;
+        character[selectedUpgrade.coAttribute] = character[selectedUpgrade.attribute];
       }
     }
-
-    console.log('### teamUpdated after => ' + JSON.stringify(teamUpdated));
 
     router.push({
       pathname: 'screens/battle',
@@ -68,6 +65,13 @@ export default function UpgradeSelectScreen() {
       }
     });
   };
+
+  const formatValue = (upgrade) => {
+    if (upgrade.type === "percentage") {
+        return `${upgrade.value * 100}%`;
+    }
+    return upgrade.value;
+};
 
   return (
     <View style={styles.container}>
@@ -84,8 +88,7 @@ export default function UpgradeSelectScreen() {
             onPress={() => handleUpgradeSelect(upgrade)}
           >
             <Text style={styles.upgradeText}>{upgrade.attribute}</Text>
-            <Text style={styles.upgradeText}>{upgrade.type}</Text>
-            <Text style={styles.upgradeText}>{upgrade.value}</Text>
+            <Text style={styles.upgradeText}>+ {formatValue(upgrade)}</Text>
           </Pressable>
         ))}
       </View>
@@ -179,6 +182,7 @@ const styles = StyleSheet.create({
   upgradesContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
+    marginTop: '50%',
     gap: 20,
     marginBottom: 30,
   },
