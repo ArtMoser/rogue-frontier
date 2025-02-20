@@ -39,6 +39,63 @@ export default function BattleScreen() {
   const [battleLog, setBattleLog] = useState<string[]>([]);
 
   const [swingAnimation] = useState(new Animated.Value(0));
+  const [characterMoveAnimations, setCharacterMoveAnimations] = useState<Animated.Value[]>([]);
+  const [enemyShakeAnimations, setEnemyShakeAnimations] = useState<Animated.Value[]>([]);
+
+  const shakeEnemy = (index: number) => {
+    Animated.sequence([
+      Animated.timing(enemyShakeAnimations[index], {
+        toValue: 10, // Movimento para a direita
+        duration: 50,
+        useNativeDriver: true,
+      }),
+      Animated.timing(enemyShakeAnimations[index], {
+        toValue: -10, // Movimento para a esquerda
+        duration: 50,
+        useNativeDriver: true,
+      }),
+      Animated.timing(enemyShakeAnimations[index], {
+        toValue: 0, // Volta ao normal
+        duration: 50,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  };
+
+  const performAttackAnimation = (characterIndex: number) => {
+    // Move o personagem para o centro
+    Animated.timing(characterMoveAnimations[characterIndex], {
+      toValue: 1,
+      duration: 200,
+      useNativeDriver: true,
+    }).start(() => {
+      // Tremer o personagem
+      Animated.sequence([
+        Animated.timing(swingAnimation, {
+          toValue: 1,
+          duration: 50,
+          useNativeDriver: true,
+        }),
+        Animated.timing(swingAnimation, {
+          toValue: -1,
+          duration: 50,
+          useNativeDriver: true,
+        }),
+        Animated.timing(swingAnimation, {
+          toValue: 0,
+          duration: 50,
+          useNativeDriver: true,
+        }),
+      ]).start(() => {
+        // Voltar o personagem para a posição inicial
+        Animated.timing(characterMoveAnimations[characterIndex], {
+          toValue: 0,
+          duration: 200,
+          useNativeDriver: true,
+        }).start();
+      });
+    });
+  };
 
   useEffect(() => {
     setParty(team);
@@ -49,7 +106,11 @@ export default function BattleScreen() {
     };
     
     const enemyCount = team.length;
-    setEnemies(getRandomEnemies(enemiesTierOne, enemyCount));
+    const randomEnemies = getRandomEnemies(enemiesTierOne, enemyCount);
+    setEnemies(randomEnemies);
+
+    setEnemyShakeAnimations(randomEnemies.map(() => new Animated.Value(0)));
+    setCharacterMoveAnimations(team.map(() => new Animated.Value(0)));
 
     setCurrentTurn('player');
     setSelectedCharacter(null);
@@ -92,6 +153,9 @@ export default function BattleScreen() {
 
   const handleAttack = () => {
     if (selectedCharacter === null || selectedTarget === null) return;
+
+    performAttackAnimation(selectedCharacter);
+    shakeEnemy(selectedTarget);
 
     const attacker = party[selectedCharacter];
     const defender = enemies[selectedTarget];
@@ -234,56 +298,71 @@ export default function BattleScreen() {
         <View style={styles.enemyContainer}>
           {enemies.map((enemy, index) => (
             <Animated.View
-              key={enemy.id}
+            key={enemy.id}
+            style={[
+              {
+                transform: [
+                  { translateX: enemyShakeAnimations[index] }, // Usa a animação específica do inimigo
+                  { rotate: selectedTarget === index ? swing : '0deg' },
+                ],
+              },
+            ]}
+          >
+            <Pressable
               style={[
-                { transform: selectedTarget === index ? [{ rotate: swing }] : [] },
+                styles.enemyCard,
+                selectedTarget === index && styles.selectedEnemy,
+                enemy.hp <= 0 && styles.defeated,
               ]}
+              onPress={() => currentTurn === 'player' && enemy.hp > 0 && setSelectedTarget(index)}
             >
-              <Pressable
-                style={[
-                  styles.enemyCard,
-                  selectedTarget === index && styles.selectedEnemy,
-                  enemy.hp <= 0 && styles.defeated
-                ]}
-                onPress={() => currentTurn === 'player' && enemy.hp > 0 && setSelectedTarget(index)}
-              >
-                <Image source={enemy.image} style={styles.characterImage, styles.enemyImage} />
-                <Text style={styles.enemyName}>{enemy.name}</Text>
-                <HealthBar hp={enemy.hp} maxHp={enemy.maxHp} isEnemy={true} />
-              </Pressable>
-            </Animated.View>
+              <Image source={enemy.image} style={[styles.characterImage, styles.enemyImage]} />
+              <Text style={styles.enemyName}>{enemy.name}</Text>
+              <HealthBar hp={enemy.hp} maxHp={enemy.maxHp} isEnemy={true} />
+            </Pressable>
+          </Animated.View>
           ))}
         </View>
 
         <View style={styles.partyContainer}>
           {party.map((character, index) => (
             <Animated.View
-              key={character.id}
-              style={[
-                { transform: selectedCharacter === index ? [{ rotate: swing }] : [] },
-              ]}
-            >
-              {character.attacked ? (
-                <View style={[styles.characterCard, styles.disabledCharacter]}>
-                  <Image source={character.image} style={[styles.characterImage]} />
-                  <Text style={styles.characterName}>{character.name}</Text>
-                  <HealthBar hp={character.hp} maxHp={character.maxHp} isEnemy={false} />
-                </View>
-              ) : (
-                <Pressable
-                  style={[
-                    styles.characterCard,
-                    currentTurn === 'player' && styles.activeTurn,
-                    selectedCharacter === index && styles.selected
-                  ]}
-                  onPress={() => currentTurn === 'player' && setSelectedCharacter(index)}
-                >
-                  <Image source={character.image} style={styles.characterImage} />
-                  <Text style={styles.characterName}>{character.name}</Text>
-                  <HealthBar hp={character.hp} maxHp={character.maxHp} isEnemy={false} />
-                </Pressable>
-              )}
-            </Animated.View>
+            key={character.id}
+            style={[
+              { 
+                transform: [
+                  { 
+                    translateX: characterMoveAnimations[index].interpolate({
+                      inputRange: [0, 1],
+                      outputRange: [0, -100], // Move para a esquerda (ajuste conforme necessário)
+                    }),
+                  },
+                  { rotate: selectedCharacter === index ? swing : '0deg' }
+                ]
+              },
+            ]}
+          >
+            {character.attacked ? (
+              <View style={[styles.characterCard, styles.disabledCharacter]}>
+                <Image source={character.image} style={[styles.characterImage]} />
+                <Text style={styles.characterName}>{character.name}</Text>
+                <HealthBar hp={character.hp} maxHp={character.maxHp} isEnemy={false} />
+              </View>
+            ) : (
+              <Pressable
+                style={[
+                  styles.characterCard,
+                  currentTurn === 'player' && styles.activeTurn,
+                  selectedCharacter === index && styles.selected
+                ]}
+                onPress={() => currentTurn === 'player' && setSelectedCharacter(index)}
+              >
+                <Image source={character.image} style={styles.characterImage} />
+                <Text style={styles.characterName}>{character.name}</Text>
+                <HealthBar hp={character.hp} maxHp={character.maxHp} isEnemy={false} />
+              </Pressable>
+            )}
+          </Animated.View>
           ))}
         </View>
       </View>
