@@ -1,6 +1,7 @@
 import { View, Text, StyleSheet, Pressable, Animated, Image } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import { ActivityIndicator } from 'react-native';
 
 import { enemiesTierOne } from '../data/characters';
 import HealthBar from "../components/healthBar";
@@ -37,18 +38,38 @@ export default function BattleScreen() {
   const [selectedCharacter, setSelectedCharacter] = useState<number | null>(null);
   const [selectedTarget, setSelectedTarget] = useState<number | null>(null);
   const [battleLog, setBattleLog] = useState<string[]>([]);
+  const [turnMessage, setTurnMessage] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   const [swingAnimation] = useState(new Animated.Value(0));
   const [characterMoveAnimations, setCharacterMoveAnimations] = useState<Animated.Value[]>([]);
   const [enemyShakeAnimations, setEnemyShakeAnimations] = useState<Animated.Value[]>([]);
   const [enemyMoveAnimations, setEnemyMoveAnimations] = useState<Animated.Value[]>([]);
+  const [characterShakeAnimations, setCharacterShakeAnimations] = useState<Animated.Value[]>([]);
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+
+  const shakeCharacter = (index: number) => {
+    Animated.sequence([
+      Animated.timing(characterShakeAnimations[index], {
+        toValue: 10,
+        duration: 50,
+        useNativeDriver: true,
+      }),
+      Animated.timing(characterShakeAnimations[index], {
+        toValue: -10,
+        duration: 50,
+        useNativeDriver: true,
+      }),
+      Animated.timing(characterShakeAnimations[index], {
+        toValue: 0,
+        duration: 50,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  };
 
   const performEnemyAttackAnimation = () => {
-    // Filtra os inimigos vivos
     const livingEnemies = enemies.filter(enemy => enemy.hp > 0);
-    console.log("Inimigos vivos:", livingEnemies); // Verifica os inimigos vivos
-  
-    // Move os inimigos vivos para frente
     Animated.parallel(
       livingEnemies.map((enemy) => {
         const enemyIndex = enemies.indexOf(enemy);
@@ -59,7 +80,6 @@ export default function BattleScreen() {
         });
       })
     ).start(() => {
-      // Volta os inimigos vivos para a posição inicial
       Animated.parallel(
         livingEnemies.map((enemy) => {
           const enemyIndex = enemies.indexOf(enemy);
@@ -76,17 +96,17 @@ export default function BattleScreen() {
   const shakeEnemy = (index: number) => {
     Animated.sequence([
       Animated.timing(enemyShakeAnimations[index], {
-        toValue: 10, // Movimento para a direita
+        toValue: 10,
         duration: 50,
         useNativeDriver: true,
       }),
       Animated.timing(enemyShakeAnimations[index], {
-        toValue: -10, // Movimento para a esquerda
+        toValue: -10,
         duration: 50,
         useNativeDriver: true,
       }),
       Animated.timing(enemyShakeAnimations[index], {
-        toValue: 0, // Volta ao normal
+        toValue: 0,
         duration: 50,
         useNativeDriver: true,
       }),
@@ -94,13 +114,11 @@ export default function BattleScreen() {
   };
 
   const performAttackAnimation = (characterIndex: number) => {
-    // Move o personagem para o centro
     Animated.timing(characterMoveAnimations[characterIndex], {
       toValue: 1,
       duration: 200,
       useNativeDriver: true,
     }).start(() => {
-      // Tremer o personagem
       Animated.sequence([
         Animated.timing(swingAnimation, {
           toValue: 1,
@@ -118,7 +136,6 @@ export default function BattleScreen() {
           useNativeDriver: true,
         }),
       ]).start(() => {
-        // Voltar o personagem para a posição inicial
         Animated.timing(characterMoveAnimations[characterIndex], {
           toValue: 0,
           duration: 200,
@@ -127,6 +144,44 @@ export default function BattleScreen() {
       });
     });
   };
+
+  useEffect(() => {
+    Animated.timing(fadeAnim, {
+      toValue: 1,
+      duration: 500,
+      useNativeDriver: true,
+    }).start();
+
+    return () => {
+      Animated.timing(fadeAnim, {
+        toValue: 0,
+        duration: 500,
+        useNativeDriver: true,
+      }).start();
+    };
+  }, []);
+
+  useEffect(() => {
+    if (currentTurn === 'player') {
+      if (selectedCharacter === null) {
+        setTurnMessage('Selecione um personagem para atacar!');
+      } else if (selectedTarget === null) {
+        setTurnMessage('Agora selecione um inimigo para atacar!');
+      }
+    } else {
+      setTurnMessage('Os inimigos estão atacando...');
+    }
+
+    const defeatedEnemy = enemies.find(enemy => enemy.hp <= 0);
+    if (defeatedEnemy) {
+      setTurnMessage(`${defeatedEnemy.name} foi derrotado!`);
+      setTimeout(() => {
+        if (currentTurn === 'player') {
+          setTurnMessage('Selecione um personagem para atacar!');
+        }
+      }, 2000);
+    }
+  }, [currentTurn, selectedCharacter, selectedTarget, enemies]);
 
   useEffect(() => {
     setParty(team);
@@ -143,6 +198,7 @@ export default function BattleScreen() {
     setEnemyShakeAnimations(randomEnemies.map(() => new Animated.Value(0)));
     setEnemyMoveAnimations(randomEnemies.map(() => new Animated.Value(0)));
     setCharacterMoveAnimations(team.map(() => new Animated.Value(0)));
+    setCharacterShakeAnimations(team.map(() => new Animated.Value(0)));
 
     setCurrentTurn('player');
     setSelectedCharacter(null);
@@ -152,7 +208,7 @@ export default function BattleScreen() {
 
   useEffect(() => {
     if (selectedCharacter !== null || selectedTarget !== null) {
-      swingAnimation.setValue(0); // Reset animation value
+      swingAnimation.setValue(0);
       Animated.loop(
         Animated.sequence([
           Animated.timing(swingAnimation, {
@@ -199,14 +255,12 @@ export default function BattleScreen() {
       hp: Math.max(0, defender.hp - damage)
     };
 
-    let partyMembers = [... party]
+    let partyMembers = [...party];
     partyMembers[selectedCharacter].attacked = true;
     setParty(partyMembers);
-    
 
     setBattleLog(prev => [...prev, `${attacker.name} deals ${damage} damage to ${defender.name}!`]);
     setEnemies(updatedEnemies);
-    
 
     swingAnimation.stopAnimation();
     swingAnimation.setValue(0);
@@ -215,15 +269,15 @@ export default function BattleScreen() {
     setSelectedTarget(null);
 
     let hasEnemiesAlive = false;
-    for(let enemie of updatedEnemies) {
-      if(enemie.hp > 0) {
+    for (let enemie of updatedEnemies) {
+      if (enemie.hp > 0) {
         hasEnemiesAlive = true;
         break;
       }
     }
 
-    for(let teamUnit of partyMembers) {
-      if(!teamUnit.attacked && hasEnemiesAlive) {
+    for (let teamUnit of partyMembers) {
+      if (!teamUnit.attacked && hasEnemiesAlive) {
         return;
       }
     }
@@ -244,7 +298,7 @@ export default function BattleScreen() {
     if (livingEnemies.length === 0 || livingParty.length === 0) return;
   
     let updatedParty = [...party];
-
+  
     performEnemyAttackAnimation();
   
     for (let enemy of livingEnemies) {
@@ -263,18 +317,19 @@ export default function BattleScreen() {
   
         setBattleLog(prev => [...prev, `${enemy.name} deals ${damage} damage to ${defender.name}!`]);
   
+        shakeCharacter(defenderIndex);
+  
         livingParty = updatedParty.filter(character => character.hp > 0);
       }
     }
-
-    for(let partyMember of updatedParty) {
+  
+    for (let partyMember of updatedParty) {
       partyMember.attacked = false;
     }
   
     setParty(updatedParty);
     setCurrentTurn("player");
   
-    // Verifica se todos os personagens foram derrotados
     if (updatedParty.every(character => character.hp <= 0)) {
       handleDefeat();
     }
@@ -282,42 +337,45 @@ export default function BattleScreen() {
   
 
   const handleVictory = () => {
-    if (generalBattleCount % 10 === 0 && team.length < 4) {
-      // Level up and character selection
-      router.push({
-        pathname: 'screens/character-select',
-        params: { 
-          team : JSON.stringify(team),
-          level: level + 1,
-          isFirstBattle: "false",
-          battleCount: battleCount + 1,
-          generalBattleCount: generalBattleCount + 1
-        }
-      });
-    } else if (generalBattleCount % 5 === 0) {
-      // Level up and upgrade selection
-      router.push({
-        pathname: 'screens/upgrade-select',
-        params: { 
-          team : JSON.stringify(team),
-          level: level + 1,
-          isFirstBattle: "false",
-          battleCount: battleCount + 1,
-          generalBattleCount: generalBattleCount + 1
-        }
-      });
-    } else {
-      // Next battle
-      router.push({
-        pathname: 'screens/battle',
-        params: {
-          team : JSON.stringify(team),
-          level : level,
-          battleCount: battleCount + 1,
-          generalBattleCount: generalBattleCount + 1
-        }
-      });
-    }
+    setIsLoading(true);
+  
+    setTimeout(() => {
+      if (generalBattleCount % 10 === 0 && team.length < 4) {
+        router.push({
+          pathname: 'screens/character-select',
+          params: { 
+            team: JSON.stringify(team),
+            level: level + 1,
+            isFirstBattle: "false",
+            battleCount: battleCount + 1,
+            generalBattleCount: generalBattleCount + 1
+          },
+        });
+      } else if (generalBattleCount % 5 === 0) {
+        router.push({
+          pathname: 'screens/upgrade-select',
+          params: { 
+            team: JSON.stringify(team),
+            level: level + 1,
+            isFirstBattle: "false",
+            battleCount: battleCount + 1,
+            generalBattleCount: generalBattleCount + 1
+          },
+        });
+      } else {
+        router.push({
+          pathname: 'screens/battle',
+          params: {
+            team: JSON.stringify(team),
+            level: level,
+            battleCount: battleCount + 1,
+            generalBattleCount: generalBattleCount + 1
+          },
+        });
+      }
+  
+      setIsLoading(false);
+    }, 1000);
   };
 
   const handleDefeat = () => {
@@ -326,6 +384,14 @@ export default function BattleScreen() {
 
   return (
     <View style={styles.container}>
+      {isLoading && (
+        <View style={styles.loadingOverlay}>
+          <ActivityIndicator size="large" color="#FFD700" />
+        </View>
+      )}
+      <Animated.View style={[styles.turnMessageContainer, { opacity: fadeAnim }]}>
+        <Text style={styles.turnMessageText}>{turnMessage}</Text>
+      </Animated.View>
       <Text style={styles.battleInfo}>Battle {battleCount} - Level {level}</Text>
       
       <View style={styles.battleField}>
@@ -339,11 +405,11 @@ export default function BattleScreen() {
                   { 
                     translateX: enemy.hp > 0 ? enemyMoveAnimations[index].interpolate({
                       inputRange: [0, 1],
-                      outputRange: [0, 50], // Move 50 pixels para a frente (ajuste conforme necessário)
-                    }) : 0, // Não move se o inimigo estiver morto
+                      outputRange: [0, 50],
+                    }) : 0,
                   },
-                  { translateX: enemyShakeAnimations[index] }, // Mantém a animação de tremor
-                  { rotate: selectedTarget === index ? swing : '0deg' }, // Mantém a animação de seleção
+                  { translateX: enemyShakeAnimations[index] },
+                  { rotate: selectedTarget === index ? swing : '0deg' },
                 ],
               },
             ]}
@@ -366,22 +432,23 @@ export default function BattleScreen() {
 
         <View style={styles.partyContainer}>
           {party.map((character, index) => (
-            <Animated.View
-            key={character.id}
-            style={[
-              { 
-                transform: [
-                  { 
-                    translateX: characterMoveAnimations[index].interpolate({
-                      inputRange: [0, 1],
-                      outputRange: [0, -100], // Move para a esquerda (ajuste conforme necessário)
-                    }),
-                  },
-                  { rotate: selectedCharacter === index ? swing : '0deg' }
-                ]
-              },
-            ]}
-          >
+           <Animated.View
+           key={character.id}
+           style={[
+             { 
+               transform: [
+                 { 
+                   translateX: characterMoveAnimations[index].interpolate({
+                     inputRange: [0, 1],
+                     outputRange: [0, -100],
+                   }),
+                 },
+                 { translateX: character.hp > 0 ? characterShakeAnimations[index] : 0 },
+                 { rotate: selectedCharacter === index ? swing : '0deg' }
+               ]
+             },
+           ]}
+         >
             {character.attacked ? (
               <View style={[styles.characterCard, styles.disabledCharacter]}>
                 <Image source={character.image} style={[styles.characterImage]} />
@@ -533,5 +600,42 @@ const styles = StyleSheet.create({
     color: '#ffffff',
     fontSize: 18,
     fontWeight: 'bold',
+  },
+  turnMessageContainer: {
+    position: 'absolute',
+    top: '10%',
+    left: '10%',
+    right: '10%',
+    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+    padding: 15,
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 2,
+    borderColor: '#FFD700',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.8,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  turnMessageText: {
+    color: '#FFD700',
+    fontSize: 20,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    textShadowColor: 'rgba(0, 0, 0, 0.75)',
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 2,
+  },
+  loadingOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.7)',
   },
 });
