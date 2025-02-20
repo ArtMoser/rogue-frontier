@@ -41,6 +41,37 @@ export default function BattleScreen() {
   const [swingAnimation] = useState(new Animated.Value(0));
   const [characterMoveAnimations, setCharacterMoveAnimations] = useState<Animated.Value[]>([]);
   const [enemyShakeAnimations, setEnemyShakeAnimations] = useState<Animated.Value[]>([]);
+  const [enemyMoveAnimations, setEnemyMoveAnimations] = useState<Animated.Value[]>([]);
+
+  const performEnemyAttackAnimation = () => {
+    // Filtra os inimigos vivos
+    const livingEnemies = enemies.filter(enemy => enemy.hp > 0);
+    console.log("Inimigos vivos:", livingEnemies); // Verifica os inimigos vivos
+  
+    // Move os inimigos vivos para frente
+    Animated.parallel(
+      livingEnemies.map((enemy) => {
+        const enemyIndex = enemies.indexOf(enemy);
+        return Animated.timing(enemyMoveAnimations[enemyIndex], {
+          toValue: 1,
+          duration: 200,
+          useNativeDriver: true,
+        });
+      })
+    ).start(() => {
+      // Volta os inimigos vivos para a posição inicial
+      Animated.parallel(
+        livingEnemies.map((enemy) => {
+          const enemyIndex = enemies.indexOf(enemy);
+          return Animated.timing(enemyMoveAnimations[enemyIndex], {
+            toValue: 0,
+            duration: 200,
+            useNativeDriver: true,
+          });
+        })
+      ).start();
+    });
+  };
 
   const shakeEnemy = (index: number) => {
     Animated.sequence([
@@ -110,6 +141,7 @@ export default function BattleScreen() {
     setEnemies(randomEnemies);
 
     setEnemyShakeAnimations(randomEnemies.map(() => new Animated.Value(0)));
+    setEnemyMoveAnimations(randomEnemies.map(() => new Animated.Value(0)));
     setCharacterMoveAnimations(team.map(() => new Animated.Value(0)));
 
     setCurrentTurn('player');
@@ -212,6 +244,8 @@ export default function BattleScreen() {
     if (livingEnemies.length === 0 || livingParty.length === 0) return;
   
     let updatedParty = [...party];
+
+    performEnemyAttackAnimation();
   
     for (let enemy of livingEnemies) {
       if (livingParty.length === 0) break;
@@ -302,8 +336,14 @@ export default function BattleScreen() {
             style={[
               {
                 transform: [
-                  { translateX: enemyShakeAnimations[index] }, // Usa a animação específica do inimigo
-                  { rotate: selectedTarget === index ? swing : '0deg' },
+                  { 
+                    translateX: enemy.hp > 0 ? enemyMoveAnimations[index].interpolate({
+                      inputRange: [0, 1],
+                      outputRange: [0, 50], // Move 50 pixels para a frente (ajuste conforme necessário)
+                    }) : 0, // Não move se o inimigo estiver morto
+                  },
+                  { translateX: enemyShakeAnimations[index] }, // Mantém a animação de tremor
+                  { rotate: selectedTarget === index ? swing : '0deg' }, // Mantém a animação de seleção
                 ],
               },
             ]}
