@@ -3,7 +3,7 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useState, useEffect, useRef } from 'react';
 import { ActivityIndicator } from 'react-native';
 
-import { enemiesTierOne } from '../data/characters';
+import { enemiesTierOne } from '../data/enemies';
 import HealthBar from "../components/healthBar";
 
 type Character = {
@@ -47,6 +47,29 @@ export default function BattleScreen() {
   const [enemyMoveAnimations, setEnemyMoveAnimations] = useState<Animated.Value[]>([]);
   const [characterShakeAnimations, setCharacterShakeAnimations] = useState<Animated.Value[]>([]);
   const fadeAnim = useRef(new Animated.Value(0)).current;
+
+  // Animação do quadrado preto
+  const slideAnim = useRef(new Animated.Value(0)).current;
+
+  const startSlideAnimation = (callback: () => void) => {
+    Animated.timing(slideAnim, {
+      toValue: 1,
+      duration: 1500, // Duração da animação
+      useNativeDriver: true,
+    }).start(() => {
+      // Resetar o slideAnim antes de navegar
+      Animated.timing(slideAnim, {
+        toValue: 0,
+        duration: 0, // Reset imediato
+        useNativeDriver: true,
+      }).start();
+
+      // Pequeno atraso para garantir que o quadrado desapareça
+      setTimeout(() => {
+        callback(); // Navega para a próxima tela após a animação
+      }, 100); // Ajuste o tempo conforme necessário
+    });
+  };
 
   const shakeCharacter = (index: number) => {
     Animated.sequence([
@@ -146,13 +169,18 @@ export default function BattleScreen() {
   };
 
   useEffect(() => {
+    // Animação de fade ao entrar na tela
     Animated.timing(fadeAnim, {
       toValue: 1,
       duration: 500,
       useNativeDriver: true,
     }).start();
 
+    // Resetar a animação do quadrado preto
+    slideAnim.setValue(0); // Garante que o quadrado comece fora da tela
+
     return () => {
+      // Animação de fade ao sair da tela
       Animated.timing(fadeAnim, {
         toValue: 0,
         duration: 500,
@@ -164,20 +192,20 @@ export default function BattleScreen() {
   useEffect(() => {
     if (currentTurn === 'player') {
       if (selectedCharacter === null) {
-        setTurnMessage('Selecione um personagem para atacar!');
+        setTurnMessage('Select a character to attack!');
       } else if (selectedTarget === null) {
-        setTurnMessage('Agora selecione um inimigo para atacar!');
+        setTurnMessage('Now select an enemy to attack!');
       }
     } else {
-      setTurnMessage('Os inimigos estão atacando...');
+      setTurnMessage('The enemies are attacking...');
     }
 
     const defeatedEnemy = enemies.find(enemy => enemy.hp <= 0);
     if (defeatedEnemy) {
-      setTurnMessage(`${defeatedEnemy.name} foi derrotado!`);
+      setTurnMessage(`${defeatedEnemy.name} was defeated!`);
       setTimeout(() => {
         if (currentTurn === 'player') {
-          setTurnMessage('Selecione um personagem para atacar!');
+          setTurnMessage('Select a character to attack!');
         }
       }, 2000);
     }
@@ -339,7 +367,8 @@ export default function BattleScreen() {
   const handleVictory = () => {
     setIsLoading(true);
   
-    setTimeout(() => {
+    // Inicia a animação do quadrado preto
+    startSlideAnimation(() => {
       if (generalBattleCount % 10 === 0 && team.length < 4) {
         router.push({
           pathname: 'screens/character-select',
@@ -375,11 +404,14 @@ export default function BattleScreen() {
       }
   
       setIsLoading(false);
-    }, 1000);
+    });
   };
 
   const handleDefeat = () => {
-    router.push('/');
+    // Inicia a animação do quadrado preto
+    startSlideAnimation(() => {
+      router.push('/');
+    });
   };
 
   return (
@@ -485,6 +517,23 @@ export default function BattleScreen() {
           <Text style={styles.attackButtonText}>Attack!</Text>
         </Pressable>
       )}
+
+      {/* Quadrado preto para a transição */}
+      <Animated.View
+        style={[
+          styles.slideOverlay,
+          {
+            transform: [
+              {
+                translateX: slideAnim.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: [1000, 0], // Começa fora da tela (direita) e se move para a esquerda
+                }),
+              },
+            ],
+          },
+        ]}
+      />
     </View>
   );
 }
@@ -494,6 +543,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#1a1a1a',
     padding: 20,
+    position: 'relative', // Importante para o posicionamento absoluto do quadrado preto
   },
   battleInfo: {
     fontSize: 24,
@@ -621,7 +671,7 @@ const styles = StyleSheet.create({
   },
   turnMessageText: {
     color: '#FFD700',
-    fontSize: 20,
+    fontSize: '12px',
     fontWeight: 'bold',
     textAlign: 'center',
     textShadowColor: 'rgba(0, 0, 0, 0.75)',
@@ -637,5 +687,14 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'rgba(0, 0, 0, 0.7)',
+  },
+  slideOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'black',
+    zIndex: 999, // Garante que o quadrado preto fique acima de tudo
   },
 });
