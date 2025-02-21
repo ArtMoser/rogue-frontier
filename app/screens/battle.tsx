@@ -267,11 +267,26 @@ export default function BattleScreen() {
     outputRange: ['-5deg', '5deg'],
   });
 
+  useEffect(() => {
+    console.log("Estado atualizado do party:", party);
+  }, [party]);
+
   const handleAttack = () => {
     if (selectedCharacter === null || selectedTarget === null) return;
 
     performAttackAnimation(selectedCharacter);
     shakeEnemy(selectedTarget);
+
+    setParty(prevParty =>
+      prevParty.map((member, index) =>
+        index === selectedCharacter ? { ...member, isAttacking: true, attacked: true } : member
+      )
+    );
+    
+
+    let partyMembers = [...party];
+    partyMembers[selectedCharacter].attacked = true;
+    partyMembers[selectedCharacter].isAttacking = true;
 
     const attacker = party[selectedCharacter];
     const defender = enemies[selectedTarget];
@@ -282,11 +297,6 @@ export default function BattleScreen() {
       ...defender,
       hp: Math.max(0, defender.hp - damage)
     };
-
-    let partyMembers = [...party];
-    partyMembers[selectedCharacter].attacked = true;
-    setParty(partyMembers);
-
     setBattleLog(prev => [...prev, `${attacker.name} deals ${damage} damage to ${defender.name}!`]);
     setEnemies(updatedEnemies);
 
@@ -353,6 +363,7 @@ export default function BattleScreen() {
   
     for (let partyMember of updatedParty) {
       partyMember.attacked = false;
+      partyMember.isAttacking = false;
     }
   
     setParty(updatedParty);
@@ -483,7 +494,10 @@ export default function BattleScreen() {
          >
             {character.attacked ? (
               <View style={[styles.characterCard, styles.disabledCharacter]}>
-                <Image source={character.image} style={[styles.characterImage]} />
+                <Image 
+                    source={character.isAttacking ? character.attackImage : character.image}
+                    style={styles.characterImage}
+                />
                 <Text style={styles.characterName}>{character.name}</Text>
                 <HealthBar hp={character.hp} maxHp={character.maxHp} isEnemy={false} />
               </View>
@@ -496,7 +510,11 @@ export default function BattleScreen() {
                 ]}
                 onPress={() => currentTurn === 'player' && setSelectedCharacter(index)}
               >
-                <Image source={character.image} style={styles.characterImage} />
+                <Image 
+                    source={character.isAttacking ? character.attackImage : character.image} 
+                    style={styles.characterImage} 
+                    key={character.isAttacking ? "attacking" : "idle"} 
+                />
                 <Text style={styles.characterName}>{character.name}</Text>
                 <HealthBar hp={character.hp} maxHp={character.maxHp} isEnemy={false} />
               </Pressable>

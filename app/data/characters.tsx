@@ -7,8 +7,11 @@ export const characters = [
       type: "class",
       attack: 15,
       defense: 10,
+      nextEvolution: 11,
+      isAttacking: false,
       attacked: false,
-      image: require('../assets/characters/rogue.png')
+      image: require('../assets/characters/rogue.png'),
+      attackImage: require('../assets/monsters/monster_yggdrasil_idle.gif')
     },
     {
       id: 2,
@@ -19,7 +22,9 @@ export const characters = [
       attack: 25,
       defense: 5,
       attacked: false,
-      image: require('../assets/characters/rogue.png')
+      isAttacking: false,
+      image: require('../assets/characters/rogue.png'),
+      attackImage: require('../assets/monsters/monster_yggdrasil_idle.gif')
     },
     {
       id: 3,
@@ -30,7 +35,9 @@ export const characters = [
       attack: 20,
       defense: 8,
       attacked: false,
-      image: require('../assets/characters/rogue.png')
+      isAttacking: false,
+      image: require('../assets/characters/rogue.png'),
+      attackImage: require('../assets/monsters/monster_yggdrasil_idle.gif')
     },
     {
       id: 4,
@@ -41,7 +48,9 @@ export const characters = [
       attack: 12,
       defense: 15,
       attacked: false,
-      image: require('../assets/characters/rogue.png')
+      isAttacking: false,
+      image: require('../assets/characters/rogue.png'),
+      attackImage: require('../assets/monsters/monster_yggdrasil_idle.gif')
     },
     {
       id: 5,
@@ -52,7 +61,9 @@ export const characters = [
       attack: 12,
       defense: 15,
       attacked: false,
-      image: require('../assets/characters/rogue.png')
+      isAttacking: false,
+      image: require('../assets/characters/rogue.png'),
+      attackImage: require('../assets/monsters/monster_yggdrasil_idle.gif')
     },
     {
       id: 6,
@@ -63,7 +74,9 @@ export const characters = [
       attack: 12,
       defense: 15,
       attacked: false,
-      image: require('../assets/characters/rogue.png')
+      isAttacking: false,
+      image: require('../assets/characters/rogue.png'),
+      attackImage: require('../assets/monsters/monster_yggdrasil_idle.gif')
     },
     {
       id: 7,
@@ -74,7 +87,9 @@ export const characters = [
       attack: 12,
       defense: 15,
       attacked: false,
-      image: require('../assets/characters/rogue.png')
+      isAttacking: false,
+      image: require('../assets/characters/rogue.png'),
+      attackImage: require('../assets/monsters/monster_yggdrasil_idle.gif')
     },
     {
       id: 8,
@@ -85,7 +100,9 @@ export const characters = [
       attack: 12,
       defense: 15,
       attacked: false,
-      image: require('../assets/characters/rogue.png')
+      isAttacking: false,
+      image: require('../assets/characters/rogue.png'),
+      attackImage: require('../assets/monsters/monster_yggdrasil_idle.gif')
     },
     {
       id: 9,
@@ -96,7 +113,9 @@ export const characters = [
       attack: 12,
       defense: 15,
       attacked: false,
-      image: require('../assets/characters/rogue.png')
+      isAttacking: false,
+      image: require('../assets/characters/rogue.png'),
+      attackImage: require('../assets/monsters/monster_yggdrasil_idle.gif')
     },
     {
       id: 10,
@@ -107,6 +126,19 @@ export const characters = [
       attack: 12,
       defense: 15,
       attacked: false,
-      image: require('../assets/characters/rogue.png')
+      isAttacking: false,
+      image: require('../assets/characters/rogue.png'),
+      attackImage: require('../assets/monsters/monster_yggdrasil_idle.gif')
     }
   ];
+
+export const charactersLevelTwo = [
+    {
+      name: "Artas o Cramunhão",
+      nextEvolution: 11,
+      hp: 30,
+      maxHp: 20,
+      attack: 10,
+      defense: 5,
+    }
+]; 
