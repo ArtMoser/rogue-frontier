@@ -38,7 +38,7 @@ export const enemiesTierOne = [
         hp: 15,
         maxHp: 10,
         type: "class",
-        attack: 40,
+        attack: 200,
         defense: 5,
         attacked: false,
         image: require('../assets/monsters/monster_yggdrasil_idle.gif')

@@ -28,7 +28,7 @@ type Enemy = {
 export default function BattleScreen() {
   const router = useRouter();
   const params = useLocalSearchParams();
-  const team = JSON.parse(params.team);
+  let team = JSON.parse(params.team);
   const level = Number(params.level);
   const battleCount = Number(params.battleCount);
   const generalBattleCount = Number(params.generalBattleCount);
@@ -313,7 +313,10 @@ export default function BattleScreen() {
   
   const checkEnemyTurn = () => {
       setParty(prevParty => {
-          const allCharactersAttacked = prevParty.every(member => member.attacked);
+        const allCharactersAttacked = prevParty
+        .filter(member => member.hp > 0)
+        .every(member => member.attacked);
+      
   
           if (allCharactersAttacked) {
               setTimeout(enemyTurn, 1000);
@@ -331,21 +334,6 @@ export default function BattleScreen() {
           return prevEnemies;
       });
   };
-  
-  
-
-
-  const changeAttackAnimation = () => {
-    let partyMembers = [...party];
-    for(let teamUnit of partyMembers) {
-      if(teamUnit.attacked) {
-        teamUnit.isAttacking = false;
-        teamUnit.attacked = false;
-      }
-    }
-
-    setParty(partyMembers);
-  }
 
   const enemyTurn = () => {
     let livingEnemies = enemies.filter(enemy => enemy.hp > 0);
@@ -378,7 +366,7 @@ export default function BattleScreen() {
         livingParty = updatedParty.filter(character => character.hp > 0);
       }
     }
-  
+
     for (let partyMember of updatedParty) {
       partyMember.attacked = false;
       partyMember.isAttacking = false;
@@ -395,7 +383,20 @@ export default function BattleScreen() {
 
   const handleVictory = () => {
     startSlideAnimation(() => {
-      if (generalBattleCount % 10 === 0 && team.length < 4) {
+
+      for(let teamMember of team) {
+        for(let partyMember of party) {
+          if(teamMember.id == partyMember.id) {
+            teamMember.hp = partyMember.hp;
+          }
+        }
+      }
+
+      team = team.filter(character => character.hp > 0);
+
+      console.log('###### team updated => ' + JSON.stringify(team));
+
+      if (generalBattleCount % 2 === 0 && team.length < 4) {
         router.push({
           pathname: 'screens/character-select',
           params: { 
@@ -507,7 +508,7 @@ export default function BattleScreen() {
               },
             ]}
           >
-              {character.attacked ? (
+              {character.attacked || character.hp <= 0 ? (
                 <View style={[styles.characterCard, styles.disabledCharacter]}>
                   <Image 
                       source={character.isAttacking ? character.attackImage : character.image}
