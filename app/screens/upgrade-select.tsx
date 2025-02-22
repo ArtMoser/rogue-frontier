@@ -246,7 +246,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#2a2a2a',
     borderRadius: 15,
     padding: 15,
-    width: 140,
+    width: 100,
     alignItems: 'center',
     borderWidth: 2,
     borderColor: '#2a2a2a',
@@ -257,9 +257,11 @@ const styles = StyleSheet.create({
   },
   upgradeText: {
     color: '#ffffff',
-    fontSize: 16,
     marginBottom: 5,
-    textAlign: 'center'
+    textAlign: 'center',
+    alignSelf: 'stretch',
+    flexWrap: 'wrap',
+    padding: 10
   },
   characterImage: {
     width: 120,

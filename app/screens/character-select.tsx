@@ -1,6 +1,7 @@
+import React, { useCallback, useMemo } from 'react'; // Adicione useMemo
 import { View, Text, StyleSheet, Pressable, Image, ImageBackground } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { characters } from '../data/characters';
 import { useFocusEffect } from '@react-navigation/native';
 
@@ -18,10 +19,10 @@ export default function CharacterSelectScreen() {
   const router = useRouter();
   const params = useLocalSearchParams();
   const level = Number(params.level);
-  const team = params.team ? JSON.parse(params.team): [];
+  const team = useMemo(() => params.team ? JSON.parse(params.team) : [], [params.team]); // Memorize team
   const isFirstBattle = params.isFirstBattle === 'true';
   const generalBattleCount = Number(params.generalBattleCount);
-  
+
   const [selectedCharacter, setSelectedCharacter] = useState<Character | null>(null);
   const [availableCharacters, setAvailableCharacters] = useState<Character[]>(characters);
 
@@ -29,31 +30,34 @@ export default function CharacterSelectScreen() {
     setSelectedCharacter(character);
   };
 
-  useFocusEffect(() => {
-    const getRandomCharacters = () => {
-      let filteredCharacters = characters;
+  // Corrigido: use useCallback para encapsular a função
+  useFocusEffect(
+    useCallback(() => {
+      const getRandomCharacters = () => {
+        let filteredCharacters = characters;
 
-      if (team.length > 0) {
-        filteredCharacters = characters.filter(charItem => 
-          !team.some(teamMember => teamMember.id === charItem.id)
-        );
-      }
+        if (team.length > 0) {
+          filteredCharacters = characters.filter(charItem =>
+            !team.some(teamMember => teamMember.id === charItem.id)
+          );
+        }
 
-      const shuffled = [...filteredCharacters].sort();
-      return shuffled.slice(0, 3);
-    };
+        const shuffled = [...filteredCharacters].sort();
+        return shuffled.slice(0, 3);
+      };
 
-    setAvailableCharacters(getRandomCharacters());
-  }, []);
+      setAvailableCharacters(getRandomCharacters());
+    }, [team]) // Dependências do useCallback
+  );
 
   const handleConfirm = () => {
     if (selectedCharacter) {
-      team.push(selectedCharacter);
+      const updatedTeam = [...team, selectedCharacter]; // Crie um novo array para evitar mutação direta
 
       router.push({
         pathname: 'screens/battle',
         params: {
-          team: JSON.stringify(team),
+          team: JSON.stringify(updatedTeam),
           level: level,
           battleCount: isFirstBattle ? 1 : Math.floor((level - 1) / 5) * 5 + 1,
           generalBattleCount: isFirstBattle ? 1 : generalBattleCount
@@ -71,7 +75,7 @@ export default function CharacterSelectScreen() {
       <View style={styles.container}>
         <Text style={styles.title}>Choose Your Hero</Text>
         <Text style={styles.subtitle}>Level {level} Adventure</Text>
-        
+
         <View style={styles.charactersContainer}>
           {availableCharacters.map((character) => (
             <Pressable
@@ -82,7 +86,7 @@ export default function CharacterSelectScreen() {
               ]}
               onPress={() => handleCharacterSelect(character)}
             >
-              <Image source={ character.image } style={styles.characterImage} />
+              <Image source={character.image} style={styles.characterImage} />
               <Text style={styles.characterName}>{character.name}</Text>
               <Text style={styles.characterType}>{character.type}</Text>
               <View style={styles.statsContainer}>

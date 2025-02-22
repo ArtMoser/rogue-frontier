@@ -169,7 +169,7 @@ export const characters = [
     },
     {
       id: 4,
-      name: "Paladino",
+      name: "Drake Armor Klaus",
       hp: 120,
       maxHp: 120,
       type: "class",
@@ -177,12 +177,35 @@ export const characters = [
       defense: 15,
       attacked: false,
       isAttacking: false,
-      image: require('../assets/characters/rogue.png'),
-      attackImage: require('../assets/monsters/monster_yggdrasil_idle.gif')
+      image: require('../assets/characters/drake-armor-klaus.gif'),
+      attackImage: require('../assets/characters/drake-armor-klaus-attacking.gif'),
+      currentEvolution: -1,
+      evolutions:[
+        {
+          name: "Dragon Shell klaus",
+          hp: 10,
+          maxHp: 10,
+          type: "class",
+          attack: 15,
+          defense: 10,
+          image: require('../assets/characters/dragon-shell-klaus.gif'),
+          attackImage: require('../assets/characters/dragon-shell-klaus-attacking.gif'),
+        },
+        {
+          name: "Wyvern Wings Klaus",
+          hp: 10,
+          maxHp: 10,
+          type: "class",
+          attack: 15,
+          defense: 10,
+          image: require('../assets/characters/wyvern-wings-klaus.gif'),
+          attackImage: require('../assets/characters/wyvern-wings-klaus-attacking.gif'),
+        }
+      ]
     },
     {
       id: 5,
-      name: "Paladino6",
+      name: "Iron Magress",
       hp: 120,
       maxHp: 120,
       type: "class",
@@ -190,12 +213,35 @@ export const characters = [
       defense: 15,
       attacked: false,
       isAttacking: false,
-      image: require('../assets/characters/rogue.png'),
-      attackImage: require('../assets/monsters/monster_yggdrasil_idle.gif')
+      image: require('../assets/characters/iron-magress.gif'),
+      attackImage: require('../assets/characters/iron-magress-attacking.gif'),
+      currentEvolution: -1,
+      evolutions:[
+        {
+          name: "Death Magress",
+          hp: 10,
+          maxHp: 10,
+          type: "class",
+          attack: 15,
+          defense: 10,
+          image: require('../assets/characters/death-magress.gif'),
+          attackImage: require('../assets/characters/death-magress-attacking.gif'),
+        },
+        {
+          name: "Death Magress",
+          hp: 10,
+          maxHp: 10,
+          type: "class",
+          attack: 15,
+          defense: 10,
+          image: require('../assets/characters/umbra-halcyon-magress.gif'),
+          attackImage: require('../assets/characters/umbra-halcyon-magress-attacking.gif'),
+        }
+      ]
     },
     {
       id: 6,
-      name: "Paladino7",
+      name: "Hallowed Dancer",
       hp: 120,
       maxHp: 120,
       type: "class",
@@ -203,12 +249,12 @@ export const characters = [
       defense: 15,
       attacked: false,
       isAttacking: false,
-      image: require('../assets/characters/rogue.png'),
-      attackImage: require('../assets/monsters/monster_yggdrasil_idle.gif')
+      image: require('../assets/characters/hallowed-dancer.gif'),
+      attackImage: require('../assets/characters/hallowed-dancer-attacking.gif')
     },
     {
       id: 7,
-      name: "Paladino8",
+      name: "Lasswell",
       hp: 120,
       maxHp: 120,
       type: "class",
@@ -216,12 +262,25 @@ export const characters = [
       defense: 15,
       attacked: false,
       isAttacking: false,
-      image: require('../assets/characters/rogue.png'),
-      attackImage: require('../assets/monsters/monster_yggdrasil_idle.gif')
+      image: require('../assets/characters/lasswell.gif'),
+      attackImage: require('../assets/characters/lasswell-attacking.gif'),
+      currentEvolution: -1,
+      evolutions:[
+        {
+          name: "Lasswell",
+          hp: 10,
+          maxHp: 10,
+          type: "class",
+          attack: 15,
+          defense: 10,
+          image: require('../assets/characters/lasswell-2.gif'),
+          attackImage: require('../assets/characters/lasswell-2-attacking.gif'),
+        }
+      ]
     },
     {
       id: 8,
-      name: "Paladino2",
+      name: "Baelfyr",
       hp: 120,
       maxHp: 120,
       type: "class",
@@ -229,8 +288,21 @@ export const characters = [
       defense: 15,
       attacked: false,
       isAttacking: false,
-      image: require('../assets/characters/rogue.png'),
-      attackImage: require('../assets/monsters/monster_yggdrasil_idle.gif')
+      image: require('../assets/characters/baelfyr.gif'),
+      attackImage: require('../assets/characters/baelfyr-attacking.gif'),
+      currentEvolution: -1,
+      evolutions:[
+        {
+          name: "Blacksteel Baelfyr",
+          hp: 10,
+          maxHp: 10,
+          type: "class",
+          attack: 15,
+          defense: 10,
+          image: require('../assets/characters/blacksteel-baelfyr.gif'),
+          attackImage: require('../assets/characters/blacksteel-baelfyr-attacking.gif'),
+        }
+      ]
     },
     {
       id: 9,
