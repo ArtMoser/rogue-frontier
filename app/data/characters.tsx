@@ -1,7 +1,7 @@
 export const characters = [
     {
       id: 1,
-      name: "Guerreiro",
+      name: "Warrior",
       hp: 100,
       maxHp: 100,
       type: "class",
@@ -9,25 +9,75 @@ export const characters = [
       defense: 10,
       isAttacking: false,
       attacked: false,
-      image: require('../assets/characters/rogue.png'),
-      attackImage: require('../assets/monsters/monster_yggdrasil_idle.gif'),
+      image: require('../assets/characters/warrior.gif'),
+      attackImage: require('../assets/characters/warrior-attacking.gif'),
       currentEvolution: -1,
       evolutions:[
         {
-          name: "Cavaleiro",
-          hp: 100,
-          maxHp: 100,
+          name: "Burning Warriror",
+          hp: 10,
+          maxHp: 10,
           type: "class",
           attack: 15,
           defense: 10,
-          image: require('../assets/monsters/monster_yggdrasil_idle.gif'),
-          attackImage: require('../assets/characters/rogue.png'),
+          image: require('../assets/characters/burning-warrior.gif'),
+          attackImage: require('../assets/characters/burning-warrior-attacking.gif'),
+        },
+        {
+          name: "Burning Warriror",
+          hp: 15,
+          maxHp: 15,
+          type: "class",
+          attack: 20,
+          defense: 15,
+          image: require('../assets/characters/fire-king-warrior.gif'),
+          attackImage: require('../assets/characters/fire-king-warrior-attacking.gif'),
+        },
+        {
+          name: "Fire God Warriror",
+          hp: 15,
+          maxHp: 15,
+          type: "class",
+          attack: 20,
+          defense: 15,
+          image: require('../assets/characters/fire-god-warrior.gif'),
+          attackImage: require('../assets/characters/fire-god-warrior-attacking.gif'),
+        },
+        {
+          name: "Holy Flame Warriror",
+          hp: 20,
+          maxHp: 20,
+          type: "class",
+          attack: 25,
+          defense: 20,
+          image: require('../assets/characters/holy-flame-warrior.gif'),
+          attackImage: require('../assets/characters/holy-flame-warrior-attacking.gif'),
+        },
+        {
+          name: "Flame Legend Warriror",
+          hp: 20,
+          maxHp: 20,
+          type: "class",
+          attack: 25,
+          defense: 20,
+          image: require('../assets/characters/flame-legend-warrior.gif'),
+          attackImage: require('../assets/characters/flame-legend-warrior-attacking.gif'),
+        },
+        {
+          name: "Ignis Halcyon Warriror",
+          hp: 20,
+          maxHp: 20,
+          type: "class",
+          attack: 25,
+          defense: 20,
+          image: require('../assets/characters/ignis-halcyon-warrior.gif'),
+          attackImage: require('../assets/characters/ignis-halcyon-warrior-attacking.gif'),
         }
       ]
     },
     {
       id: 2,
-      name: "Mago",
+      name: "Mifune",
       hp: 80,
       maxHp: 80,
       type: "class",
@@ -35,12 +85,65 @@ export const characters = [
       defense: 5,
       attacked: false,
       isAttacking: false,
-      image: require('../assets/characters/rogue.png'),
-      attackImage: require('../assets/monsters/monster_yggdrasil_idle.gif')
+      image: require('../assets/characters/mifune.gif'),
+      attackImage: require('../assets/characters/mifune.gif'),
+      currentEvolution: -1,
+      evolutions:[
+        {
+          name: "Samurai Mifune",
+          hp: 10,
+          maxHp: 10,
+          type: "class",
+          attack: 15,
+          defense: 10,
+          image: require('../assets/characters/samurai-mifune.gif'),
+          attackImage: require('../assets/characters/samurai-mifune.gif'),
+        },
+        {
+          name: "God Blade Mifune",
+          hp: 10,
+          maxHp: 10,
+          type: "class",
+          attack: 15,
+          defense: 10,
+          image: require('../assets/characters/god-blade-mifune.gif'),
+          attackImage: require('../assets/characters/god-blade-mifune.gif'),
+        },
+        {
+          name: "Ryujin Mifune",
+          hp: 10,
+          maxHp: 10,
+          type: "class",
+          attack: 15,
+          defense: 10,
+          image: require('../assets/characters/ryujin-mifune-mifune.gif'),
+          attackImage: require('../assets/characters/ryujin-mifune-mifune.gif'),
+        },
+        {
+          name: "Shadow Ronin Mifune",
+          hp: 10,
+          maxHp: 10,
+          type: "class",
+          attack: 15,
+          defense: 10,
+          image: require('../assets/characters/shadow-ronin-mifune.gif'),
+          attackImage: require('../assets/characters/shadow-ronin-mifune-attacking.gif'),
+        },
+        {
+          name: "Ultimate Mifune",
+          hp: 10,
+          maxHp: 10,
+          type: "class",
+          attack: 15,
+          defense: 10,
+          image: require('../assets/characters/ultimate-mifune.gif'),
+          attackImage: require('../assets/characters/ultimate-mifune.gif'),
+        }
+      ]
     },
     {
       id: 3,
-      name: "Arqueiro",
+      name: "Ardent Monk Rengaku",
       hp: 90,
       maxHp: 90,
       type: "class",
@@ -48,8 +151,21 @@ export const characters = [
       defense: 8,
       attacked: false,
       isAttacking: false,
-      image: require('../assets/characters/rogue.png'),
-      attackImage: require('../assets/monsters/monster_yggdrasil_idle.gif')
+      image: require('../assets/characters/ardent-monk-rengaku.gif'),
+      attackImage: require('../assets/characters/ardent-monk-rengaku-attacking.gif'),
+      currentEvolution: -1,
+      evolutions:[
+        {
+          name: "Samurai Mifune",
+          hp: 10,
+          maxHp: 10,
+          type: "class",
+          attack: 15,
+          defense: 10,
+          image: require('../assets/characters/samurai-mifune.gif'),
+          attackImage: require('../assets/characters/samurai-mifune.gif'),
+        }
+      ]
     },
     {
       id: 4,
@@ -143,14 +259,3 @@ export const characters = [
       attackImage: require('../assets/monsters/monster_yggdrasil_idle.gif')
     }
   ];
-
-export const charactersLevelTwo = [
-    {
-      name: "Artas o Cramunhão",
-      nextEvolution: 11,
-      hp: 30,
-      maxHp: 20,
-      attack: 10,
-      defense: 5,
-    }
-]; 

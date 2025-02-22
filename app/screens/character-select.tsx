@@ -139,8 +139,6 @@ const styles = StyleSheet.create({
     transform: [{ scale: 1.05 }],
   },
   characterImage: {
-    width: 100,
-    height: 100,
     borderRadius: 50,
     marginBottom: 10,
   },

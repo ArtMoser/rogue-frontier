@@ -609,8 +609,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   characterImage: {
-    width: 120,
-    height: 100,
     marginBottom: 10
   },
   enemyCard: {
