@@ -156,14 +156,14 @@ export const characters = [
       currentEvolution: -1,
       evolutions:[
         {
-          name: "Samurai Mifune",
+          name: "Dancing Flame Rengaku",
           hp: 10,
           maxHp: 10,
           type: "class",
           attack: 15,
           defense: 10,
-          image: require('../assets/characters/samurai-mifune.gif'),
-          attackImage: require('../assets/characters/samurai-mifune.gif'),
+          image: require('../assets/characters/dancing-flame-rengaku.gif'),
+          attackImage: require('../assets/characters/dancing-flame-rengaku-attacking.gif'),
         }
       ]
     },

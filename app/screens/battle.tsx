@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, Pressable, Animated, Image } from 'react-native';
+import { View, Text, StyleSheet, Pressable, Animated, Image, ImageBackground } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useState, useEffect, useRef } from 'react';
 import { ActivityIndicator } from 'react-native';
@@ -439,142 +439,148 @@ export default function BattleScreen() {
   };
 
   return (
-    <View style={styles.container}>
-      {isLoading && (
-        <View style={styles.loadingOverlay}>
-          <ActivityIndicator size="large" color="#FFD700" />
-        </View>
-      )}
-      <Animated.View style={[styles.turnMessageContainer, { opacity: fadeAnim }]}>
-        <Text style={styles.turnMessageText}>{turnMessage}</Text>
-      </Animated.View>
-      <Text style={styles.battleInfo}>Battle {battleCount} - Level {level}</Text>
-      
-      <View style={styles.battleField}>
-        <View style={styles.enemyContainer}>
-          {enemies.map((enemy, index) => (
+    <ImageBackground
+      source={require('../assets/battle/dungeon_battle_earth.png')}
+      style={styles.backgroundImage}
+      resizeMode="cover"
+    >
+      <View style={styles.container}>
+        {isLoading && (
+          <View style={styles.loadingOverlay}>
+            <ActivityIndicator size="large" color="#FFD700" />
+          </View>
+        )}
+        <Animated.View style={[styles.turnMessageContainer, { opacity: fadeAnim }]}>
+          <Text style={styles.turnMessageText}>{turnMessage}</Text>
+        </Animated.View>
+        <Text style={styles.battleInfo}>Battle {battleCount} - Level {level}</Text>
+        
+        <View style={styles.battleField}>
+          <View style={styles.enemyContainer}>
+            {enemies.map((enemy, index) => (
+              <Animated.View
+              key={enemy.id}
+              style={[
+                {
+                  transform: [
+                    { 
+                      translateX: enemy.hp > 0 ? enemyMoveAnimations[index].interpolate({
+                        inputRange: [0, 1],
+                        outputRange: [0, 50],
+                      }) : 0,
+                    },
+                    { translateX: enemyShakeAnimations[index] },
+                    { rotate: selectedTarget === index ? swing : '0deg' },
+                  ],
+                },
+              ]}
+            >
+              <Pressable
+                style={[
+                  styles.enemyCard,
+                  selectedTarget === index && styles.selectedEnemy,
+                  enemy.hp <= 0 && styles.defeated,
+                ]}
+                onPress={() => currentTurn === 'player' && enemy.hp > 0 && setSelectedTarget(index)}
+              >
+                <Image source={enemy.image} style={[styles.characterImage, styles.enemyImage]} />
+                <Text style={styles.enemyName}>{enemy.name}</Text>
+                <HealthBar hp={enemy.hp} maxHp={enemy.maxHp} isEnemy={true} />
+              </Pressable>
+            </Animated.View>
+            ))}
+          </View>
+
+          <View style={styles.partyContainer}>
+            {party.map((character, index) => (
             <Animated.View
-            key={enemy.id}
+            key={character.id}
             style={[
-              {
+              { 
                 transform: [
                   { 
-                    translateX: enemy.hp > 0 ? enemyMoveAnimations[index].interpolate({
+                    translateX: characterMoveAnimations[index].interpolate({
                       inputRange: [0, 1],
-                      outputRange: [0, 50],
-                    }) : 0,
+                      outputRange: [0, -100],
+                    }),
                   },
-                  { translateX: enemyShakeAnimations[index] },
-                  { rotate: selectedTarget === index ? swing : '0deg' },
-                ],
+                  { translateX: character.hp > 0 ? characterShakeAnimations[index] : 0 },
+                  { rotate: selectedCharacter === index ? swing : '0deg' }
+                ]
               },
             ]}
           >
-            <Pressable
-              style={[
-                styles.enemyCard,
-                selectedTarget === index && styles.selectedEnemy,
-                enemy.hp <= 0 && styles.defeated,
-              ]}
-              onPress={() => currentTurn === 'player' && enemy.hp > 0 && setSelectedTarget(index)}
-            >
-              <Image source={enemy.image} style={[styles.characterImage, styles.enemyImage]} />
-              <Text style={styles.enemyName}>{enemy.name}</Text>
-              <HealthBar hp={enemy.hp} maxHp={enemy.maxHp} isEnemy={true} />
-            </Pressable>
-          </Animated.View>
-          ))}
+              {character.attacked ? (
+                <View style={[styles.characterCard, styles.disabledCharacter]}>
+                  <Image 
+                      source={character.isAttacking ? character.attackImage : character.image}
+                      style={styles.characterImage}
+                  />
+                  <Text style={styles.characterName}>{character.name}</Text>
+                  <HealthBar hp={character.hp} maxHp={character.maxHp} isEnemy={false} />
+                </View>
+              ) : (
+                <Pressable
+                  style={[
+                    styles.characterCard,
+                    currentTurn === 'player' && styles.activeTurn,
+                    selectedCharacter === index && styles.selected
+                  ]}
+                  onPress={() => currentTurn === 'player' && setSelectedCharacter(index)}
+                >
+                  <Image 
+                      source={character.isAttacking ? character.attackImage : character.image} 
+                      style={styles.characterImage} 
+                      key={character.isAttacking ? "attacking" : "idle"} 
+                  />
+                  <Text style={styles.characterName}>{character.name}</Text>
+                  <HealthBar hp={character.hp} maxHp={character.maxHp} isEnemy={false} />
+                </Pressable>
+              )}
+            </Animated.View>
+            ))}
+          </View>
         </View>
 
-        <View style={styles.partyContainer}>
-          {party.map((character, index) => (
-           <Animated.View
-           key={character.id}
-           style={[
-             { 
-               transform: [
-                 { 
-                   translateX: characterMoveAnimations[index].interpolate({
-                     inputRange: [0, 1],
-                     outputRange: [0, -100],
-                   }),
-                 },
-                 { translateX: character.hp > 0 ? characterShakeAnimations[index] : 0 },
-                 { rotate: selectedCharacter === index ? swing : '0deg' }
-               ]
-             },
-           ]}
-         >
-            {character.attacked ? (
-              <View style={[styles.characterCard, styles.disabledCharacter]}>
-                <Image 
-                    source={character.isAttacking ? character.attackImage : character.image}
-                    style={styles.characterImage}
-                />
-                <Text style={styles.characterName}>{character.name}</Text>
-                <HealthBar hp={character.hp} maxHp={character.maxHp} isEnemy={false} />
-              </View>
-            ) : (
-              <Pressable
-                style={[
-                  styles.characterCard,
-                  currentTurn === 'player' && styles.activeTurn,
-                  selectedCharacter === index && styles.selected
-                ]}
-                onPress={() => currentTurn === 'player' && setSelectedCharacter(index)}
-              >
-                <Image 
-                    source={character.isAttacking ? character.attackImage : character.image} 
-                    style={styles.characterImage} 
-                    key={character.isAttacking ? "attacking" : "idle"} 
-                />
-                <Text style={styles.characterName}>{character.name}</Text>
-                <HealthBar hp={character.hp} maxHp={character.maxHp} isEnemy={false} />
-              </Pressable>
-            )}
-          </Animated.View>
-          ))}
-        </View>
+        {currentTurn === 'player' && selectedCharacter !== null && selectedTarget !== null && (
+          <Pressable style={styles.attackButton} onPress={handleAttack}>
+            <Text style={styles.attackButtonText}>Attack!</Text>
+          </Pressable>
+        )}
+
+        {/* Quadrado preto para a transição */}
+        <Animated.View
+          style={[
+            styles.slideOverlay,
+            {
+              transform: [
+                {
+                  translateX: slideAnim.interpolate({
+                    inputRange: [0, 1],
+                    outputRange: [1000, 0],
+                  }),
+                },
+              ],
+            },
+          ]}
+        />
       </View>
-
-      <View style={styles.battleLog}>
-        {battleLog.slice(-3).map((log, index) => (
-          <Text key={index} style={styles.logText}>{log}</Text>
-        ))}
-      </View>
-
-      {currentTurn === 'player' && selectedCharacter !== null && selectedTarget !== null && (
-        <Pressable style={styles.attackButton} onPress={handleAttack}>
-          <Text style={styles.attackButtonText}>Attack!</Text>
-        </Pressable>
-      )}
-
-      {/* Quadrado preto para a transição */}
-      <Animated.View
-        style={[
-          styles.slideOverlay,
-          {
-            transform: [
-              {
-                translateX: slideAnim.interpolate({
-                  inputRange: [0, 1],
-                  outputRange: [1000, 0], // Começa fora da tela (direita) e se move para a esquerda
-                }),
-              },
-            ],
-          },
-        ]}
-      />
-    </View>
+    </ImageBackground>
   );
 }
 
 const styles = StyleSheet.create({
+  backgroundImage: {
+    flex: 1,
+    width: '100%',
+    height: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   container: {
     flex: 1,
-    backgroundColor: '#1a1a1a',
     padding: 20,
-    position: 'relative', // Importante para o posicionamento absoluto do quadrado preto
+    position: 'relative',
   },
   battleInfo: {
     fontSize: 24,
@@ -594,14 +600,14 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     justifyContent: 'center',
     alignItems: 'center',
-    gap: 10,
+    gap: 5,
   },
   enemyContainer: {
     flexDirection: 'column',
     flexWrap: 'wrap',
     justifyContent: 'center',
     alignItems: 'center',
-    gap: 10,
+    gap: 0,
   },
   characterCard: {
     borderRadius: 8,
@@ -609,12 +615,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   characterImage: {
-    marginBottom: 10
+    marginBottom: 10,
   },
   enemyCard: {
     borderRadius: 8,
     width: 120,
     alignItems: 'center',
+    marginBottom: '-25px'
   },
   enemyImage: { 
    transform: [{ scaleX: -1 }]

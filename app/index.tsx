@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, Pressable, Image } from 'react-native';
+import { View, Text, StyleSheet, Pressable, ImageBackground, Image } from 'react-native';
 import { useRouter } from 'expo-router';
 
 export default function StartScreen() {
@@ -9,31 +9,44 @@ export default function StartScreen() {
       pathname: 'screens/character-select',
       params: { 
         level: 1, 
-        isFirstBattle: true }
+        isFirstBattle: true,
+      },
     });
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Dungeon Crawler</Text>
-      <Text style={styles.subtitle}>A Roguelike RPG Adventure</Text>
-      <Image 
-        source={{ uri: 'https://images.unsplash.com/photo-1612404730960-5c71577fca11?q=80&w=400' }}
-        style={styles.image}
-      />
-      <Pressable style={styles.startButton} onPress={startGame}>
-        <Text style={styles.startButtonText}>Start Journey</Text>
-      </Pressable>
-    </View>
+    <ImageBackground
+      source={require('../app/assets/menu/menu-background.jpg')}
+      style={styles.backgroundImage}
+      resizeMode="cover"
+    >
+      <View style={styles.container}>
+        <Pressable style={styles.startButton} onPress={startGame}>
+          <ImageBackground
+            source={require('../app/assets/menu/menu-background.jpg')}
+            style={styles.buttonBackground}
+            resizeMode="cover"
+          >
+            <Text style={styles.startButtonText}>Start Journey</Text>
+          </ImageBackground>
+        </Pressable>
+      </View>
+    </ImageBackground>
   );
 }
 
 const styles = StyleSheet.create({
+  backgroundImage: {
+    flex: 1,
+    width: '100%',
+    height: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   container: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#1a1a1a',
     padding: 20,
   },
   title: {
@@ -57,10 +70,10 @@ const styles = StyleSheet.create({
     marginBottom: 40,
   },
   startButton: {
-    backgroundColor: '#4CAF50',
-    paddingHorizontal: 60,
-    paddingVertical: 20,
+    width: 250,
+    height: 60,
     borderRadius: 30,
+    overflow: 'hidden',
     elevation: 5,
     shadowColor: '#000',
     shadowOffset: {
@@ -70,9 +83,17 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
   },
+  buttonBackground: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   startButtonText: {
     color: '#ffffff',
     fontSize: 24,
     fontWeight: 'bold',
+    textShadowColor: '#000',
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 2,
   },
 });
