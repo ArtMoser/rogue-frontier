@@ -7,11 +7,23 @@ export const characters = [
       type: "class",
       attack: 15,
       defense: 10,
-      nextEvolution: 11,
       isAttacking: false,
       attacked: false,
       image: require('../assets/characters/rogue.png'),
-      attackImage: require('../assets/monsters/monster_yggdrasil_idle.gif')
+      attackImage: require('../assets/monsters/monster_yggdrasil_idle.gif'),
+      currentEvolution: -1,
+      evolutions:[
+        {
+          name: "Cavaleiro",
+          hp: 100,
+          maxHp: 100,
+          type: "class",
+          attack: 15,
+          defense: 10,
+          image: require('../assets/monsters/monster_yggdrasil_idle.gif'),
+          attackImage: require('../assets/characters/rogue.png'),
+        }
+      ]
     },
     {
       id: 2,

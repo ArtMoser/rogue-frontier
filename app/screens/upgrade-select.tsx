@@ -31,8 +31,38 @@ export default function UpgradeSelectScreen() {
       return shuffled.slice(0, 3);
     };
 
-    setAvailableUpgrades(getRandomUpgrades());
-  }, []);
+    const characterEvolutionUpgrade = () => {
+      let teamCharacters = [...team].sort(() => 0.5 - Math.random());
+
+      for(let char of teamCharacters) {
+        if(!char.evolutions) {
+          continue;
+        }
+        let charNextEvolution = char.evolutions[char.currentEvolution+1];
+
+        if(charNextEvolution != undefined) {
+          return {
+            attribute: null,
+            type: "evolution",
+            evolution: charNextEvolution,
+            currentEvolution: char
+          }
+        }
+      }
+
+      return null;
+    }
+
+    let shuffledUpgrades = getRandomUpgrades();
+    let characterUpgrade = characterEvolutionUpgrade();
+
+    console.log(characterUpgrade);
+    if(characterUpgrade != null) {
+      shuffledUpgrades[1] = characterUpgrade;
+    }
+
+    setAvailableUpgrades(shuffledUpgrades);
+  }, [generalBattleCount, level]);
 
   const handleUpgradeSelect = (upgrade) => {
     setSelectedUpgrade(upgrade);
@@ -41,6 +71,18 @@ export default function UpgradeSelectScreen() {
   const handleConfirm = () => {
     let teamUpdated = [...team];
     for(let character of teamUpdated) {
+
+      if(selectedUpgrade.type == 'evolution' && selectedUpgrade.currentEvolution.id == character.id) {
+        character.image = selectedUpgrade.evolution.image;
+        character.attackImage = selectedUpgrade.evolution.attackImage;
+        character.name = selectedUpgrade.evolution.name;
+        character.hp = character.hp + selectedUpgrade.evolution.hp;
+        character.maxHp = character.maxHp + selectedUpgrade.evolution.maxHp;
+        character.attack = character.attack + selectedUpgrade.evolution.attack;
+        character.defense = character.defense + selectedUpgrade.evolution.defense;
+        character.currentEvolution = character.currentEvolution + 1;
+        break;
+      }
 
       if(selectedUpgrade.type == 'literal') {
         character[selectedUpgrade.attribute] = character[selectedUpgrade.attribute] + selectedUpgrade.value;
@@ -87,8 +129,21 @@ export default function UpgradeSelectScreen() {
             ]}
             onPress={() => handleUpgradeSelect(upgrade)}
           >
-            <Text style={styles.upgradeText}>{upgrade.attribute}</Text>
-            <Text style={styles.upgradeText}>+ {formatValue(upgrade)}</Text>
+
+            {upgrade.type === "evolution" && (
+              <View style={styles.evolutionBlock}>
+                <Text style={styles.upgradeText}> Evolve {upgrade.currentEvolution.name} to  {upgrade.evolution.name}</Text>
+                <Image source={upgrade.evolution.image} style={[styles.characterImage]} />
+              </View>
+            )}
+
+            {upgrade.type !== "evolution" && (
+              <View style={styles.blockStyle}>
+                <Text style={styles.upgradeText}>{upgrade.attribute}</Text>
+                <Text style={styles.upgradeText}>+ {formatValue(upgrade)}</Text>
+              </View>
+            )}
+            
           </Pressable>
         ))}
       </View>
@@ -153,6 +208,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#ffffff',
     marginBottom: 5,
+    textAlign: 'center'
   },
   characterType: {
     fontSize: 14,
@@ -190,7 +246,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#2a2a2a',
     borderRadius: 15,
     padding: 15,
-    width: 100,
+    width: 140,
     alignItems: 'center',
     borderWidth: 2,
     borderColor: '#2a2a2a',
@@ -203,5 +259,17 @@ const styles = StyleSheet.create({
     color: '#ffffff',
     fontSize: 16,
     marginBottom: 5,
+    textAlign: 'center'
   },
+  characterImage: {
+    width: 120,
+    height: 100,
+    marginBottom: 10
+  },
+  blockStyle: {
+    paddingTop: '60%'
+  },
+  evolutionBlock: {
+    textAlign: 'center'
+  }
 });

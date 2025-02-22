@@ -313,6 +313,8 @@ export default function BattleScreen() {
         break;
       }
     }
+    
+    setTimeout(changeAttackAnimation, 1000);
 
     for (let teamUnit of partyMembers) {
       if (!teamUnit.attacked && hasEnemiesAlive) {
@@ -328,6 +330,17 @@ export default function BattleScreen() {
       setTimeout(enemyTurn, 1000);
     }
   };
+
+  const changeAttackAnimation = () => {
+    let partyMembers = [...party];
+    for(let teamUnit of partyMembers) {
+      if(teamUnit.attacked) {
+        teamUnit.isAttacking = false;
+      }
+    }
+
+    setParty(partyMembers);
+  }
 
   const enemyTurn = () => {
     let livingEnemies = enemies.filter(enemy => enemy.hp > 0);
