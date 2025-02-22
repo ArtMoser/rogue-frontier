@@ -397,6 +397,10 @@ export default function BattleScreen() {
       console.log('###### team updated => ' + JSON.stringify(team));
 
       if (generalBattleCount % 2 === 0 && team.length < 4) {
+        debugger;
+        for(let teamMember of team) {
+          teamMember.hp = teamMember.maxHp;
+        }
         router.push({
           pathname: 'screens/character-select',
           params: { 
@@ -408,6 +412,9 @@ export default function BattleScreen() {
           },
         });
       } else if (generalBattleCount % 5 === 0) {
+        for(let teamMember of team) {
+          teamMember.hp = teamMember.maxHp;
+        }
         router.push({
           pathname: 'screens/upgrade-select',
           params: { 

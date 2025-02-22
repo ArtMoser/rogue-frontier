@@ -33,6 +33,7 @@ export default function CharacterSelectScreen() {
   // Corrigido: use useCallback para encapsular a função
   useFocusEffect(
     useCallback(() => {
+      debugger;
       const getRandomCharacters = () => {
         let filteredCharacters = characters;
 
