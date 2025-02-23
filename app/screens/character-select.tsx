@@ -70,6 +70,11 @@ export default function CharacterSelectScreen() {
 
   const handleConfirm = () => {
     if (selectedCharacter) {
+      selectedCharacter.hp = selectedCharacter.hp + generalBattleCount;
+      selectedCharacter.maxHp = selectedCharacter.maxHp + generalBattleCount;
+      selectedCharacter.attack = selectedCharacter.attack + generalBattleCount;
+      selectedCharacter.defense = selectedCharacter.defense + generalBattleCount;
+
       const updatedTeam = [...team];
       updatedTeam.push(selectedCharacter);
 
