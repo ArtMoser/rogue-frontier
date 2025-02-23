@@ -50,7 +50,7 @@ export const enemiesTierOne = [
         maxHp: 20,
         type: "class",
         attack: 30,
-        defense: 20,
+        defense: 5,
         attacked: false,
         image: require('../assets/monsters/acnologia.gif')
     },
@@ -61,7 +61,7 @@ export const enemiesTierOne = [
         maxHp: 15,
         type: "class",
         attack: 15,
-        defense: 20,
+        defense: 5,
         attacked: false,
         image: require('../assets/monsters/kranus.gif')
     },
@@ -72,7 +72,7 @@ export const enemiesTierOne = [
         maxHp: 15,
         type: "class",
         attack: 15,
-        defense: 20,
+        defense: 5,
         attacked: false,
         image: require('../assets/monsters/fire-geode.gif')
     },
@@ -83,8 +83,74 @@ export const enemiesTierOne = [
         maxHp: 20,
         type: "class",
         attack: 15,
-        defense: 20,
+        defense: 5,
         attacked: false,
         image: require('../assets/monsters/renatus.gif')
+    },
+    {
+        id: 1009,
+        name: "Stone Ogre",
+        hp: 20,
+        maxHp: 20,
+        type: "class",
+        attack: 15,
+        defense: 5,
+        attacked: false,
+        image: require('../assets/monsters/stone-ogre.gif')
+    },
+    {
+        id: 1010,
+        name: "Wendigo",
+        hp: 20,
+        maxHp: 20,
+        type: "class",
+        attack: 15,
+        defense: 5,
+        attacked: false,
+        image: require('../assets/monsters/wendigo.gif')
+    },
+    {
+        id: 1011,
+        name: "Ogre",
+        hp: 20,
+        maxHp: 20,
+        type: "class",
+        attack: 15,
+        defense: 5,
+        attacked: false,
+        image: require('../assets/monsters/ogre.gif')
+    },
+    {
+        id: 1012,
+        name: "Cat",
+        hp: 20,
+        maxHp: 20,
+        type: "class",
+        attack: 15,
+        defense: 5,
+        attacked: false,
+        image: require('../assets/monsters/cat.gif')
+    },
+    {
+        id: 1013,
+        name: "Drake Queen",
+        hp: 20,
+        maxHp: 20,
+        type: "class",
+        attack: 15,
+        defense: 5,
+        attacked: false,
+        image: require('../assets/monsters/drake-queen.gif')
+    },
+    {
+        id: 1014,
+        name: "Bolt Goddess",
+        hp: 20,
+        maxHp: 20,
+        type: "class",
+        attack: 15,
+        defense: 5,
+        attacked: false,
+        image: require('../assets/monsters/bolt-goddess.gif')
     }
   ];

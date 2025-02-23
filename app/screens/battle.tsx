@@ -217,7 +217,7 @@ export default function BattleScreen() {
     };
 
     const scaleEnemyStats = (enemy, level) => {
-      const scaleFactor = 1 + (level * 0.1);
+      const scaleFactor = 1 + (level * 0.2);
       return {
         ...enemy,
         hp: Math.round(enemy.hp * scaleFactor),
@@ -232,7 +232,7 @@ export default function BattleScreen() {
 
     if(isBossBattle) {
       enemyCount = 1;
-      enemyScaleLevel = level + 3;
+      enemyScaleLevel = level + 5;
     }
 
     const randomEnemies = getRandomEnemies(enemiesTierOne, enemyCount)
@@ -449,7 +449,6 @@ export default function BattleScreen() {
       }
 
       team = team.filter(character => character.hp > 0);
-      debugger;
       if(isBossBattle) {
         router.push({
           pathname: 'screens/victory',
@@ -524,19 +523,31 @@ export default function BattleScreen() {
 
   return (
     <ImageBackground
-      source={require('../assets/battle/dungeon_battle_earth.png')}
+      source={isBossBattle ? require('../assets/battle/fire-arena.png') : require('../assets/battle/dungeon_battle_earth.png')}
       style={styles.backgroundImage}
       resizeMode="cover"
     >
       <View style={styles.container}>
-        <Animated.View style={[styles.turnMessageContainer, { opacity: fadeAnim }]}>
-          <Text style={styles.turnMessageText}>{turnMessage}</Text>
-        </Animated.View>
-        {isBossBattle ?
-          <Text style={styles.battleInfo}>BOSS BATTLE!</Text> 
-          :
-          <Text style={styles.battleInfo}>Battle {battleCount} - Level {level}</Text>  
-        }
+        <ImageBackground
+          source={require('../assets/misc/battle-information.png')}
+          style={styles.information}
+          resizeMode="cover" // ou "contain", conforme sua necessidade
+        >
+          <Animated.View style={[styles.turnMessageContainer, { opacity: fadeAnim }]}>
+            <Text style={styles.turnMessageText}>{turnMessage}</Text>
+          </Animated.View>
+        </ImageBackground>
+        {isBossBattle ? (
+          <Image
+            contentFit="none"
+            source={require('../assets/misc/boss-indicator.png')}
+            style={[styles.bossIndicator]}
+          />
+        ) : (
+          <Text style={styles.battleInfo}>
+            Battle {battleCount} - Level {level}
+          </Text>
+        )}
         
         <View style={styles.battleField}>
           <View style={styles.enemyContainer}>
@@ -566,7 +577,13 @@ export default function BattleScreen() {
                 ]}
                 onPress={() => currentTurn === 'player' && enemy.hp > 0 && setSelectedTarget(index)}
               >
-                <Image contentFit="none" source={enemy.image} style={[styles.enemyImage]} />
+                {
+                  isBossBattle ? 
+                  <Image contentFit="none" source={enemy.image} style={[styles.bossImage]} />
+                  :
+                  <Image contentFit="none" source={enemy.image} style={[styles.enemyImage]} />
+                }
+                
                 <Text style={styles.enemyName}>{enemy.name}</Text>
                 <HealthBar hp={enemy.hp} maxHp={enemy.maxHp} isEnemy={true} />
               </Pressable>
@@ -629,11 +646,16 @@ export default function BattleScreen() {
 
         {currentTurn === 'player' && selectedCharacter !== null && selectedTarget !== null && (
           <Pressable style={styles.attackButton} onPress={handleAttack}>
-            <Text style={styles.attackButtonText}>Attack!</Text>
+            <ImageBackground
+                source={require('../assets/misc/attack-button.png')}
+                style={styles.attackButton}
+                resizeMode="contain"
+              >
+            <Text style={styles.attackButtonText}>Attack</Text>
+          </ImageBackground>
           </Pressable>
         )}
 
-        {/* Quadrado preto para a transição */}
         <Animated.View
           style={[
             styles.slideOverlay,
@@ -669,9 +691,21 @@ const styles = StyleSheet.create({
   },
   battleInfo: {
     fontSize: 24,
-    color: '#ffffff',
+    color: '#000',
     textAlign: 'center',
-    marginBottom: 20,
+    marginBottom: 5,
+    paddingTop: 10,
+    fontWeight: 800,
+    opacity: 0.5
+  },
+  battleInfoBoss: {
+    fontSize: 24,
+    color: 'red',
+    textAlign: 'center',
+    marginBottom: 5,
+    paddingTop: 10,
+    fontWeight: 800,
+    opacity: 0.5
   },
   battleField: {
     flex: 1,
@@ -703,22 +737,38 @@ const styles = StyleSheet.create({
   disabledCharacter: {
     backgroundColor: 'rgba(0,0,0, 0.1)'
   },
+  bossIndicator: {
+    top: 10,
+    left: '40%',
+    right: 0,
+    alignSelf: 'center',
+    position: 'absolute',
+    width: 100,
+    height: 100,
+    transform: [{ scale: 1.5 }]
+  },
   characterImage: {
     marginBottom: '-10',
     width: 100,
     height: 100,
-    transform: [{ scale: 2 }]
+    transform: [{ scale: 2.5 }]
   },
   characterImageAttacking: {
     marginBottom: 10,
     width: 150,
     height: 150,
-    transform: [{ scale: 2 }]
+    transform: [{ scale: 2.5 }]
   },
   enemyCard: {
     borderRadius: 8,
     width: 120,
     alignItems: 'center',
+  },
+  bossImage: { 
+    marginBottom: '-10',
+    width: 100,
+    height: 100,
+    transform: [{ scale: 4 }, { scaleX: -1 }]
   },
   enemyImage: { 
     marginBottom: '-10',
@@ -776,23 +826,35 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
   attackButton: {
-    backgroundColor: '#4CAF50',
     padding: 15,
     borderRadius: 8,
     alignItems: 'center',
     marginTop: 20,
+    position: 'absolute',
+    bottom: 20, // Pode ajustar a distância do fundo
+    left: 0,
+    right: 0,
+    alignItems: 'center',
+    transform: [{ scale: 1 }]
   },
   attackButtonText: {
     color: '#ffffff',
     fontSize: 18,
     fontWeight: 'bold',
   },
+  information: {
+    position: 'absolute',
+    width: '100%',
+    height: 100,
+    top: '10%',
+    left: '5%'
+  },
   turnMessageContainer: {
     position: 'absolute',
-    top: '10%',
+    top: '40%',
     left: '10%',
     right: '10%',
-    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+    /*backgroundColor: 'rgba(0, 0, 0, 0.8)',
     padding: 15,
     borderRadius: 10,
     alignItems: 'center',
@@ -803,11 +865,11 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.8,
     shadowRadius: 4,
-    elevation: 5,
+    elevation: 5,*/
   },
   turnMessageText: {
-    color: '#FFD700',
-    fontSize: 12,
+    color: '#ffffff',
+    fontSize: 20,
     fontWeight: 'bold',
     textAlign: 'center',
     textShadowColor: 'rgba(0, 0, 0, 0.75)',

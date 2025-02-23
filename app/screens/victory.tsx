@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { View, Text, StyleSheet, Animated } from 'react-native';
+import { View, Text, StyleSheet, Animated, ImageBackground } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 
 export default function VictoryScreen() {
@@ -41,11 +41,15 @@ debugger;
   }, [generalBattleCount]);
 
   return (
-    <View style={styles.container}>
-      <Animated.Text style={[styles.text, { opacity: fadeAnim }]}>
-        Boss Defeated!
-      </Animated.Text>
-    </View>
+      <ImageBackground
+        source={require('../assets/misc/boss-defeat.jpg')}
+        style={styles.container}
+        resizeMode="cover" // ou "contain", conforme sua necessidade
+      >
+        <Animated.Text style={[styles.text, { opacity: fadeAnim }]}>
+          Boss Defeated!
+        </Animated.Text>
+      </ImageBackground>
   );
 }
 
@@ -54,12 +58,12 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#000', // Fundo preto
+    backgroundColor: '#000',
   },
   text: {
     fontSize: 36,
     fontWeight: 'bold',
-    color: '#FFD700', // Texto dourado
+    color: 'white', // Texto dourado
     textShadowColor: 'rgba(255, 215, 0, 0.5)', // Sombra dourada
     textShadowOffset: { width: 2, height: 2 },
     textShadowRadius: 10,

@@ -35,6 +35,22 @@ export default function CharacterSelectScreen() {
   useFocusEffect(
     useCallback(() => {
       debugger;
+      const shuffleList = (array) => {
+        let currentIndex = array.length, randomIndex;
+      
+        // Enquanto ainda houver elementos para embaralhar...
+        while (currentIndex !== 0) {
+          // Escolhe um índice aleatório
+          randomIndex = Math.floor(Math.random() * currentIndex);
+          currentIndex--;
+      
+          // Troca o elemento atual pelo elemento aleatório
+          [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
+        }
+      
+        return array;
+      }
+
       const getRandomCharacters = () => {
         let filteredCharacters = characters;
 
@@ -44,7 +60,7 @@ export default function CharacterSelectScreen() {
           );
         }
 
-        const shuffled = [...filteredCharacters].sort();
+        const shuffled = shuffleList([...filteredCharacters]);
         return shuffled.slice(0, 3);
       };
 
