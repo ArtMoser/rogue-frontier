@@ -42,5 +42,49 @@ export const enemiesTierOne = [
         defense: 5,
         attacked: false,
         image: require('../assets/monsters/monster_yggdrasil_idle.gif')
+    },
+    {
+        id: 1005,
+        name: "Acnologia",
+        hp: 40,
+        maxHp: 40,
+        type: "class",
+        attack: 30,
+        defense: 20,
+        attacked: false,
+        image: require('../assets/monsters/acnologia.gif')
+    },
+    {
+        id: 1006,
+        name: "Kranus",
+        hp: 20,
+        maxHp: 20,
+        type: "class",
+        attack: 15,
+        defense: 20,
+        attacked: false,
+        image: require('../assets/monsters/kranus.gif')
+    },
+    {
+        id: 1007,
+        name: "Fire Geode",
+        hp: 20,
+        maxHp: 20,
+        type: "class",
+        attack: 15,
+        defense: 20,
+        attacked: false,
+        image: require('../assets/monsters/fire-geode.gif')
+    },
+    {
+        id: 1008,
+        name: "Renatus",
+        hp: 20,
+        maxHp: 20,
+        type: "class",
+        attack: 15,
+        defense: 20,
+        attacked: false,
+        image: require('../assets/monsters/renatus.gif')
     }
   ];
