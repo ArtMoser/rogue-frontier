@@ -46,8 +46,8 @@ export const enemiesTierOne = [
     {
         id: 1005,
         name: "Acnologia",
-        hp: 40,
-        maxHp: 40,
+        hp: 20,
+        maxHp: 20,
         type: "class",
         attack: 30,
         defense: 20,
@@ -57,8 +57,8 @@ export const enemiesTierOne = [
     {
         id: 1006,
         name: "Kranus",
-        hp: 20,
-        maxHp: 20,
+        hp: 15,
+        maxHp: 15,
         type: "class",
         attack: 15,
         defense: 20,
@@ -68,8 +68,8 @@ export const enemiesTierOne = [
     {
         id: 1007,
         name: "Fire Geode",
-        hp: 20,
-        maxHp: 20,
+        hp: 15,
+        maxHp: 15,
         type: "class",
         attack: 15,
         defense: 20,
