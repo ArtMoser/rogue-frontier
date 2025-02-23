@@ -28,10 +28,11 @@ type Enemy = {
 export default function BattleScreen() {
   const router = useRouter();
   const params = useLocalSearchParams();
-  let team = JSON.parse(params.team);
+  let team = JSON.parse(decodeURIComponent(params.team));
   const level = Number(params.level);
   const battleCount = Number(params.battleCount);
   const generalBattleCount = Number(params.generalBattleCount);
+  const isBossBattle = (params.isBossBattle == 'false' || params.isBossBattle == 'true') ? JSON.parse(params.isBossBattle): false;
 
   const [party, setParty] = useState<Character[]>([]);
   const [enemies, setEnemies] = useState<Enemy[]>([]);
@@ -40,6 +41,7 @@ export default function BattleScreen() {
   const [selectedTarget, setSelectedTarget] = useState<number | null>(null);
   const [battleLog, setBattleLog] = useState<string[]>([]);
   const [turnMessage, setTurnMessage] = useState('');
+  const [turnNumber, setTurnNumber] = useState<number | null>(1);
 
   const [swingAnimation] = useState(new Animated.Value(0));
   const [characterMoveAnimations, setCharacterMoveAnimations] = useState<Animated.Value[]>([]);
@@ -213,9 +215,32 @@ export default function BattleScreen() {
       const shuffled = [...enemiesArray].sort(() => 0.5 - Math.random());
       return shuffled.slice(0, enemyCount);
     };
-    
-    const enemyCount = team.length;
-    const randomEnemies = getRandomEnemies(enemiesTierOne, enemyCount);
+
+    const scaleEnemyStats = (enemy, level) => {
+      const scaleFactor = 1 + (level * 0.1);
+      return {
+        ...enemy,
+        hp: Math.round(enemy.hp * scaleFactor),
+        hp: Math.round(enemy.maxHp * scaleFactor),
+        attack: Math.round(enemy.attack * scaleFactor),
+        defense: Math.round(enemy.defense * scaleFactor),
+      };
+    };
+
+    let enemyCount = level > 4 ? 4 : level;
+    let enemyScaleLevel = level;
+
+    if(isBossBattle) {
+      enemyCount = 1;
+      enemyScaleLevel = level + 3;
+    }
+
+    const randomEnemies = getRandomEnemies(enemiesTierOne, enemyCount)
+      .map(enemy => (
+        {...scaleEnemyStats(enemy, enemyScaleLevel),
+          isBoss: isBossBattle
+        }));
+
     setEnemies(randomEnemies);
 
     setEnemyShakeAnimations(randomEnemies.map(() => new Animated.Value(0)));
@@ -263,8 +288,32 @@ export default function BattleScreen() {
   });
 
   useEffect(() => {
-    console.log("Estado atualizado do party:", party);
+    if (enemies != undefined && enemies.length > 0 && enemies.every(character => character.hp <= 0)) {
+      handleVictory();
+    }
+  }, [enemies]);
+
+  useEffect(() => {
+    //console.log("Estado atualizado do party:", party);
+    if (party != undefined && party.length > 0 && party.every(character => character.hp <= 0)) {
+      handleDefeat();
+    }
+
+    const allCharactersAttacked = party
+        .filter(member => member.hp > 0)
+        .every(member => member.attacked);
+
+    if (allCharactersAttacked && turnNumber > 1) {
+        setTimeout(enemyTurn, 1000);
+        setCurrentTurn('enemy');
+    }
   }, [party]);
+
+  const handleDefeat = () => {
+    startSlideAnimation(() => {
+      router.push('/');
+    });
+  };
 
   const handleAttack = () => {
       if (selectedCharacter === null || selectedTarget === null) return;
@@ -307,17 +356,18 @@ export default function BattleScreen() {
               )
           );
   
-          checkEnemyTurn();
-      }, 1500);
+          //checkEnemyTurn();
+      }, 1000);
+
+      setTurnNumber(turnNumber + 1);
   };
   
-  const checkEnemyTurn = () => {
+  /*const checkEnemyTurn = () => {
       setParty(prevParty => {
         const allCharactersAttacked = prevParty
         .filter(member => member.hp > 0)
         .every(member => member.attacked);
-      
-  
+
           if (allCharactersAttacked) {
               setTimeout(enemyTurn, 1000);
               setCurrentTurn('enemy');
@@ -328,12 +378,13 @@ export default function BattleScreen() {
       });
   
       setEnemies(prevEnemies => {
-          if (prevEnemies.every(enemy => enemy.hp <= 0)) {
+          /*if (prevEnemies.every(enemy => enemy.hp <= 0)) {
               handleVictory();
           }
           return prevEnemies;
       });
-  };
+      //setEnemies(prevEnemies);
+  };*/
 
   const enemyTurn = () => {
     let livingEnemies = enemies.filter(enemy => enemy.hp > 0);
@@ -374,14 +425,19 @@ export default function BattleScreen() {
   
     setParty(updatedParty);
     setCurrentTurn("player");
-  
-    if (updatedParty.every(character => character.hp <= 0)) {
+
+    /*if (updatedParty.every(character => character.hp <= 0)) {
       handleDefeat();
-    }
+    }*/
+
+    setTurnNumber(turnNumber + 1);
   };
   
 
   const handleVictory = () => {
+      console.log('handle victory');
+      console.log(JSON.stringify(team));
+      console.log(JSON.stringify(enemies));
     startSlideAnimation(() => {
 
       for(let teamMember of team) {
@@ -393,32 +449,54 @@ export default function BattleScreen() {
       }
 
       team = team.filter(character => character.hp > 0);
-
-      console.log('###### team updated => ' + JSON.stringify(team));
-
-      if (generalBattleCount % 2 === 0 && team.length < 4) {
-        debugger;
+      debugger;
+      if(isBossBattle) {
+        router.push({
+          pathname: 'screens/victory',
+          params: { 
+            team: encodeURIComponent(JSON.stringify(team)),
+            level: level,
+            isFirstBattle: "false",
+            battleCount: battleCount,
+            generalBattleCount: generalBattleCount
+          },
+        });
+      } else if(generalBattleCount % 10 === 0) {
+        for(let teamMember of team) {
+          teamMember.hp = teamMember.maxHp;
+        }
+        router.push({
+          pathname: 'screens/battle',
+          params: {
+            team: encodeURIComponent(JSON.stringify(team)),
+            level: level,
+            battleCount: battleCount + 1,
+            generalBattleCount: generalBattleCount,
+            isBossBattle: true
+          },
+        });
+      } else if (generalBattleCount % 5 === 0 && team.length < 4) {
         for(let teamMember of team) {
           teamMember.hp = teamMember.maxHp;
         }
         router.push({
           pathname: 'screens/character-select',
           params: { 
-            team: JSON.stringify(team),
-            level: level + 1,
+            team: encodeURIComponent(JSON.stringify(team)),
+            level: level,
             isFirstBattle: "false",
             battleCount: battleCount + 1,
             generalBattleCount: generalBattleCount + 1
           },
         });
-      } else if (generalBattleCount % 5 === 0) {
+      } else if (generalBattleCount % 3 === 0) {
         for(let teamMember of team) {
           teamMember.hp = teamMember.maxHp;
         }
         router.push({
           pathname: 'screens/upgrade-select',
           params: { 
-            team: JSON.stringify(team),
+            team: encodeURIComponent(JSON.stringify(team)),
             level: level + 1,
             isFirstBattle: "false",
             battleCount: battleCount + 1,
@@ -426,22 +504,18 @@ export default function BattleScreen() {
           },
         });
       } else {
+
         router.push({
           pathname: 'screens/battle',
           params: {
-            team: JSON.stringify(team),
+            team: encodeURIComponent(JSON.stringify(team)),
             level: level,
             battleCount: battleCount + 1,
-            generalBattleCount: generalBattleCount + 1
+            generalBattleCount: generalBattleCount + 1,
+            bossBattle: false
           },
         });
       }
-    });
-  };
-
-  const handleDefeat = () => {
-    startSlideAnimation(() => {
-      router.push('/');
     });
   };
 
@@ -458,7 +532,11 @@ export default function BattleScreen() {
         <Animated.View style={[styles.turnMessageContainer, { opacity: fadeAnim }]}>
           <Text style={styles.turnMessageText}>{turnMessage}</Text>
         </Animated.View>
-        <Text style={styles.battleInfo}>Battle {battleCount} - Level {level}</Text>
+        {isBossBattle ?
+          <Text style={styles.battleInfo}>BOSS BATTLE!</Text> 
+          :
+          <Text style={styles.battleInfo}>Battle {battleCount} - Level {level}</Text>  
+        }
         
         <View style={styles.battleField}>
           <View style={styles.enemyContainer}>
@@ -488,7 +566,7 @@ export default function BattleScreen() {
                 ]}
                 onPress={() => currentTurn === 'player' && enemy.hp > 0 && setSelectedTarget(index)}
               >
-                <Image source={enemy.image} style={[styles.enemyImage]} />
+                <Image contentFit="none" source={enemy.image} style={[styles.enemyImage]} />
                 <Text style={styles.enemyName}>{enemy.name}</Text>
                 <HealthBar hp={enemy.hp} maxHp={enemy.maxHp} isEnemy={true} />
               </Pressable>
@@ -520,7 +598,7 @@ export default function BattleScreen() {
                   <Image 
                       source={character.isAttacking ? character.attackImage : character.image}
                       style={(character.isAttacking && character.image != character.attackImage) ? styles.characterImageAttacking : styles.characterImage}
-                      contentFit="cover"
+                      contentFit="none"
                   />
                   <Text style={styles.characterName}>{character.name}</Text>
                   <HealthBar hp={character.hp} maxHp={character.maxHp} isEnemy={false} />
@@ -532,13 +610,13 @@ export default function BattleScreen() {
                     currentTurn === 'player' && styles.activeTurn,
                     selectedCharacter === index && styles.selected
                   ]}
-                  onPress={() => currentTurn === 'player' && setSelectedCharacter(index)}
+                  onPress={() => { currentTurn === 'player' && setSelectedCharacter(index)}}
                 >
                   <Image 
                       source={character.isAttacking ? character.attackImage : character.image} 
                       style={(character.isAttacking && character.image != character.attackImage) ? styles.characterImageAttacking : styles.characterImage}
                       key={character.isAttacking ? "attacking" : "idle"} 
-                      contentFit="cover"
+                      contentFit="none"
                   />
                   <Text style={styles.characterName}>{character.name}</Text>
                   <HealthBar hp={character.hp} maxHp={character.maxHp} isEnemy={false} />
@@ -622,15 +700,20 @@ const styles = StyleSheet.create({
     width: 120,
     alignItems: 'center',
   },
+  disabledCharacter: {
+    backgroundColor: 'rgba(0,0,0, 0.1)'
+  },
   characterImage: {
-    marginBottom: 10,
+    marginBottom: '-10',
     width: 100,
-    height: 100
+    height: 100,
+    transform: [{ scale: 2 }]
   },
   characterImageAttacking: {
     marginBottom: 10,
     width: 150,
-    height: 150
+    height: 150,
+    transform: [{ scale: 2 }]
   },
   enemyCard: {
     borderRadius: 8,
@@ -638,10 +721,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   enemyImage: { 
-    transform: [{ scaleX: -1 }],
-    marginBottom: 10,
+    marginBottom: '-10',
     width: 100,
-    height: 100
+    height: 100,
+    transform: [{ scale: 2 }, { scaleX: -1 }]
   },
   selected: {
     borderColor: 'transparent',

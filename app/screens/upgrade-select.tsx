@@ -18,7 +18,7 @@ export default function UpgradeSelectScreen() {
   const router = useRouter();
   const params = useLocalSearchParams();
   const level = Number(params.level);
-  const team = params.team ? JSON.parse(params.team): [];
+  const team = params.team ? JSON.parse(decodeURIComponent(params.team)) : [];
   const isFirstBattle = params.isFirstBattle === 'true';
   const generalBattleCount = Number(params.generalBattleCount);
 
@@ -100,10 +100,11 @@ export default function UpgradeSelectScreen() {
     router.push({
       pathname: 'screens/battle',
       params: {
-        team: JSON.stringify(teamUpdated),
+        team: encodeURIComponent(JSON.stringify(teamUpdated)),
         level: level,
         battleCount: isFirstBattle ? 1 : Math.floor((level - 1) / 5) * 5 + 1,
-        generalBattleCount: isFirstBattle ? 1 : generalBattleCount
+        generalBattleCount: isFirstBattle ? 1 : generalBattleCount,
+        isBossBattle: false
       }
     });
   };

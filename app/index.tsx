@@ -9,7 +9,7 @@ export default function StartScreen() {
       pathname: 'screens/character-select',
       params: { 
         level: 1, 
-        isFirstBattle: true,
+        isFirstBattle: true
       },
     });
   };

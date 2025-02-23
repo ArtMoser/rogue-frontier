@@ -1,10 +1,9 @@
 import { View } from "react-native";
 
 const HealthBar = ({ hp, maxHp, isEnemy }) => {
-  const hpPercentage = (hp / maxHp) * 100; // Calcula a porcentagem de HP
-
+  const hpPercentage = (hp / maxHp) * 100;
   return (
-    <View style={{ width: 80, height: 10, backgroundColor: "#444", borderRadius: 5, overflow: "hidden" }}>
+    <View style={{ width: 80, height: 3, backgroundColor: "#444", borderRadius: 5, overflow: "hidden" }}>
       <View
         style={{
           width: `${hpPercentage}%`,

@@ -19,9 +19,10 @@ export default function CharacterSelectScreen() {
   const router = useRouter();
   const params = useLocalSearchParams();
   const level = Number(params.level);
-  const team = useMemo(() => params.team ? JSON.parse(params.team) : [], [params.team]); // Memorize team
+  const team = useMemo(() => params.team ? JSON.parse(decodeURIComponent(params.team)) : [], [params.team]); // Memorize team
   const isFirstBattle = params.isFirstBattle === 'true';
   const generalBattleCount = Number(params.generalBattleCount);
+  const battleCount = Number(params.battleCount);
 
   const [selectedCharacter, setSelectedCharacter] = useState<Character | null>(null);
   const [availableCharacters, setAvailableCharacters] = useState<Character[]>(characters);
@@ -53,15 +54,18 @@ export default function CharacterSelectScreen() {
 
   const handleConfirm = () => {
     if (selectedCharacter) {
-      const updatedTeam = [...team, selectedCharacter]; // Crie um novo array para evitar mutação direta
+      const updatedTeam = [...team];
+      updatedTeam.push(selectedCharacter);
 
       router.push({
         pathname: 'screens/battle',
         params: {
-          team: JSON.stringify(updatedTeam),
+          team: encodeURIComponent(JSON.stringify(updatedTeam)),
           level: level,
-          battleCount: isFirstBattle ? 1 : Math.floor((level - 1) / 5) * 5 + 1,
-          generalBattleCount: isFirstBattle ? 1 : generalBattleCount
+          battleCount: isFirstBattle ? 1 : (battleCount + 1),
+          generalBattleCount: isFirstBattle ? 1 : generalBattleCount,
+          isFirstBattle: isFirstBattle,
+          isBossBattle: false
         }
       });
     }
