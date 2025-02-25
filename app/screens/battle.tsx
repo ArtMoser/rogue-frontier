@@ -222,13 +222,13 @@ export default function BattleScreen() {
       let atkDefScaleFactor = 1 + (level * 0.3);
 
       if(isBossBattle) {
-        hpScaleFactor = hpScaleFactor + level;
+        hpScaleFactor = hpScaleFactor + (level * 3);
       }
 
       return {
         ...enemy,
         hp: Math.round(enemy.hp * hpScaleFactor),
-        hp: Math.round(enemy.maxHp * hpScaleFactor),
+        maxHp: Math.round(enemy.maxHp * hpScaleFactor),
         attack: Math.round(enemy.attack * atkDefScaleFactor),
         defense: Math.round(enemy.defense * atkDefScaleFactor),
       };
@@ -410,7 +410,11 @@ export default function BattleScreen() {
       let damage = Math.max(1, enemy.attack - defender.defense);
   
       let defenderIndex = updatedParty.findIndex(char => char.id === defender.id);
-  
+
+      if(damage <= 1) {
+        damage = (updatedParty[defenderIndex].hp * 0.05);
+      }
+
       if (defenderIndex !== -1) {
         updatedParty[defenderIndex] = {
           ...updatedParty[defenderIndex],
@@ -442,9 +446,7 @@ export default function BattleScreen() {
   
 
   const handleVictory = () => {
-      console.log('handle victory');
-      console.log(JSON.stringify(team));
-      console.log(JSON.stringify(enemies));
+      console.log('###### Handle victory =>' + JSON.stringify(team));
     startSlideAnimation(() => {
 
       for(let teamMember of team) {
@@ -635,6 +637,11 @@ export default function BattleScreen() {
                 <Text style={styles.enemyName}>{enemy.name}</Text>
                 <HealthBar hp={enemy.hp} maxHp={enemy.maxHp} isEnemy={true} />
               </Pressable>
+              {/*<>
+                <Text style={styles.characterHp}>{enemy.hp} / {enemy.maxHp}</Text>
+                <Text style={styles.characterHp}>Attack {enemy.attack}</Text>
+                <Text style={styles.characterHp}>Defense {enemy.defense}</Text>
+              </>*/}
             </Animated.View>
             ))}
           </View>
@@ -705,6 +712,11 @@ export default function BattleScreen() {
                     <HealthBar hp={character.hp} maxHp={character.maxHp} isEnemy={false} />
                   </Pressable>
                 )}
+                {/*<>
+                  <Text style={styles.characterHp}>{character.hp} / {character.maxHp}</Text>
+                  <Text style={styles.characterHp}>Attack {character.attack}</Text>
+                  <Text style={styles.characterHp}>Defense {character.defense}</Text>
+                </>*/}
                 <View style={styles.characterLevel}>
                   {Array.from({ length: (character.currentEvolution+1) }, (_, i) => (
                     <Image
@@ -897,7 +909,7 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
   characterHp: {
-    color: '#4CAF50',
+    color: '#000',
     fontSize: 14,
   },
   enemyName: {

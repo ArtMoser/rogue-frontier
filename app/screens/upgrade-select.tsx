@@ -96,7 +96,9 @@ export default function UpgradeSelectScreen() {
         character[selectedUpgrade.coAttribute] = character[selectedUpgrade.attribute];
       }
 
-      character.upgrades.push(selectedUpgrade);
+      if(selectedUpgrade.type !== 'evolution') {
+        character.upgrades.push(selectedUpgrade);
+      }
     }
 
     router.push({
