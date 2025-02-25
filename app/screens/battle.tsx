@@ -4,6 +4,7 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useState, useEffect, useRef } from 'react';
 import { ActivityIndicator } from 'react-native';
 
+import { upgrades } from '../data/upgrades';
 import { enemiesTierOne } from '../data/enemies';
 import HealthBar from "../components/healthBar";
 
@@ -189,17 +190,17 @@ export default function BattleScreen() {
   useEffect(() => {
     if (currentTurn === 'player') {
       if (selectedCharacter === null) {
-        setTurnMessage('Select a character to attack!');
+        setTurnMessage('Select a character to attack');
       } else if (selectedTarget === null) {
-        setTurnMessage('Now select an enemy to attack!');
+        setTurnMessage('Select a target enemy to attack');
       }
     } else {
-      setTurnMessage('The enemies are attacking...');
+      setTurnMessage('Enemies are attacking...');
     }
 
     const defeatedEnemy = enemies.find(enemy => enemy.hp <= 0);
     if (defeatedEnemy) {
-      setTurnMessage(`${defeatedEnemy.name} was defeated!`);
+      //setTurnMessage(`${defeatedEnemy.name} was defeated!`);
       setTimeout(() => {
         if (currentTurn === 'player') {
           setTurnMessage('Select a character to attack!');
@@ -216,28 +217,34 @@ export default function BattleScreen() {
       return shuffled.slice(0, enemyCount);
     };
 
-    const scaleEnemyStats = (enemy, level) => {
-      const scaleFactor = 1 + (level * 0.2);
+    const scaleEnemyStats = (enemy, level, isBossBattle) => {
+      let hpScaleFactor = 1 + (level * 0.3);
+      let atkDefScaleFactor = 1 + (level * 0.3);
+
+      if(isBossBattle) {
+        hpScaleFactor = hpScaleFactor + level;
+      }
+
       return {
         ...enemy,
-        hp: Math.round(enemy.hp * scaleFactor),
-        hp: Math.round(enemy.maxHp * scaleFactor),
-        attack: Math.round(enemy.attack * scaleFactor),
-        defense: Math.round(enemy.defense * scaleFactor),
+        hp: Math.round(enemy.hp * hpScaleFactor),
+        hp: Math.round(enemy.maxHp * hpScaleFactor),
+        attack: Math.round(enemy.attack * atkDefScaleFactor),
+        defense: Math.round(enemy.defense * atkDefScaleFactor),
       };
     };
 
-    let enemyCount = level > 4 ? 4 : level;
+    let enemyCount = level > 5 ? 5 : level;
     let enemyScaleLevel = level;
 
     if(isBossBattle) {
       enemyCount = 1;
-      enemyScaleLevel = level + 5;
+      enemyScaleLevel = level + 20;
     }
 
     const randomEnemies = getRandomEnemies(enemiesTierOne, enemyCount)
       .map(enemy => (
-        {...scaleEnemyStats(enemy, enemyScaleLevel),
+        {...scaleEnemyStats(enemy, enemyScaleLevel, isBossBattle),
           isBoss: isBossBattle
         }));
 
@@ -284,12 +291,12 @@ export default function BattleScreen() {
 
   const swing = swingAnimation.interpolate({
     inputRange: [-1, 1],
-    outputRange: ['-5deg', '5deg'],
+    outputRange: ['-3deg', '3deg'],
   });
 
   useEffect(() => {
     if (enemies != undefined && enemies.length > 0 && enemies.every(character => character.hp <= 0)) {
-      handleVictory();
+      setTimeout(handleVictory, 2000);
     }
   }, [enemies]);
 
@@ -450,6 +457,30 @@ export default function BattleScreen() {
 
       team = team.filter(character => character.hp > 0);
       if(isBossBattle) {
+        const getRandomUpgrades = () => {
+          const shuffled = [...upgrades].sort(() => 0.5 - Math.random());
+          return shuffled.slice(0, 3);
+        };
+
+        let selectedUpgrade = getRandomUpgrades()[0];
+
+        for(let character of team) {
+          if(selectedUpgrade.type == 'literal') {
+            character[selectedUpgrade.attribute] = character[selectedUpgrade.attribute] + selectedUpgrade.value;
+          } 
+          
+          if(selectedUpgrade.type == 'percentage') {
+            character[selectedUpgrade.attribute] = character[selectedUpgrade.attribute] + (character[selectedUpgrade.attribute] * selectedUpgrade.value);
+          }
+
+          if(selectedUpgrade.coAttribute) {
+            character[selectedUpgrade.coAttribute] = character[selectedUpgrade.attribute];
+          }
+    
+          character.upgrades.push(selectedUpgrade);
+        }
+        
+
         router.push({
           pathname: 'screens/victory',
           params: { 
@@ -523,15 +554,33 @@ export default function BattleScreen() {
 
   return (
     <ImageBackground
-      source={isBossBattle ? require('../assets/battle/fire-arena.png') : require('../assets/battle/dungeon_battle_earth.png')}
+      source={isBossBattle
+      ? require('../assets/battle/fire-arena.png') // Imagem de boss
+      : level <= 5
+        ? require('../assets/battle/dungeon_battle_earth.png') // Nível 1-5
+        : level <= 10
+          ? require('../assets/battle/Dungeon_battle_8340060.png') // Nível 6-10
+          : level <= 15
+            ? require('../assets/battle/Dungeon_battle_light.png') // Nível 11-15
+            : level <= 20
+              ? require('../assets/battle/Dungeon_battle_81028.png') // Nível 16-20
+              : level <= 25
+                ? require('../assets/battle/Dungeon_battle_80020.png') // Nível 21-25
+                : level <= 30
+                  ? require('../assets/battle/Dungeon_battle_10700.png') // Nível 26-30
+                  : level <= 35
+                    ? require('../assets/battle/Dungeon_battle_10400.png') // Nível 31-35
+                    : level <= 40
+                      ? require('../assets/battle/Dungeon_battle_8340060.png') // Nível 36-40
+                      : require('../assets/battle/fire-arena.png')}
       style={styles.backgroundImage}
       resizeMode="cover"
     >
       <View style={styles.container}>
         <ImageBackground
-          source={require('../assets/misc/battle-information.png')}
+          source={require('../assets/misc/battle-dialog.png')}
           style={styles.information}
-          resizeMode="cover" // ou "contain", conforme sua necessidade
+          resizeMode="cover" 
         >
           <Animated.View style={[styles.turnMessageContainer, { opacity: fadeAnim }]}>
             <Text style={styles.turnMessageText}>{turnMessage}</Text>
@@ -572,7 +621,6 @@ export default function BattleScreen() {
               <Pressable
                 style={[
                   styles.enemyCard,
-                  selectedTarget === index && styles.selectedEnemy,
                   enemy.hp <= 0 && styles.defeated,
                 ]}
                 onPress={() => currentTurn === 'player' && enemy.hp > 0 && setSelectedTarget(index)}
@@ -593,53 +641,80 @@ export default function BattleScreen() {
 
           <View style={styles.partyContainer}>
             {party.map((character, index) => (
-            <Animated.View
-            key={character.id}
-            style={[
-              { 
-                transform: [
-                  { 
-                    translateX: characterMoveAnimations[index].interpolate({
-                      inputRange: [0, 1],
-                      outputRange: [0, -100],
-                    }),
-                  },
-                  { translateX: character.hp > 0 ? characterShakeAnimations[index] : 0 },
-                  { rotate: selectedCharacter === index ? swing : '0deg' }
-                ]
-              },
-            ]}
-          >
-              {character.attacked || character.hp <= 0 ? (
-                <View style={[styles.characterCard, styles.disabledCharacter]}>
-                  <Image 
-                      source={character.isAttacking ? character.attackImage : character.image}
-                      style={(character.isAttacking && character.image != character.attackImage) ? styles.characterImageAttacking : styles.characterImage}
-                      contentFit="none"
-                  />
-                  <Text style={styles.characterName}>{character.name}</Text>
-                  <HealthBar hp={character.hp} maxHp={character.maxHp} isEnemy={false} />
-                </View>
-              ) : (
-                <Pressable
+                <Animated.View
+                  key={character.id}
                   style={[
-                    styles.characterCard,
-                    currentTurn === 'player' && styles.activeTurn,
-                    selectedCharacter === index && styles.selected
+                    { 
+                      transform: [
+                        { 
+                          translateX: characterMoveAnimations[index].interpolate({
+                            inputRange: [0, 1],
+                            outputRange: [0, -100],
+                          }),
+                        },
+                        { translateX: character.hp > 0 ? characterShakeAnimations[index] : 0 },
+                        { rotate: selectedCharacter === index ? swing : '0deg' }
+                      ]
+                    },
                   ]}
-                  onPress={() => { currentTurn === 'player' && setSelectedCharacter(index)}}
                 >
-                  <Image 
-                      source={character.isAttacking ? character.attackImage : character.image} 
-                      style={(character.isAttacking && character.image != character.attackImage) ? styles.characterImageAttacking : styles.characterImage}
-                      key={character.isAttacking ? "attacking" : "idle"} 
-                      contentFit="none"
-                  />
-                  <Text style={styles.characterName}>{character.name}</Text>
-                  <HealthBar hp={character.hp} maxHp={character.maxHp} isEnemy={false} />
-                </Pressable>
-              )}
-            </Animated.View>
+                  <View style={styles.upgradeContainer}>
+                  {character.upgrades.map((upgrade, index) => (
+                      <Image
+                        key={character.id + index}
+                        source={upgrade.image}
+                        style={styles.upgradeIcon}
+                      />
+                    ))}
+                  </View>
+                {character.attacked || character.hp <= 0 ? (
+                  <View style={[styles.characterCard]}>
+                    <Image 
+                        source={require('../assets/misc/already-attacked.png')}
+                        style={styles.attackIcon}
+                        contentFit="cover"
+                    />
+                    <Image 
+                        source={character.isAttacking ? character.attackImage : character.image}
+                        style={(character.isAttacking && character.image != character.attackImage) ? styles.characterImageAttacking : styles.characterImage}
+                        contentFit="none"
+                    />
+                    <Text style={styles.characterName}>{character.name}</Text>
+                    <HealthBar hp={character.hp} maxHp={character.maxHp} isEnemy={false} />
+                  </View>
+                ) : (
+                  <Pressable
+                    style={[
+                      styles.characterCard,
+                      currentTurn === 'player' && styles.activeTurn
+                    ]}
+                    onPress={() => { currentTurn === 'player' && setSelectedCharacter(index)}}
+                  >
+                    <Image 
+                        source={require('../assets/misc/attack.png')}
+                        style={styles.attackIcon}
+                        contentFit="cover"
+                    />
+                    <Image 
+                        source={character.isAttacking ? character.attackImage : character.image} 
+                        style={(character.isAttacking && character.image != character.attackImage) ? styles.characterImageAttacking : styles.characterImage}
+                        key={character.isAttacking ? "attacking" : "idle"} 
+                        contentFit="none"
+                    />
+                    <Text style={styles.characterName}>{character.name}</Text>
+                    <HealthBar hp={character.hp} maxHp={character.maxHp} isEnemy={false} />
+                  </Pressable>
+                )}
+                <View style={styles.characterLevel}>
+                  {Array.from({ length: (character.currentEvolution+1) }, (_, i) => (
+                    <Image
+                      key={i}
+                      source={require('../assets/misc/star.png')}
+                      style={styles.star}
+                    />
+                  ))}
+                </View>
+              </Animated.View>
             ))}
           </View>
         </View>
@@ -647,12 +722,12 @@ export default function BattleScreen() {
         {currentTurn === 'player' && selectedCharacter !== null && selectedTarget !== null && (
           <Pressable style={styles.attackButton} onPress={handleAttack}>
             <ImageBackground
-                source={require('../assets/misc/attack-button.png')}
+                source={require('../assets/misc/attack-image.png')}
                 style={styles.attackButton}
                 resizeMode="contain"
               >
-            <Text style={styles.attackButtonText}>Attack</Text>
-          </ImageBackground>
+              <Text style={styles.attackButtonText}>Attack</Text>
+            </ImageBackground>
           </Pressable>
         )}
 
@@ -679,8 +754,8 @@ export default function BattleScreen() {
 const styles = StyleSheet.create({
   backgroundImage: {
     flex: 1,
-    width: '100%',
-    height: '100%',
+    width: Dimensions.get("screen").width,
+    height: Dimensions.get("screen").height,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -691,12 +766,11 @@ const styles = StyleSheet.create({
   },
   battleInfo: {
     fontSize: 24,
-    color: '#000',
+    color: '#fff',
     textAlign: 'center',
     marginBottom: 5,
-    paddingTop: 10,
-    fontWeight: 800,
-    opacity: 0.5
+    paddingTop: 40,
+    fontWeight: 800
   },
   battleInfoBoss: {
     fontSize: 24,
@@ -734,11 +808,8 @@ const styles = StyleSheet.create({
     width: 120,
     alignItems: 'center',
   },
-  disabledCharacter: {
-    backgroundColor: 'rgba(0,0,0, 0.1)'
-  },
   bossIndicator: {
-    top: 10,
+    top: '0',
     left: '40%',
     right: 0,
     alignSelf: 'center',
@@ -746,6 +817,40 @@ const styles = StyleSheet.create({
     width: 100,
     height: 100,
     transform: [{ scale: 1.5 }]
+  },
+  upgradeContainer: {
+    position: 'relative',
+    bottom: '-20',
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+    zIndex: 40,
+  },
+  upgradeIcon: {
+    width: 15,
+    height: 15,
+    bottom: 0,
+  },
+  characterLevel: {
+    position: 'relative',
+    bottom: 0,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  star: {
+    width: 10,
+    height: 10,
+    bottom: 0,
+  },
+  attackIcon: {
+    position: 'absolute',
+    //left: '-10',
+    right: 0,
+    bottom: 0,
+    width: 20,
+    height: 20,
+    zIndex: 40
   },
   characterImage: {
     marginBottom: '-10',
@@ -775,14 +880,6 @@ const styles = StyleSheet.create({
     width: 100,
     height: 100,
     transform: [{ scale: 2 }, { scaleX: -1 }]
-  },
-  selected: {
-    borderColor: 'transparent',
-    filter: 'drop-shadow(0 0 5px white)'
-  },
-  selectedEnemy: {
-    borderColor: 'transparent',
-    filter: 'drop-shadow(0 0 5px red)'
   },
   defeated: {
     opacity: 0.5,
@@ -831,29 +928,27 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: 20,
     position: 'absolute',
-    bottom: 20, // Pode ajustar a distância do fundo
+    bottom: 20,
     left: 0,
     right: 0,
     alignItems: 'center',
-    transform: [{ scale: 1 }]
   },
   attackButtonText: {
     color: '#ffffff',
-    fontSize: 18,
+    fontSize: 15,
     fontWeight: 'bold',
+    textTransform: 'uppercase',
   },
   information: {
+    transform: [{ scale: 0.8 }],
     position: 'absolute',
     width: '100%',
-    height: 100,
-    top: '10%',
+    height: '40%',
+    top: '0%',
     left: '5%'
   },
   turnMessageContainer: {
-    position: 'absolute',
-    top: '40%',
-    left: '10%',
-    right: '10%',
+    top: 70,
     /*backgroundColor: 'rgba(0, 0, 0, 0.8)',
     padding: 15,
     borderRadius: 10,

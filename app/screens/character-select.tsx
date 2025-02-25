@@ -31,16 +31,13 @@ export default function CharacterSelectScreen() {
     setSelectedCharacter(character);
   };
 
-  // Corrigido: use useCallback para encapsular a função
   useFocusEffect(
     useCallback(() => {
       debugger;
       const shuffleList = (array) => {
         let currentIndex = array.length, randomIndex;
-      
-        // Enquanto ainda houver elementos para embaralhar...
+
         while (currentIndex !== 0) {
-          // Escolhe um índice aleatório
           randomIndex = Math.floor(Math.random() * currentIndex);
           currentIndex--;
       
@@ -70,10 +67,11 @@ export default function CharacterSelectScreen() {
 
   const handleConfirm = () => {
     if (selectedCharacter) {
-      selectedCharacter.hp = selectedCharacter.hp + generalBattleCount;
-      selectedCharacter.maxHp = selectedCharacter.maxHp + generalBattleCount;
-      selectedCharacter.attack = selectedCharacter.attack + generalBattleCount;
-      selectedCharacter.defense = selectedCharacter.defense + generalBattleCount;
+      let scaleFactor = (1 + level * 0.2);
+      selectedCharacter.hp = Math.floor(selectedCharacter.hp * scaleFactor);
+      selectedCharacter.maxHp = Math.floor(selectedCharacter.maxHp * scaleFactor);
+      selectedCharacter.attack = Math.floor(selectedCharacter.attack * scaleFactor);
+      selectedCharacter.defense = Math.floor(selectedCharacter.defense * scaleFactor);
 
       const updatedTeam = [...team];
       updatedTeam.push(selectedCharacter);
@@ -94,13 +92,12 @@ export default function CharacterSelectScreen() {
 
   return (
     <ImageBackground
-      source={require('../assets/upgrades/area_sp.jpg')}
+      source={require('../assets/misc/base.jpg')}
       style={styles.backgroundImage}
       resizeMode="cover"
     >
       <View style={styles.container}>
         <Text style={styles.title}>Choose Your Hero</Text>
-        <Text style={styles.subtitle}>Level {level} Adventure</Text>
 
         <View style={styles.charactersContainer}>
           {availableCharacters.map((character) => (
@@ -114,7 +111,7 @@ export default function CharacterSelectScreen() {
             >
               <Image source={character.image} style={styles.characterImage} />
               <Text style={styles.characterName}>{character.name}</Text>
-              <Text style={styles.characterType}>{character.type}</Text>
+              {/*<Text style={styles.characterType}>{character.type}</Text>*/}
               <View style={styles.statsContainer}>
                 <Text style={styles.statText}>HP: {character.hp}</Text>
                 <Text style={styles.statText}>ATK: {character.attack}</Text>
@@ -126,7 +123,13 @@ export default function CharacterSelectScreen() {
 
         {selectedCharacter && (
           <Pressable style={styles.confirmButton} onPress={handleConfirm}>
-            <Text style={styles.confirmButtonText}>Begin Battle</Text>
+            <ImageBackground
+              source={require('../assets/misc/sub_m_sp_btn2.png')}
+              style={styles.okButton}
+              resizeMode="cover"
+            >
+              <Text style={styles.confirmButtonText}>Begin Battle</Text>
+            </ImageBackground>
           </Pressable>
         )}
       </View>
@@ -139,6 +142,11 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     padding: 20,
+  },
+  okButton: {
+    width: 150,
+    height: 60,
+    marginTop: 30
   },
   title: {
     fontSize: 32,
@@ -160,7 +168,7 @@ const styles = StyleSheet.create({
     marginBottom: 30,
   },
   characterCard: {
-    backgroundColor: '#2a2a2a',
+    backgroundColor: 'rgba(0, 0, 0, 0.7)',
     borderRadius: 15,
     padding: 15,
     width: 100,
@@ -170,7 +178,7 @@ const styles = StyleSheet.create({
     marginTop: "35%"
   },
   selectedCharacter: {
-    borderColor: '#4CAF50',
+    borderColor: 'rgba(255, 255, 255, 0.7)',
     transform: [{ scale: 1.05 }],
   },
   characterImage: {
@@ -197,16 +205,19 @@ const styles = StyleSheet.create({
     marginBottom: 2,
   },
   confirmButton: {
-    backgroundColor: '#4CAF50',
+    /*backgroundColor: '#4CAF50',
     paddingHorizontal: 40,
     paddingVertical: 15,
     borderRadius: 25,
-    marginTop: 20,
+    marginTop: 20,*/
   },
   confirmButtonText: {
     color: '#ffffff',
     fontSize: 18,
     fontWeight: 'bold',
+    textAlign: 'center',
+    textShadowColor: '#000',
+    paddingTop: 17,
   },
   backgroundImage: {
     flex: 1,

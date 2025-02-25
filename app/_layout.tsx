@@ -18,7 +18,7 @@ export default function RootLayout() {
 
   return (
     <Animated.View style={{ flex: 1, opacity: fadeAnim }}>
-      <Stack>
+      <Stack screenOptions={{ headerShown: false }}>
         <Stack.Screen name="screens" options={{ headerShown: false }} />
         <Stack.Screen name="battle" options={{ headerShown: false }} />
         <Stack.Screen name="character-select" options={{ headerShown: false }} />

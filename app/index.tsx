@@ -25,11 +25,11 @@ export default function StartScreen() {
       <View style={styles.container}>
         <Pressable style={styles.startButton} onPress={startGame}>
           <ImageBackground
-            source={require('../app/assets/menu/menu-background.jpg')}
+            source={require('../app/assets/misc/title_msg.png')}
             style={styles.buttonBackground}
             resizeMode="cover"
           >
-            <Text style={styles.startButtonText}>Start Journey</Text>
+            {/*<Text style={styles.startButtonText}>Start Journey</Text>*/}
           </ImageBackground>
         </Pressable>
       </View>
@@ -72,9 +72,8 @@ const styles = StyleSheet.create({
     marginBottom: 40,
   },
   startButton: {
-    width: 250,
+    width: 400,
     height: 60,
-    borderRadius: 30,
     overflow: 'hidden',
     elevation: 5,
     shadowColor: '#000',

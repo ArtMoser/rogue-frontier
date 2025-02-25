@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, Pressable, Image } from 'react-native';
+import { View, Text, StyleSheet, Pressable, Image, ImageBackground } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { characters } from '../data/characters';
@@ -95,6 +95,8 @@ export default function UpgradeSelectScreen() {
       if(selectedUpgrade.coAttribute) {
         character[selectedUpgrade.coAttribute] = character[selectedUpgrade.attribute];
       }
+
+      character.upgrades.push(selectedUpgrade);
     }
 
     router.push({
@@ -117,44 +119,70 @@ export default function UpgradeSelectScreen() {
 };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Choose Your Upgrade</Text>
-      
-      <View style={styles.upgradesContainer}>
-        {availableUpgrades.map((upgrade, index) => (
-          <Pressable
-            key={index}
-            style={[
-              styles.upgradeCard,
-              selectedUpgrade === upgrade && styles.selectedUpgrade
-            ]}
-            onPress={() => handleUpgradeSelect(upgrade)}
+    <ImageBackground
+          source={require('../assets/misc/base2.jpg')}
+          style={styles.backgroundImage}
+          resizeMode="cover"
+        >
+      <View style={styles.container}>
+        <Text style={styles.title}>Choose Your Upgrade</Text>
+        
+        <View style={styles.upgradesContainer}>
+          {availableUpgrades.map((upgrade, index) => (
+            <Pressable
+              key={index}
+              style={[
+                styles.upgradeCard,
+                selectedUpgrade === upgrade && styles.selectedUpgrade
+              ]}
+              onPress={() => handleUpgradeSelect(upgrade)}
+            >
+
+              {upgrade.type === "evolution" && (
+                
+                  <View style={styles.evolutionBlock}>
+                    <Text style={styles.upgradeText}>
+                      <Text style={{ color: '#ff00d5' }}>Evolve </Text>
+                      <Text style={{ color: '#ffaa00' }}>{upgrade.currentEvolution.name} </Text>
+                      <Text style={{ color: '#ff00d5' }}>to </Text>
+                      <Text style={{ color: '#ff0055' }}>{upgrade.evolution.name}</Text>
+                    </Text>
+                    {/*<Text style={styles.upgradeText}> Evolve <Text> {upgrade.currentEvolution.name} to  {upgrade.evolution.name}</Text>*/}
+                    <Image source={upgrade.evolution.image} style={[styles.characterImage]} />
+                  </View>
+                
+              )}
+
+              {upgrade.type !== "evolution" && (
+                <ImageBackground
+                  source={require('../assets/misc/item_frame_0.png')}
+                  style={styles.upgradeFrame}
+                  resizeMode="cover"
+                >
+                  <View style={styles.blockStyle}>
+                    <Text style={styles.upgradeText}>{upgrade.label}</Text>
+                    <Text style={styles.upgradeText}>+ {formatValue(upgrade)}</Text>
+                  </View>
+                </ImageBackground>
+              )}
+              
+            </Pressable>
+          ))}
+        </View>
+
+        {selectedUpgrade && (
+          <ImageBackground
+            source={require('../assets/misc/ok_btn1.png')}
+            style={styles.okButton}
+            resizeMode="cover"
           >
-
-            {upgrade.type === "evolution" && (
-              <View style={styles.evolutionBlock}>
-                <Text style={styles.upgradeText}> Evolve {upgrade.currentEvolution.name} to  {upgrade.evolution.name}</Text>
-                <Image source={upgrade.evolution.image} style={[styles.characterImage]} />
-              </View>
-            )}
-
-            {upgrade.type !== "evolution" && (
-              <View style={styles.blockStyle}>
-                <Text style={styles.upgradeText}>{upgrade.attribute}</Text>
-                <Text style={styles.upgradeText}>+ {formatValue(upgrade)}</Text>
-              </View>
-            )}
-            
-          </Pressable>
-        ))}
+            <Pressable style={styles.confirmButton} onPress={handleConfirm}>
+              {/*<Text style={styles.confirmButtonText}>Confirm Upgrade</Text>*/}
+            </Pressable>
+          </ImageBackground>
+        )}
       </View>
-
-      {selectedUpgrade && (
-        <Pressable style={styles.confirmButton} onPress={handleConfirm}>
-          <Text style={styles.confirmButtonText}>Confirm Upgrade</Text>
-        </Pressable>
-      )}
-    </View>
+    </ImageBackground>
   );
 }
 
@@ -162,8 +190,18 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'center',
-    backgroundColor: '#1a1a1a',
     padding: 20,
+  },
+  okButton: {
+    width: 150,
+    height: 60,
+    marginTop: 30
+  },
+  upgradeFrame: {
+    width: 100,
+    height: 100,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    borderRadius: 15,
   },
   title: {
     fontSize: 32,
@@ -225,7 +263,7 @@ const styles = StyleSheet.create({
     marginBottom: 2,
   },
   confirmButton: {
-    backgroundColor: '#4CAF50',
+    backgroundColor: 'transparent',
     paddingHorizontal: 40,
     paddingVertical: 15,
     borderRadius: 25,
@@ -244,24 +282,21 @@ const styles = StyleSheet.create({
     marginBottom: 30,
   },
   upgradeCard: {
-    backgroundColor: '#2a2a2a',
     borderRadius: 15,
     padding: 15,
     width: 100,
-    alignItems: 'center',
-    borderWidth: 2,
-    borderColor: '#2a2a2a',
+    alignItems: 'center'
   },
   selectedUpgrade: {
     borderColor: '#4CAF50',
     transform: [{ scale: 1.05 }],
   },
   upgradeText: {
-    color: '#ffffff',
-    marginBottom: 5,
+    color: '#55ff00',
+    fontWeight: 'bold',	
     textAlign: 'center',
     alignSelf: 'stretch',
-    flexWrap: 'wrap',
+    textTransform: 'uppercase',
     padding: 10
   },
   characterImage: {
@@ -270,9 +305,22 @@ const styles = StyleSheet.create({
     marginBottom: 10
   },
   blockStyle: {
-    paddingTop: '60%'
+    paddingTop: '10%'
   },
   evolutionBlock: {
-    textAlign: 'center'
+    textAlign: 'center',
+    width: 130,
+    height: 240,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    borderRadius: 15,
+    borderColor: 'rgba(255, 255, 255, 0.8)',
+    borderWidth: 5,
+  },
+  backgroundImage: {
+    flex: 1,
+    width: '100%',
+    height: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
   }
 });
