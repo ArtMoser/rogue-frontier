@@ -218,8 +218,8 @@ export default function BattleScreen() {
     };
 
     const scaleEnemyStats = (enemy, level, isBossBattle) => {
-      let hpScaleFactor = 1 + (level * 0.3);
-      let atkDefScaleFactor = 1 + (level * 0.3);
+      let hpScaleFactor = 1 + (level * 0.2);
+      let atkDefScaleFactor = 1 + (level * 0.2);
 
       if(isBossBattle) {
         hpScaleFactor = hpScaleFactor + (level * 3);

@@ -152,5 +152,71 @@ export const enemiesTierOne = [
         defense: 5,
         attacked: false,
         image: require('../assets/monsters/bolt-goddess.gif')
+    },
+    {
+        id: 1015,
+        name: "Immortal Phoenix Levarza",
+        hp: 40,
+        maxHp: 40,
+        type: "class",
+        attack: 15,
+        defense: 5,
+        attacked: false,
+        image: require('../assets/monsters/Immortal-Phoenix-Levarza.gif')
+    },
+    {
+        id: 1016,
+        name: "Bolt Phoenix Ardas",
+        hp: 40,
+        maxHp: 40,
+        type: "class",
+        attack: 15,
+        defense: 5,
+        attacked: false,
+        image: require('../assets/monsters/Bolt-Phoenix-Ardas.gif')
+    },
+    {
+        id: 1017,
+        name: "Inferno Wings Magnazorda",
+        hp: 40,
+        maxHp: 40,
+        type: "class",
+        attack: 15,
+        defense: 5,
+        attacked: false,
+        image: require('../assets/monsters/Inferno-Wings-Magnazorda.gif')
+    },
+    {
+        id: 1018,
+        name: "Ultimate Behemoth",
+        hp: 40,
+        maxHp: 40,
+        type: "class",
+        attack: 15,
+        defense: 5,
+        attacked: false,
+        image: require('../assets/monsters/Ultimate-Behemoth.gif')
+    },
+    {
+        id: 1019,
+        name: "Supreme Dragon Elderex",
+        hp: 40,
+        maxHp: 40,
+        type: "class",
+        attack: 15,
+        defense: 5,
+        attacked: false,
+        image: require('../assets/monsters/Supreme-Dragon-Elderex.gif')
+    },
+    {
+        id: 1020,
+        name: "Tundra Scales Zerafalgar",
+        hp: 40,
+        maxHp: 40,
+        type: "class",
+        attack: 15,
+        defense: 5,
+        attacked: false,
+        image: require('../assets/monsters/Tundra-Scales-Zerafalga.gif')
     }
   ];
