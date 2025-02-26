@@ -218,5 +218,93 @@ export const enemiesTierOne = [
         defense: 5,
         attacked: false,
         image: require('../assets/monsters/Tundra-Scales-Zerafalga.gif')
+    },
+    {
+        id: 1021,
+        name: "Great Thief",
+        hp: 40,
+        maxHp: 40,
+        type: "class",
+        attack: 15,
+        defense: 5,
+        attacked: false,
+        image: require('../assets/monsters/grate-thief.gif')
+    },
+    {
+        id: 1022,
+        name: "Tenebrous Wings Reviora",
+        hp: 40,
+        maxHp: 40,
+        type: "class",
+        attack: 15,
+        defense: 5,
+        attacked: false,
+        image: require('../assets/monsters/Tenebrous-Wings-Reviora.gif')
+    },
+    {
+        id: 1023,
+        name: "Sky Emperor Grafl",
+        hp: 40,
+        maxHp: 40,
+        type: "class",
+        attack: 15,
+        defense: 5,
+        attacked: false,
+        image: require('../assets/monsters/Sky-Emperor-Grafl.gif')
+    },
+    {
+        id: 1024,
+        name: "Bitter Manipulator Zora",
+        hp: 40,
+        maxHp: 40,
+        type: "class",
+        attack: 15,
+        defense: 5,
+        attacked: false,
+        image: require('../assets/monsters/Bitter-Manipulator-Zora.gif')
+    },
+    {
+        id: 1025,
+        name: "Yellow Dragon Belzeft",
+        hp: 40,
+        maxHp: 40,
+        type: "class",
+        attack: 15,
+        defense: 5,
+        attacked: false,
+        image: require('../assets/monsters/Yellow-Dragon-Belzeft.gif')
+    },
+    {
+        id: 1026,
+        name: "Flash Knight Jed",
+        hp: 40,
+        maxHp: 40,
+        type: "class",
+        attack: 15,
+        defense: 5,
+        attacked: false,
+        image: require('../assets/monsters/Flash-Knight-Jed.gif')
+    },
+    {
+        id: 1027,
+        name: "Refulgent Savage Jed",
+        hp: 40,
+        maxHp: 40,
+        type: "class",
+        attack: 15,
+        defense: 5,
+        attacked: false,
+        image: require('../assets/monsters/Refulgent-Savage-Jed.gif')
+    },
+    {
+        id: 1028,
+        name: "Alluring Empress Savia",
+        hp: 40,
+        maxHp: 40,
+        type: "class",
+        attack: 15,
+        defense: 5,
+        attacked: false,
+        image: require('../assets/monsters/Alluring-Empress-Savia.gif')
     }
   ];
