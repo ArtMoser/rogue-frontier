@@ -560,7 +560,7 @@ export default function BattleScreen() {
           teamMember.hp = teamMember.maxHp;
         }*/
         for(let teamMember of team) {
-          teamMember.hp += (teamMember.maxHp * 0.2);
+          teamMember.hp = teamMember.hp + (teamMember.maxHp * 0.2);
         }
         router.push({
           pathname: 'screens/battle',
@@ -587,9 +587,6 @@ export default function BattleScreen() {
           },
         });
       } else if (generalBattleCount % 3 === 0) {
-        for(let teamMember of team) {
-          teamMember.hp = teamMember.maxHp;
-        }
         router.push({
           pathname: 'screens/upgrade-select',
           params: { 

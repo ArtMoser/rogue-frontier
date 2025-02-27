@@ -812,5 +812,89 @@ export const characters = [
         attackImage: require('../assets/characters/Sir-Sancus-Xenon.gif'),
       }
     ]
-  }
+  },
+  {
+    id: 21,
+    name: "Crimson Fist Glenn",
+    hp: 180,
+    maxHp: 180,
+    type: "class",
+    attack: 40,
+    defense: 30,
+    attacked: false,
+    isAttacking: false,
+    image: require('../assets/characters/Crimson-Fist-Glenn.gif'),
+    attackImage: require('../assets/characters/Crimson-Fist-Glenn-attacking.gif'),
+    upgrades: [],
+    currentEvolution: -1,
+    evolutions: [
+      {
+        name: "Scorching Fang Glenn",
+        hp: 90,
+        maxHp: 90,
+        type: "class",
+        attack: 35,
+        defense: 30,
+        image: require('../assets/characters/Scorching-Fang-Glenn.gif'),
+        attackImage: require('../assets/characters/Scorching-Fang-Glenn-attacking.gif'),
+      }
+    ]
+  },
+  {
+    id: 22,
+    name: "Zeln",
+    hp: 190,
+    maxHp: 190,
+    type: "class",
+    attack: 45,
+    defense: 35,
+    attacked: false,
+    isAttacking: false,
+    image: require('../assets/characters/Zeln.gif'),
+    attackImage: require('../assets/characters/Zeln-attacking.gif'),
+    upgrades: [],
+    currentEvolution: -1,
+    evolutions: [
+      {
+        name: "Spark Kick Zeln",
+        hp: 90,
+        maxHp: 90,
+        type: "class",
+        attack: 40,
+        defense: 35,
+        image: require('../assets/characters/Spark-Kick-Zeln.gif'),
+        attackImage: require('../assets/characters/Spark-Kick-Zeln-attacking.gif'),
+      },
+      {
+        name: "Thunder Kick Zeln",
+        hp: 100,
+        maxHp: 100,
+        type: "class",
+        attack: 45,
+        defense: 40,
+        image: require('../assets/characters/Thunder-Kick-Zeln.gif'),
+        attackImage: require('../assets/characters/Thunder-Kick-Zeln-attacking.gif'),
+      },
+      {
+        name: "Thunder Punt Zeln",
+        hp: 100,
+        maxHp: 100,
+        type: "class",
+        attack: 50,
+        defense: 45,
+        image: require('../assets/characters/Thunder-Punt-Zeln.gif'),
+        attackImage: require('../assets/characters/Thunder-Punt-Zeln-attacking.gif'),
+      },
+      {
+        name: "Storm Roundhouse Zeln",
+        hp: 100,
+        maxHp: 100,
+        type: "class",
+        attack: 55,
+        defense: 50,
+        image: require('../assets/characters/Storm-Roundhouse-Zeln.gif'),
+        attackImage: require('../assets/characters/Storm-Roundhouse-Zeln-attacking.gif'),
+      }
+    ]
+  },
 ];
