@@ -218,10 +218,19 @@ export default function BattleScreen() {
     };
 
     const scaleEnemyStats = (enemy, level, isBossBattle) => {
-      let hpScaleFactor = 1 + (level * 0.2);
-      let atkDefScaleFactor = 1 + (level * 0.2);
+      let multiplier = 1;
+      if(level <= 9) {
+        multiplier = 1.5;
+      } else if(level <= 11) {
+        multiplier = 2;
+      } else {
+        multiplier = 3;
+      }
 
-      if(isBossBattle) {
+      let hpScaleFactor = multiplier + (level * 0.2);
+      let atkDefScaleFactor = multiplier + (level * 0.2);
+
+      if(isBossBattle && level > 10) {
         hpScaleFactor = hpScaleFactor + level;
       }
 
@@ -239,14 +248,15 @@ export default function BattleScreen() {
 
     if(isBossBattle) {
       enemyCount = 1;
-      
-      if(generalBattleCount > 20 && generalBattleCount < 30) { 
-        enemyCount = 2;
-      } else if(generalBattleCount > 30 && generalBattleCount < 40) {
-        enemyCount = 3;
-      }
+      enemyScaleLevel = level + 10;
 
-      enemyScaleLevel = level + 20;
+      if(level > 10 && level < 15) { 
+        enemyCount = 2;
+        enemyScaleLevel = level + 15;
+      } else if(level > 16) {
+        enemyCount = 3;
+        enemyScaleLevel = level + 20;
+      }
     }
 
     let enemiesFiltered = [];
@@ -267,7 +277,7 @@ export default function BattleScreen() {
 
     for(let enemy of randomEnemies) {
       let totalAttributes = Math.floor(((enemy.hp + enemy.attack + enemy.defense) * 20) / 550);
-      enemy.rarity = totalAttributes;
+      enemy.rarity = Math.floor(totalAttributes / 2);
     }
 
     setEnemies(randomEnemies);
@@ -498,7 +508,7 @@ export default function BattleScreen() {
   
 
   const handleVictory = () => {
-      console.log('###### Handle victory =>' + JSON.stringify(team));
+      console.log('###### generalBattleCount => ' + generalBattleCount);
     startSlideAnimation(() => {
 
       for(let teamMember of team) {
@@ -546,8 +556,11 @@ export default function BattleScreen() {
           },
         });
       } else if(generalBattleCount % 10 === 0) {
-        for(let teamMember of team) {
+        /*for(let teamMember of team) {
           teamMember.hp = teamMember.maxHp;
+        }*/
+        for(let teamMember of team) {
+          teamMember.hp += (teamMember.maxHp * 0.2);
         }
         router.push({
           pathname: 'screens/battle',
@@ -555,14 +568,14 @@ export default function BattleScreen() {
             team: encodeURIComponent(JSON.stringify(team)),
             level: level,
             battleCount: battleCount + 1,
-            generalBattleCount: generalBattleCount,
+            generalBattleCount: generalBattleCount + 1,
             isBossBattle: true
           },
         });
       } else if (generalBattleCount % 5 === 0 && team.length < 4) {
-        for(let teamMember of team) {
-          teamMember.hp = teamMember.maxHp;
-        }
+        /*for(let teamMember of team) {
+          teamMember.hp += (teamMember.maxHp * 0.1);
+        }*/
         router.push({
           pathname: 'screens/character-select',
           params: { 
@@ -570,7 +583,7 @@ export default function BattleScreen() {
             level: level,
             isFirstBattle: "false",
             battleCount: battleCount + 1,
-            generalBattleCount: generalBattleCount + 1
+            generalBattleCount: generalBattleCount
           },
         });
       } else if (generalBattleCount % 3 === 0) {
@@ -584,7 +597,7 @@ export default function BattleScreen() {
             level: level + 1,
             isFirstBattle: "false",
             battleCount: battleCount + 1,
-            generalBattleCount: generalBattleCount + 1
+            generalBattleCount: generalBattleCount
           },
         });
       } else {
@@ -901,6 +914,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     width: 120,
     alignItems: 'center',
+    marginBottom: 10,
   },
   bossIndicator: {
     top: '0',
@@ -913,17 +927,21 @@ const styles = StyleSheet.create({
     transform: [{ scale: 1.5 }]
   },
   upgradeContainer: {
-    position: 'relative',
-    bottom: '-20',
+    position: 'absolute',
+    //bottom: '-20',
+    top: '-10',
+    flexWrap: 'wrap',
     flexDirection: 'row',
     justifyContent: 'flex-start',
     alignItems: 'center',
+    maxWidth: 150,
     zIndex: 40,
   },
   upgradeIcon: {
     width: 15,
     height: 15,
     bottom: 0,
+    margin: 1
   },
   characterLevel: {
     position: 'relative',
@@ -959,14 +977,15 @@ const styles = StyleSheet.create({
   },
   enemyCard: {
     borderRadius: 8,
-    width: 120,
+    width: 100,
+    height: 100,
     alignItems: 'center',
   },
   bossImage: { 
     marginBottom: '-10',
     width: 100,
     height: 100,
-    transform: [{ scale: 4 }, { scaleX: -1 }]
+    transform: [{ scale: 3 }, { scaleX: -1 }]
   },
   enemyImage: { 
     marginBottom: '-10',

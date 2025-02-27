@@ -76,13 +76,15 @@ export default function CharacterSelectScreen() {
       const updatedTeam = [...team];
       updatedTeam.push(selectedCharacter);
 
+      setSelectedCharacter(null);
+
       router.push({
         pathname: 'screens/battle',
         params: {
           team: encodeURIComponent(JSON.stringify(updatedTeam)),
           level: level,
           battleCount: isFirstBattle ? 1 : (battleCount + 1),
-          generalBattleCount: isFirstBattle ? 1 : generalBattleCount,
+          generalBattleCount: isFirstBattle ? 1 : (generalBattleCount + 1),
           isFirstBattle: isFirstBattle,
           isBossBattle: false
         }

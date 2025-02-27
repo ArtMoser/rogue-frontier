@@ -56,7 +56,7 @@ export default function UpgradeSelectScreen() {
     let shuffledUpgrades = getRandomUpgrades();
     let characterUpgrade = characterEvolutionUpgrade();
 
-    console.log(characterUpgrade);
+    //console.log(characterUpgrade);
     if(characterUpgrade != null) {
       shuffledUpgrades[1] = characterUpgrade;
     }
@@ -101,13 +101,15 @@ export default function UpgradeSelectScreen() {
       }
     }
 
+    setSelectedUpgrade(null);
+
     router.push({
       pathname: 'screens/battle',
       params: {
         team: encodeURIComponent(JSON.stringify(teamUpdated)),
         level: level,
         battleCount: isFirstBattle ? 1 : Math.floor((level - 1) / 5) * 5 + 1,
-        generalBattleCount: isFirstBattle ? 1 : generalBattleCount,
+        generalBattleCount: isFirstBattle ? 1 : (generalBattleCount + 1),
         isBossBattle: false
       }
     });
