@@ -90,6 +90,13 @@ export default function CharacterSelectScreen() {
     }
   };
 
+  function getTargetType(character) {
+    if (!character.evolutions || character.evolutions.length <= 1) {
+        return "Multi target";
+    }
+    return "Single target";
+}
+
   return (
     <ImageBackground
       source={require('../assets/misc/base.jpg')}
@@ -113,6 +120,13 @@ export default function CharacterSelectScreen() {
               <Text style={styles.characterName}>{character.name}</Text>
               {/*<Text style={styles.characterType}>{character.type}</Text>*/}
               <View style={styles.statsContainer}>
+                <Text style={styles.statText}>
+                  { 
+                    getTargetType(character)
+                  }
+                </Text>
+                
+                
                 <Text style={styles.statText}>HP: {character.hp}</Text>
                 <Text style={styles.statText}>ATK: {character.attack}</Text>
                 <Text style={styles.statText}>DEF: {character.defense}</Text>

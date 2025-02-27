@@ -222,7 +222,7 @@ export default function BattleScreen() {
       let atkDefScaleFactor = 1 + (level * 0.2);
 
       if(isBossBattle) {
-        hpScaleFactor = hpScaleFactor + (level * 3);
+        hpScaleFactor = hpScaleFactor + level;
       }
 
       return {
@@ -239,14 +239,36 @@ export default function BattleScreen() {
 
     if(isBossBattle) {
       enemyCount = 1;
+      
+      if(generalBattleCount > 20 && generalBattleCount < 30) { 
+        enemyCount = 2;
+      } else if(generalBattleCount > 30 && generalBattleCount < 40) {
+        enemyCount = 3;
+      }
+
       enemyScaleLevel = level + 20;
     }
 
-    const randomEnemies = getRandomEnemies(enemiesTierOne, enemyCount)
+    let enemiesFiltered = [];
+
+    if(level <= 9) {
+      enemiesFiltered = enemiesTierOne.filter(enemy => enemy.difficulty == "Easy");
+    } else if(level <= 15) {
+      enemiesFiltered = enemiesTierOne.filter(enemy => enemy.difficulty == "Normal");
+    } else {
+      enemiesFiltered = enemiesTierOne;
+    }
+
+    const randomEnemies = getRandomEnemies(enemiesFiltered, enemyCount)
       .map(enemy => (
         {...scaleEnemyStats(enemy, enemyScaleLevel, isBossBattle),
           isBoss: isBossBattle
         }));
+
+    for(let enemy of randomEnemies) {
+      let totalAttributes = Math.floor(((enemy.hp + enemy.attack + enemy.defense) * 20) / 550);
+      enemy.rarity = totalAttributes;
+    }
 
     setEnemies(randomEnemies);
 
@@ -335,19 +357,49 @@ export default function BattleScreen() {
       );
   
       setEnemies(prevEnemies => {
-          const updatedEnemies = [...prevEnemies];
-          const attacker = party[selectedCharacter];
-          const defender = updatedEnemies[selectedTarget];
-          const damage = Math.max(1, attacker.attack - defender.defense);
-  
-          updatedEnemies[selectedTarget] = {
-              ...defender,
-              hp: Math.max(0, defender.hp - damage),
-          };
-  
-          setBattleLog(prev => [...prev, `${attacker.name} deals ${damage} damage to ${defender.name}!`]);
-          return updatedEnemies;
-      });
+        const updatedEnemies = [...prevEnemies];
+        const attacker = party[selectedCharacter];
+        const defender = updatedEnemies[selectedTarget];
+        const damage = Math.max(1, attacker.attack - defender.defense);
+    
+        // Verifica se o personagem tem 1 evolução ou menos
+        const hasEvolutions = attacker.evolutions && attacker.evolutions.length > 0;
+        const evolutionCount = hasEvolutions ? attacker.evolutions.length : 0;
+    
+        if (evolutionCount <= 1) {
+            // Dano dividido entre todos os inimigos
+            const splitDamage = Math.floor(damage / updatedEnemies.length);
+            let remainingDamage = damage;
+    
+            updatedEnemies.forEach((enemy, index) => {
+                updatedEnemies[index] = {
+                    ...enemy,
+                    hp: Math.max(0, enemy.hp - splitDamage),
+                };
+                remainingDamage -= splitDamage;
+            });
+    
+            // Aplica o dano restante ao inimigo selecionado
+            if (remainingDamage > 0) {
+                updatedEnemies[selectedTarget] = {
+                    ...updatedEnemies[selectedTarget],
+                    hp: Math.max(0, updatedEnemies[selectedTarget].hp - remainingDamage),
+                };
+            }
+    
+            setBattleLog(prev => [...prev, `${attacker.name} deals ${splitDamage} damage to all enemies!`]);
+        } else {
+            // Dano completo no inimigo selecionado
+            updatedEnemies[selectedTarget] = {
+                ...defender,
+                hp: Math.max(0, defender.hp - damage),
+            };
+    
+            setBattleLog(prev => [...prev, `${attacker.name} deals ${damage} damage to ${defender.name}!`]);
+        }
+    
+        return updatedEnemies;
+    });
   
       setSelectedCharacter(null);
       setSelectedTarget(null);
@@ -576,7 +628,7 @@ export default function BattleScreen() {
                       ? require('../assets/battle/Dungeon_battle_8340060.png') // Nível 36-40
                       : require('../assets/battle/fire-arena.png')}
       style={styles.backgroundImage}
-      resizeMode="cover"
+      resizeMode="stretch"
     >
       <View style={styles.container}>
         <ImageBackground
@@ -637,6 +689,35 @@ export default function BattleScreen() {
                 <Text style={styles.enemyName}>{enemy.name}</Text>
                 <HealthBar hp={enemy.hp} maxHp={enemy.maxHp} isEnemy={true} />
               </Pressable>
+              <View style={styles.characterLevel}>
+                {Array.from({ length: Math.min(enemy.rarity, 10) }, (_, i) => {
+                let imageSource;
+
+                switch (enemy.difficulty) {
+                  case 'Easy':
+                    imageSource = require('../assets/misc/star_red_enemy.png');
+                    break;
+                  case 'Normal':
+                    imageSource = require('../assets/misc/star_enemy_purple.png');
+                    break;
+                  case 'Hard':
+                    imageSource = require('../assets/misc/star_enemy.png');
+                    break;
+                  default:
+                    imageSource = require('../assets/misc/star_red_enemy.png');
+                    break;
+                }
+
+                return (
+                  <Image
+                    key={i}
+                    source={imageSource}
+                    style={styles.star}
+                  />
+                );
+              })}
+              </View>
+                
               {/*<>
                 <Text style={styles.characterHp}>{enemy.hp} / {enemy.maxHp}</Text>
                 <Text style={styles.characterHp}>Attack {enemy.attack}</Text>
@@ -797,16 +878,17 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
+    alignItems: 'flex-end',
     paddingVertical: 20,
+    marginBottom: '15%',
     width: '100%'
   },
   partyContainer: {
     flexDirection: 'column',
     flexWrap: 'wrap',
-    justifyContent: 'center',
-    alignItems: 'center',
-    gap: 5,
+    justifyContent: 'space-around',
+    alignItems: 'flex-end',
+    gap: 0,
   },
   enemyContainer: {
     flexDirection: 'column',
@@ -857,7 +939,6 @@ const styles = StyleSheet.create({
   },
   attackIcon: {
     position: 'absolute',
-    //left: '-10',
     right: 0,
     bottom: 0,
     width: 20,
