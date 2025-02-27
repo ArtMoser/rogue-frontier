@@ -254,7 +254,7 @@ export default function BattleScreen() {
     if(level <= 9) {
       enemiesFiltered = enemiesTierOne.filter(enemy => enemy.difficulty == "Easy");
     } else if(level <= 15) {
-      enemiesFiltered = enemiesTierOne.filter(enemy => enemy.difficulty == "Normal");
+      enemiesFiltered = enemiesTierOne.filter(enemy => enemy.difficulty == "Normal" || enemy.difficulty == "Easy");
     } else {
       enemiesFiltered = enemiesTierOne;
     }
