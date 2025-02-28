@@ -163,7 +163,7 @@ export default function CharacterSelectScreen() {
               style={styles.okButton}
               resizeMode="cover"
             >
-              <Text style={styles.confirmButtonText}>Begin Battle</Text>
+             
             </ImageBackground>
           </Pressable>
         )}

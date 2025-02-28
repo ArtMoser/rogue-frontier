@@ -43,6 +43,7 @@ export default function BattleScreen() {
   const [battleLog, setBattleLog] = useState<string[]>([]);
   const [turnMessage, setTurnMessage] = useState('');
   const [turnNumber, setTurnNumber] = useState<number | null>(1);
+  const [characterHistory, setCharacterHistory] = useState<Character[]>([]);
 
   const [swingAnimation] = useState(new Animated.Value(0));
   const [characterMoveAnimations, setCharacterMoveAnimations] = useState<Animated.Value[]>([]);
@@ -437,7 +438,16 @@ export default function BattleScreen() {
   const handleDefeat = () => {
     stopSounds();
     startSlideAnimation(() => {
-      router.push('/');
+      router.push({
+        pathname: 'screens/end-game',
+        params: { 
+          characterHistory: encodeURIComponent(JSON.stringify(characterHistory)),
+          level: level,
+          generalBattleCount: generalBattleCount,
+          isWin: false
+        },
+      });
+      //router.push('/');
     });
   };
 
@@ -598,9 +608,15 @@ export default function BattleScreen() {
         };
   
         setBattleLog(prev => [...prev, `${enemy.name} deals ${damage} damage to ${defender.name}!`]);
-  
+
         shakeCharacter(defenderIndex);
-  
+
+        if(updatedParty[defenderIndex].hp <= 0) {
+          let defeatPartyMember = {... updatedParty[defenderIndex]};
+          defeatPartyMember.isDefeated = true;
+          setCharacterHistory(prev => [...prev, defeatPartyMember]);
+        }
+
         livingParty = updatedParty.filter(character => character.hp > 0);
       }
     }
@@ -635,7 +651,31 @@ export default function BattleScreen() {
       }
 
       team = team.filter(character => character.hp > 0);
-      if(isBossBattle) {
+
+      if(generalBattleCount == 54) {
+        stopSounds();
+        let updatedHistory = team.map(member => ({
+          ...member,
+          isDefeated: false
+        }));
+
+        let charactersUsed = [...characterHistory];
+
+        for(let teamMember of updatedHistory) {
+          charactersUsed.push(teamMember);
+        }
+
+        router.push({
+          pathname: 'screens/end-game',
+          params: { 
+            characterHistory: encodeURIComponent(JSON.stringify(charactersUsed)),
+            level: level,
+            generalBattleCount: generalBattleCount,
+            isWin: true
+          },
+        });
+
+      } else if(isBossBattle) {
         const getRandomUpgrades = () => {
           const shuffled = [...upgrades].sort(() => 0.5 - Math.random());
           return shuffled.slice(0, 3);
@@ -671,9 +711,6 @@ export default function BattleScreen() {
           },
         });
       } else if((generalBattleCount + 1) % 10 === 1) {
-        /*for(let teamMember of team) {
-          teamMember.hp = teamMember.maxHp;
-        }*/
         for(let teamMember of team) {
           teamMember.hp = teamMember.hp + (teamMember.maxHp * 0.2);
         }
@@ -688,9 +725,6 @@ export default function BattleScreen() {
           },
         });
       } else if (generalBattleCount % 5 === 0 && team.length < 5) {
-        /*for(let teamMember of team) {
-          teamMember.hp += (teamMember.maxHp * 0.1);
-        }*/
         router.push({
           pathname: 'screens/character-select',
           params: { 
@@ -1172,19 +1206,7 @@ const styles = StyleSheet.create({
     left: '5%'
   },
   turnMessageContainer: {
-    top: 70,
-    /*backgroundColor: 'rgba(0, 0, 0, 0.8)',
-    padding: 15,
-    borderRadius: 10,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderWidth: 2,
-    borderColor: '#FFD700',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.8,
-    shadowRadius: 4,
-    elevation: 5,*/
+    top: 70
   },
   turnMessageText: {
     color: '#ffffff',
