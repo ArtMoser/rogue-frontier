@@ -13,6 +13,7 @@ export const characters = [
     attackImage: require('../assets/characters/warrior-attacking.gif'),
     currentEvolution: -1,
     upgrades: [],
+    sound: 'fire',
     evolutions: [
       {
         name: "Burning Warrior",
@@ -74,7 +75,8 @@ export const characters = [
         image: require('../assets/characters/ignis-halcyon-warrior.gif'),
         attackImage: require('../assets/characters/ignis-halcyon-warrior-attacking.gif'),
       }
-    ]
+    ],
+    attackType: "singleTarget"
   },
   {
     id: 2,
@@ -90,6 +92,7 @@ export const characters = [
     attackImage: require('../assets/characters/mifune.gif'),
     upgrades: [],
     currentEvolution: -1,
+    sound: 'dark',
     evolutions: [
       {
         name: "Samurai Mifune",
@@ -140,8 +143,10 @@ export const characters = [
         defense: 40,
         image: require('../assets/characters/ultimate-mifune.gif'),
         attackImage: require('../assets/characters/ultimate-mifune.gif'),
+        attackType: "multiTarget"
       }
-    ]
+    ],
+    attackType: "singleTarget"
   },
   {
     id: 3,
@@ -157,18 +162,20 @@ export const characters = [
     attackImage: require('../assets/characters/ardent-monk-rengaku-attacking.gif'),
     upgrades: [],
     currentEvolution: -1,
+    sound: 'fire',
     evolutions: [
       {
         name: "Dancing Flame Rengaku",
-        hp: 100,
+        hp: 130,
         maxHp: 100,
         type: "class",
-        attack: 50,
+        attack: 130,
         defense: 40,
         image: require('../assets/characters/dancing-flame-rengaku.gif'),
         attackImage: require('../assets/characters/dancing-flame-rengaku-attacking.gif'),
       }
-    ]
+    ],
+    attackType: "multiTarget"
   },
   {
     id: 4,
@@ -184,6 +191,7 @@ export const characters = [
     attackImage: require('../assets/characters/drake-armor-klaus-attacking.gif'),
     upgrades: [],
     currentEvolution: -1,
+    sound: 'fire',
     evolutions: [
       {
         name: "Dragon Shell Klaus",
@@ -197,15 +205,16 @@ export const characters = [
       },
       {
         name: "Wyvern Wings Klaus",
-        hp: 90,
-        maxHp: 90,
+        hp: 190,
+        maxHp: 190,
         type: "class",
-        attack: 35,
+        attack: 135,
         defense: 30,
         image: require('../assets/characters/wyvern-wings-klaus.gif'),
         attackImage: require('../assets/characters/wyvern-wings-klaus-attacking.gif'),
       }
-    ]
+    ],
+    attackType: "multiTarget"
   },
   {
     id: 5,
@@ -221,6 +230,7 @@ export const characters = [
     attackImage: require('../assets/characters/iron-magress-attacking.gif'),
     upgrades: [],
     currentEvolution: -1,
+    sound: 'dark',
     evolutions: [
       {
         name: "Death Magress",
@@ -237,34 +247,37 @@ export const characters = [
         hp: 100,
         maxHp: 100,
         type: "class",
-        attack: 45,
+        attack: 145,
         defense: 40,
         image: require('../assets/characters/umbra-halcyon-magress.gif'),
         attackImage: require('../assets/characters/umbra-halcyon-magress-attacking.gif'),
       }
-    ]
+    ],
+    attackType: "multiTarget"
   },
-  {
+  /*{
     id: 6,
     name: "Hallowed Dancer",
     hp: 200,
     maxHp: 200,
     type: "class",
-    attack: 50,
-    defense: 40,
+    attack: 150,
+    defense: 140,
     attacked: false,
     isAttacking: false,
+    sound: 'dark',
     image: require('../assets/characters/hallowed-dancer.gif'),
     attackImage: require('../assets/characters/hallowed-dancer-attacking.gif'),
-    upgrades: []
-  },
+    upgrades: [],
+    attackType: "multiTarget"
+  },*/
   {
     id: 7,
     name: "Lasswell",
     hp: 180,
     maxHp: 180,
     type: "class",
-    attack: 40,
+    attack: 140,
     defense: 30,
     attacked: false,
     isAttacking: false,
@@ -272,18 +285,20 @@ export const characters = [
     attackImage: require('../assets/characters/lasswell-attacking.gif'),
     upgrades: [],
     currentEvolution: -1,
+    sound: 'water',
     evolutions: [
       {
         name: "Lasswell",
-        hp: 100,
+        hp: 120,
         maxHp: 100,
         type: "class",
-        attack: 50,
+        attack: 150,
         defense: 40,
         image: require('../assets/characters/lasswell-2.gif'),
         attackImage: require('../assets/characters/lasswell-2-attacking.gif'),
       }
-    ]
+    ],
+    attackType: "multiTarget"
   },
   {
     id: 8,
@@ -299,18 +314,20 @@ export const characters = [
     attackImage: require('../assets/characters/baelfyr-attacking.gif'),
     upgrades: [],
     currentEvolution: -1,
+    sound: 'fire',
     evolutions: [
       {
         name: "Blacksteel Baelfyr",
         hp: 100,
         maxHp: 100,
         type: "class",
-        attack: 50,
+        attack: 120,
         defense: 45,
         image: require('../assets/characters/blacksteel-baelfyr.gif'),
         attackImage: require('../assets/characters/blacksteel-baelfyr-attacking.gif'),
       }
-    ]
+    ],
+    attackType: "multiTarget"
   },
   {
     id: 9,
@@ -326,18 +343,20 @@ export const characters = [
     attackImage: require('../assets/characters/scarlet-archon-blaze-attacking.gif'),
     upgrades: [],
     currentEvolution: -1,
+    sound: 'saint',
     evolutions: [
       {
         name: "Immortal Firewing Blaze",
         hp: 90,
         maxHp: 90,
         type: "class",
-        attack: 40,
+        attack: 110,
         defense: 35,
         image: require('../assets/characters/immortal-firewing-blaze.gif'),
         attackImage: require('../assets/characters/immortal-firewing-blaze-attacking.gif'),
       }
-    ]
+    ],
+    attackType: "multiTarget"
   },
   {
     id: 10,
@@ -353,18 +372,20 @@ export const characters = [
     attackImage: require('../assets/characters/artificer-ceulfan-attacking.gif'),
     upgrades: [],
     currentEvolution: -1,
+    sound: 'saint',
     evolutions: [
       {
         name: "Grandmagos Ceulfan",
         hp: 100,
         maxHp: 100,
         type: "class",
-        attack: 50,
+        attack: 130,
         defense: 40,
         image: require('../assets/characters/grandmagos-ceulfan.gif'),
         attackImage: require('../assets/characters/grandmagos-ceulfan-attacking.gif'),
       }
-    ]
+    ],
+    attackType: "multiTarget"
   },
   {
     id: 11,
@@ -380,6 +401,7 @@ export const characters = [
     attackImage: require('../assets/characters/Beryl-Edge-Quaid-attacking.gif'),
     upgrades: [],
     currentEvolution: -1,
+    sound: 'saint',
     evolutions: [
       {
         name: "Valiant Edge Quaid",
@@ -406,12 +428,14 @@ export const characters = [
         hp: 100,
         maxHp: 100,
         type: "class",
-        attack: 50,
+        attack: 150,
         defense: 45,
         image: require('../assets/characters/Heroic-Leader-Quaid.gif'),
         attackImage: require('../assets/characters/Heroic-Leader-Quaid-attacking.gif'),
+        attackType: "multiTarget"
       }
-    ]
+    ],
+    attackType: "singleTarget"
   },
   {
     id: 12,
@@ -427,6 +451,7 @@ export const characters = [
     attackImage: require('../assets/characters/Warrior-Eze-attacking.gif'),
     upgrades: [],
     currentEvolution: -1,
+    sound: 'thunder',
     evolutions: [
       {
         name: "Thunder Eze",
@@ -483,12 +508,14 @@ export const characters = [
         hp: 100,
         maxHp: 100,
         type: "class",
-        attack: 65,
+        attack: 125,
         defense: 60,
         image: require('../assets/characters/Fulgur-Halcyon-Eze.gif'),
         attackImage: require('../assets/characters/Fulgur-Halcyon-Eze-attacking.gif'),
+        attackType: "multiTarget"
       }
-    ]
+    ],
+    attackType: "singleTarget"
   },
   {
     id: 13,
@@ -504,6 +531,7 @@ export const characters = [
     attackImage: require('../assets/characters/Grahdens-attacking.gif'),
     upgrades: [],
     currentEvolution: -1,
+    sound: 'saint',
     evolutions: [
       {
         name: "Twilight God Grahdens",
@@ -520,12 +548,13 @@ export const characters = [
         hp: 100,
         maxHp: 100,
         type: "class",
-        attack: 60,
+        attack: 160,
         defense: 55,
         image: require('../assets/characters/Effulgent-Dusk-Grahdens.gif'),
         attackImage: require('../assets/characters/Effulgent-Dusk-Grahdens-attacking.gif'),
       }
-    ]
+    ],
+    attackType: "multiTarget"
   },
   {
     id: 14,
@@ -533,13 +562,15 @@ export const characters = [
     hp: 200,
     maxHp: 200,
     type: "class",
-    attack: 60,
+    attack: 160,
     defense: 50,
     attacked: false,
     isAttacking: false,
     image: require('../assets/characters/Baiken.gif'),
     attackImage: require('../assets/characters/Baiken-attacking.gif'),
-    upgrades: []
+    sound: 'dark',
+    upgrades: [],
+    attackType: "multiTarget"
   },
   {
     id: 15,
@@ -555,6 +586,7 @@ export const characters = [
     attackImage: require('../assets/characters/Great-Thief-Zelnite-attacking.gif'),
     upgrades: [],
     currentEvolution: -1,
+    sound: 'saint',
     evolutions: [
       {
         name: "Noble Thief Zelnite",
@@ -591,12 +623,14 @@ export const characters = [
         hp: 100,
         maxHp: 100,
         type: "class",
-        attack: 55,
+        attack: 155,
         defense: 50,
         image: require('../assets/characters/Chivalrous-Thief-Zelnite.gif'),
         attackImage: require('../assets/characters/Chivalrous-Thief-Zelnite-attacking.gif'),
+        attackType: "multiTarget"
       }
-    ]
+    ],
+    attackType: "singleTarget"
   },
   {
     id: 16,
@@ -612,6 +646,7 @@ export const characters = [
     attackImage: require('../assets/characters/Flame-Demon-Adel-attacking.gif'),
     upgrades: [],
     currentEvolution: -1,
+    sound: 'fire',
     evolutions: [
       {
         name: "Ember Hellion Adel",
@@ -638,12 +673,14 @@ export const characters = [
         hp: 100,
         maxHp: 100,
         type: "class",
-        attack: 45,
+        attack: 150,
         defense: 40,
         image: require('../assets/characters/Blazing-Emperor-Adel.gif'),
         attackImage: require('../assets/characters/Blazing-Emperor-Adel-attacking.gif'),
+        attackType: "multiTarget"
       }
-    ]
+    ],
+    attackType: "singleTarget"
   },
   {
     id: 17,
@@ -659,6 +696,7 @@ export const characters = [
     attackImage: require('../assets/characters/Strong-Flame-Griff-attacking.gif'),
     upgrades: [],
     currentEvolution: -1,
+    sound: 'fire',
     evolutions: [
       {
         name: "Mighty Blaze Griff",
@@ -685,12 +723,13 @@ export const characters = [
         hp: 100,
         maxHp: 100,
         type: "class",
-        attack: 40,
+        attack: 140,
         defense: 35,
         image: require('../assets/characters/Furious-General-Griff.gif'),
         attackImage: require('../assets/characters/Furious-General-Griff-attacking.gif'),
       }
-    ]
+    ],
+    attackType: "singleTarget"
   },
   {
     id: 18,
@@ -706,18 +745,20 @@ export const characters = [
     attackImage: require('../assets/characters/Wicked-Warrior-Shura-attacking.gif'),
     upgrades: [],
     currentEvolution: -1,
+    sound: 'fire',
     evolutions: [
       {
         name: "Heavenly Rift Shura",
         hp: 100,
         maxHp: 100,
         type: "class",
-        attack: 45,
+        attack: 145,
         defense: 40,
         image: require('../assets/characters/Heavenly-Rift-Shura.gif'),
         attackImage: require('../assets/characters/Heavenly-Rift-Shura-attacking.gif'),
       }
-    ]
+    ],
+    attackType: "multiTarget"
   },
   {
     id: 19,
@@ -733,6 +774,7 @@ export const characters = [
     attackImage: require('../assets/characters/Loch-attacking.gif'),
     upgrades: [],
     currentEvolution: -1,
+    sound: 'shot',
     evolutions: [
       {
         name: "Shock Bow Loch",
@@ -769,12 +811,14 @@ export const characters = [
         hp: 100,
         maxHp: 100,
         type: "class",
-        attack: 55,
+        attack: 155,
         defense: 50,
         image: require('../assets/characters/Celestial-Archer-Loch.gif'),
         attackImage: require('../assets/characters/Celestial-Archer-Loch.gif'),
+        attackType: "multiTarget"
       }
-    ]
+    ],
+    attackType: "singleTarget"
   },
   {
     id: 20,
@@ -790,6 +834,7 @@ export const characters = [
     attackImage: require('../assets/characters/Xenon-attacking.gif'),
     upgrades: [],
     currentEvolution: -1,
+    sound: 'water',
     evolutions: [
       {
         name: "Royal Guard Xenon",
@@ -806,12 +851,13 @@ export const characters = [
         hp: 100,
         maxHp: 100,
         type: "class",
-        attack: 40,
+        attack: 140,
         defense: 35,
         image: require('../assets/characters/Sir-Sancus-Xenon.gif'),
         attackImage: require('../assets/characters/Sir-Sancus-Xenon.gif'),
       }
-    ]
+    ],
+    attackType: "multiTarget"
   },
   {
     id: 21,
@@ -827,18 +873,20 @@ export const characters = [
     attackImage: require('../assets/characters/Crimson-Fist-Glenn-attacking.gif'),
     upgrades: [],
     currentEvolution: -1,
+    sound: 'fire',
     evolutions: [
       {
         name: "Scorching Fang Glenn",
-        hp: 90,
-        maxHp: 90,
+        hp: 150,
+        maxHp: 150,
         type: "class",
-        attack: 35,
-        defense: 30,
+        attack: 190,
+        defense: 100,
         image: require('../assets/characters/Scorching-Fang-Glenn.gif'),
         attackImage: require('../assets/characters/Scorching-Fang-Glenn-attacking.gif'),
       }
-    ]
+    ],
+    attackType: "multiTarget"
   },
   {
     id: 22,
@@ -854,6 +902,7 @@ export const characters = [
     attackImage: require('../assets/characters/Zeln-attacking.gif'),
     upgrades: [],
     currentEvolution: -1,
+    sound: 'fire',
     evolutions: [
       {
         name: "Spark Kick Zeln",
@@ -890,11 +939,13 @@ export const characters = [
         hp: 100,
         maxHp: 100,
         type: "class",
-        attack: 55,
+        attack: 155,
         defense: 50,
         image: require('../assets/characters/Storm-Roundhouse-Zeln.gif'),
         attackImage: require('../assets/characters/Storm-Roundhouse-Zeln-attacking.gif'),
+        attackType: "multiTarget"
       }
-    ]
-  },
+    ],
+    attackType: "singleTarget"
+  }
 ];

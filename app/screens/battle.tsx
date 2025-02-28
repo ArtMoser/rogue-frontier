@@ -2,7 +2,7 @@ import { View, Text, StyleSheet, Pressable, Animated, ImageBackground, Dimension
 import { Image } from 'expo-image';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useState, useEffect, useRef } from 'react';
-import { ActivityIndicator } from 'react-native';
+import { Audio } from 'expo-av';
 
 import { upgrades } from '../data/upgrades';
 import { enemiesTierOne } from '../data/enemies';
@@ -52,7 +52,85 @@ export default function BattleScreen() {
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const attackTimeouts = useRef<Record<number, NodeJS.Timeout>>({});
 
+  const [sound, setSound] = useState();
+  const [effectSound, setEffectSound] = useState(null);
+
   const slideAnim = useRef(new Animated.Value(0)).current;
+
+  const soundRef = useRef(null);
+  const isPlayingRef = useRef(false);
+
+  async function playSoundForLevel() {
+    if (isPlayingRef.current) return; // Impede tocar outro som se já estiver tocando
+
+    isPlayingRef.current = true; // Marca que um som está sendo iniciado
+
+    // Para e descarrega o som anterior (se houver)
+    if (soundRef.current) {
+      try {
+        await soundRef.current.stopAsync();
+        await soundRef.current.unloadAsync();
+      } catch (error) {
+        console.log('Erro ao parar/descarregar o som:', error);
+      }
+      soundRef.current = null;
+    }
+
+    let soundFile;
+    if (level <= 5) {
+      soundFile = require('../assets/sounds/ToD2_B1.mp3');
+    } else if (level <= 10) {
+      soundFile = require('../assets/sounds/ToV_B2.mp3');
+    } else if (level <= 15) {
+      soundFile = require('../assets/sounds/ToV_B1.mp3');
+    } else if (level <= 20) {
+      soundFile = require('../assets/sounds/ToX_B1.mp3');
+    } else if (level <= 25) {
+      soundFile = require('../assets/sounds/ToD_B1.mp3');
+    } else if (level <= 30) {
+      soundFile = require('../assets/sounds/TerraBattle_dungeon.mp3');
+    } else if (level <= 35) {
+      soundFile = require('../assets/sounds/bf48_raid_batlle.mp3');
+    } else if (level <= 40) {
+      soundFile = require('../assets/sounds/bf051_boss02_vari.mp3');
+    } else {
+      soundFile = require('../assets/sounds/TerraBattle_dungeon.mp3');
+    }
+
+    if (isBossBattle) {
+      soundFile = require('../assets/sounds/bf006_btl_boss.mp3');
+    }
+
+    try {
+      const { sound } = await Audio.Sound.createAsync(soundFile, { isLooping: true });
+      soundRef.current = sound;
+
+      await sound.setVolumeAsync(0.05);
+      await sound.playAsync();
+
+      sound.setOnPlaybackStatusUpdate((status) => {
+        if (!status.isLoaded) {
+          isPlayingRef.current = false; // Libera para um novo áudio se necessário
+        }
+      });
+    } catch (error) {
+      console.error('Erro ao carregar e tocar o som:', error);
+      isPlayingRef.current = false; // Libera caso dê erro
+    }
+  }
+
+  useEffect(() => {
+    playSoundForLevel();
+
+    return () => {
+      // Para e descarrega quando o componente for desmontado
+      if (soundRef.current) {
+        soundRef.current.stopAsync();
+        soundRef.current.unloadAsync();
+      }
+      isPlayingRef.current = false; // Libera para um novo áudio quando desmontado
+    };
+  }, [level, isBossBattle]);
 
   const startSlideAnimation = (callback: () => void) => {
     Animated.timing(slideAnim, {
@@ -220,17 +298,17 @@ export default function BattleScreen() {
     const scaleEnemyStats = (enemy, level, isBossBattle) => {
       let multiplier = 1;
       if(level <= 9) {
-        multiplier = 1.5;
+        multiplier = 1;
       } else if(level <= 11) {
         multiplier = 2;
       } else {
-        multiplier = 3;
+        multiplier = 2.5;
       }
 
       let hpScaleFactor = multiplier + (level * 0.2);
       let atkDefScaleFactor = multiplier + (level * 0.2);
 
-      if(isBossBattle && level > 10) {
+      if(isBossBattle && level > 15) {
         hpScaleFactor = hpScaleFactor + level;
       }
 
@@ -291,6 +369,7 @@ export default function BattleScreen() {
     setSelectedCharacter(null);
     setSelectedTarget(null);
     setBattleLog([]);
+    playSoundForLevel();
   }, [battleCount, level]);
 
   useEffect(() => {
@@ -348,14 +427,74 @@ export default function BattleScreen() {
     }
   }, [party]);
 
+  async function stopSounds() {
+    if (sound) {
+      await sound.stopAsync();
+      await sound.unloadAsync();
+    }
+  }
+
   const handleDefeat = () => {
+    stopSounds();
     startSlideAnimation(() => {
       router.push('/');
     });
   };
 
+  const playSoundEffect = async (character) => {
+    if (effectSound) {
+      await effectSound.stopAsync();
+      await effectSound.unloadAsync();
+    }
+    let soundFile;
+    
+    if(character.sound == 'fire') {
+      soundFile = require('../assets/sounds/damage/bf201_se_slash1.mp3');
+      if(character.currentEvolution >= 0) {
+        soundFile = require('../assets/sounds/damage/bf207_se_fire2.mp3');
+      }
+    } else if(character.sound == 'water') {
+      soundFile = require('../assets/sounds/damage/bf201_se_slash1.mp3');
+      if(character.currentEvolution >= 0) {
+        soundFile = require('../assets/sounds/damage/bf210_se_water2.mp3');
+      }
+      if(character.currentEvolution >= 1) {
+        soundFile = require('../assets/sounds/damage/bf211_se_water3.mp3');
+      }
+    } else if(character.sound == 'dark') {
+      soundFile = require('../assets/sounds/damage/bf201_se_slash1.mp3');
+      if(character.currentEvolution >= 0) {
+        soundFile = require('../assets/sounds/damage/bf222_se_dark2.mp3');
+      }
+      if(character.currentEvolution >= 1) {
+        soundFile = require('../assets/sounds/damage/bf223_se_dark3.mp3');
+      }
+    } else if(character.sound == 'thunder') {
+      soundFile = require('../assets/sounds/damage/bf201_se_slash1.mp3');
+      if(character.currentEvolution >= 0) {
+        soundFile = require('../assets/sounds/damage/bf216_se_thunder2.mp3');
+      }
+      if(character.currentEvolution >= 1) {
+        soundFile = require('../assets/sounds/damage/bf217_se_thunder3.mp3');
+      }
+    } else if(character.sound == 'shot') {
+      soundFile = require('../assets/sounds/damage/bf201_se_slash1.mp3');
+      if(character.currentEvolution >= 0) {
+        soundFile = require('../assets/sounds/damage/bf204_se_shot2.mp3');
+      }
+    } else {
+      soundFile = require('../assets/sounds/damage/bf201_se_slash1.mp3');
+    }
+
+    const { sound: newSound } = await Audio.Sound.createAsync(soundFile);
+    setEffectSound(newSound);
+    await newSound.setVolumeAsync(0.1);
+    await newSound.playAsync();
+  }
+
   const handleAttack = () => {
       if (selectedCharacter === null || selectedTarget === null) return;
+      playSoundEffect(party[selectedCharacter]);
   
       performAttackAnimation(selectedCharacter);
       shakeEnemy(selectedTarget);
@@ -372,30 +511,27 @@ export default function BattleScreen() {
         const defender = updatedEnemies[selectedTarget];
         const damage = Math.max(1, attacker.attack - defender.defense);
     
-        // Verifica se o personagem tem 1 evolução ou menos
-        const hasEvolutions = attacker.evolutions && attacker.evolutions.length > 0;
-        const evolutionCount = hasEvolutions ? attacker.evolutions.length : 0;
-    
-        if (evolutionCount <= 1) {
+        if (attacker.attackType === 'multiTarget') {
             // Dano dividido entre todos os inimigos
-            const splitDamage = Math.floor(damage / updatedEnemies.length);
-            let remainingDamage = damage;
+            //const splitDamage = Math.floor(damage / updatedEnemies.length);
+            const splitDamage = damage - (damage * 0.1);// Math.floor(damage / updatedEnemies.length);
+            //let remainingDamage = damage;
     
             updatedEnemies.forEach((enemy, index) => {
                 updatedEnemies[index] = {
                     ...enemy,
                     hp: Math.max(0, enemy.hp - splitDamage),
                 };
-                remainingDamage -= splitDamage;
+                //remainingDamage -= splitDamage;
             });
     
             // Aplica o dano restante ao inimigo selecionado
-            if (remainingDamage > 0) {
+            /*if (remainingDamage > 0) {
                 updatedEnemies[selectedTarget] = {
                     ...updatedEnemies[selectedTarget],
                     hp: Math.max(0, updatedEnemies[selectedTarget].hp - remainingDamage),
                 };
-            }
+            }*/
     
             setBattleLog(prev => [...prev, `${attacker.name} deals ${splitDamage} damage to all enemies!`]);
         } else {
@@ -430,37 +566,15 @@ export default function BattleScreen() {
 
       setTurnNumber(turnNumber + 1);
   };
-  
-  /*const checkEnemyTurn = () => {
-      setParty(prevParty => {
-        const allCharactersAttacked = prevParty
-        .filter(member => member.hp > 0)
-        .every(member => member.attacked);
-
-          if (allCharactersAttacked) {
-              setTimeout(enemyTurn, 1000);
-              setCurrentTurn('enemy');
-              return prevParty.map(member => ({ ...member, attacked: false }));
-          }
-  
-          return prevParty;
-      });
-  
-      setEnemies(prevEnemies => {
-          /*if (prevEnemies.every(enemy => enemy.hp <= 0)) {
-              handleVictory();
-          }
-          return prevEnemies;
-      });
-      //setEnemies(prevEnemies);
-  };*/
 
   const enemyTurn = () => {
     let livingEnemies = enemies.filter(enemy => enemy.hp > 0);
     let livingParty = party.filter(character => character.hp > 0);
   
     if (livingEnemies.length === 0 || livingParty.length === 0) return;
-  
+    
+    playSoundEffect({ sound: 'fire', currentEvolution: -1 });
+
     let updatedParty = [...party];
   
     performEnemyAttackAnimation();
@@ -508,7 +622,8 @@ export default function BattleScreen() {
   
 
   const handleVictory = () => {
-      console.log('###### generalBattleCount => ' + generalBattleCount);
+    console.log('###### generalBattleCount:', generalBattleCount);
+    setSound(null);
     startSlideAnimation(() => {
 
       for(let teamMember of team) {
@@ -555,7 +670,7 @@ export default function BattleScreen() {
             generalBattleCount: generalBattleCount
           },
         });
-      } else if(generalBattleCount % 10 === 0) {
+      } else if((generalBattleCount + 1) % 10 === 1) {
         /*for(let teamMember of team) {
           teamMember.hp = teamMember.maxHp;
         }*/
@@ -572,7 +687,7 @@ export default function BattleScreen() {
             isBossBattle: true
           },
         });
-      } else if (generalBattleCount % 5 === 0 && team.length < 4) {
+      } else if (generalBattleCount % 5 === 0 && team.length < 5) {
         /*for(let teamMember of team) {
           teamMember.hp += (teamMember.maxHp * 0.1);
         }*/

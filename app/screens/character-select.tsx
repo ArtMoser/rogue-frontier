@@ -4,6 +4,7 @@ import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
 import { characters } from '../data/characters';
 import { useFocusEffect } from '@react-navigation/native';
+import { Audio } from 'expo-av';
 
 type Character = {
   id: number;
@@ -26,10 +27,26 @@ export default function CharacterSelectScreen() {
 
   const [selectedCharacter, setSelectedCharacter] = useState<Character | null>(null);
   const [availableCharacters, setAvailableCharacters] = useState<Character[]>(characters);
+  const [sound, setSound] = useState();
 
   const handleCharacterSelect = (character: Character) => {
     setSelectedCharacter(character);
+    playSound();
   };
+
+  const playSound = async (type) => {
+    if (sound) {
+      await sound.stopAsync();
+      await sound.unloadAsync();
+    }
+
+    let soundFile = require('../assets/sounds/bf300_se_action.mp3');
+    const { sound: newSound } = await Audio.Sound.createAsync(soundFile);
+    setSound(newSound);
+
+    await newSound.setVolumeAsync(0.1);
+    await newSound.playAsync();
+  }
 
   useFocusEffect(
     useCallback(() => {
@@ -49,7 +66,8 @@ export default function CharacterSelectScreen() {
       }
 
       const getRandomCharacters = () => {
-        let filteredCharacters = characters;
+
+        let filteredCharacters = [...characters];
 
         if (team.length > 0) {
           filteredCharacters = characters.filter(charItem =>
@@ -66,8 +84,9 @@ export default function CharacterSelectScreen() {
   );
 
   const handleConfirm = () => {
+    playSound();
     if (selectedCharacter) {
-      let scaleFactor = (1 + level * 0.2);
+      let scaleFactor = (1 + level * 0.4);
       selectedCharacter.hp = Math.floor(selectedCharacter.hp * scaleFactor);
       selectedCharacter.maxHp = Math.floor(selectedCharacter.maxHp * scaleFactor);
       selectedCharacter.attack = Math.floor(selectedCharacter.attack * scaleFactor);
@@ -93,7 +112,7 @@ export default function CharacterSelectScreen() {
   };
 
   function getTargetType(character) {
-    if (!character.evolutions || character.evolutions.length <= 1) {
+    if (character.attackType == 'multiTarget') {
         return "Multi target";
     }
     return "Single target";
@@ -140,7 +159,7 @@ export default function CharacterSelectScreen() {
         {selectedCharacter && (
           <Pressable style={styles.confirmButton} onPress={handleConfirm}>
             <ImageBackground
-              source={require('../assets/misc/sub_m_sp_btn2.png')}
+              source={require('../assets/misc/ok_btn1.png')}
               style={styles.okButton}
               resizeMode="cover"
             >

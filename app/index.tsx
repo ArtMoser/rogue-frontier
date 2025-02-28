@@ -1,10 +1,36 @@
 import { View, Text, StyleSheet, Pressable, ImageBackground, Image } from 'react-native';
 import { useRouter } from 'expo-router';
+import { useEffect, useState } from 'react';
+import { Audio } from 'expo-av';
 
 export default function StartScreen() {
   const router = useRouter();
+  const [sound, setSound] = useState();
 
-  const startGame = () => {
+  const playSound = async () => {
+    if (sound) {
+      await sound.stopAsync();
+      await sound.unloadAsync();
+    }
+
+    let soundFile = require('./assets/sounds/bf001_title.mp3');
+
+    const { sound: newSound } = await Audio.Sound.createAsync(soundFile, { isLooping: true });
+    setSound(newSound);
+
+    await newSound.setVolumeAsync(0.05);
+    await newSound.playAsync();
+  }
+
+  useEffect(() => {
+      playSound();
+  }, []);
+
+  const startGame = async () => {
+    if (sound) {
+      await sound.stopAsync();
+      await sound.unloadAsync();
+    }
     router.push({
       pathname: 'screens/character-select',
       params: { 

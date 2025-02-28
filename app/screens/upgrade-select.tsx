@@ -3,6 +3,7 @@ import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { characters } from '../data/characters';
 import { upgrades } from '../data/upgrades';
+import { Audio } from 'expo-av';
 
 type Character = {
   id: number;
@@ -24,6 +25,21 @@ export default function UpgradeSelectScreen() {
 
   const [selectedUpgrade, setSelectedUpgrade] = useState(null);
   const [availableUpgrades, setAvailableUpgrades] = useState([]);
+  const [sound, setSound] = useState();
+  
+  const playSound = async (type) => {
+    if (sound) {
+      await sound.stopAsync();
+      await sound.unloadAsync();
+    }
+
+    let soundFile = require('../assets/sounds/bf300_se_action.mp3');
+    const { sound: newSound } = await Audio.Sound.createAsync(soundFile);
+    setSound(newSound);
+
+    await newSound.setVolumeAsync(0.1);
+    await newSound.playAsync();
+  }
 
   useEffect(() => {
     const getRandomUpgrades = () => {
@@ -66,9 +82,11 @@ export default function UpgradeSelectScreen() {
 
   const handleUpgradeSelect = (upgrade) => {
     setSelectedUpgrade(upgrade);
+    playSound();
   };
 
   const handleConfirm = () => {
+    playSound();
     let teamUpdated = [...team];
     for(let character of teamUpdated) {
 
@@ -81,6 +99,11 @@ export default function UpgradeSelectScreen() {
         character.attack = character.attack + selectedUpgrade.evolution.attack;
         character.defense = character.defense + selectedUpgrade.evolution.defense;
         character.currentEvolution = character.currentEvolution + 1;
+
+        if(selectedUpgrade.evolution.attackType) {
+          character.attackType = selectedUpgrade.evolution.attackType;
+        }
+
         break;
       }
 
