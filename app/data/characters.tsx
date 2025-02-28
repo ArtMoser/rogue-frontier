@@ -851,7 +851,7 @@ export const characters = [
         hp: 100,
         maxHp: 100,
         type: "class",
-        attack: 140,
+        attack: 100,
         defense: 35,
         image: require('../assets/characters/Sir-Sancus-Xenon.gif'),
         attackImage: require('../assets/characters/Sir-Sancus-Xenon.gif'),

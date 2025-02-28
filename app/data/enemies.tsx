@@ -334,5 +334,17 @@ export const enemiesTierOne = [
         attacked: false,
         image: require('../assets/monsters/Alluring-Empress-Savia.gif'),
         difficulty: "Hard"
-    }
+    },
+    {
+        id: 1029,
+        name: "Fire Geode",
+        hp: 40,
+        maxHp: 40,
+        type: "class",
+        attack: 25,
+        defense: 8,
+        attacked: false,
+        image: require('../assets/monsters/fire-geode.gif'),
+        difficulty: "Easy"
+    },
 ];
