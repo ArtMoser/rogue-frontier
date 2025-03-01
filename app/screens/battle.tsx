@@ -7,6 +7,7 @@ import { Audio } from 'expo-av';
 import { upgrades } from '../data/upgrades';
 import { enemiesTierOne } from '../data/enemies';
 import HealthBar from "../components/healthBar";
+import BattleInfo from '../components/battleInfo';
 
 type Character = {
   id: number;
@@ -290,6 +291,27 @@ export default function BattleScreen() {
   }, [currentTurn, selectedCharacter, selectedTarget, enemies]);
 
   useEffect(() => {
+    if (enemies != undefined && enemies.length > 0 && enemies.every(character => character.hp <= 0)) {
+      return;
+    }
+
+    if(currentTurn === 'enemy') {
+      setTimeout(() => {
+        let enemiesDamage = [...enemies];
+        for(let enemie of enemiesDamage) {
+          enemie.damageTaken = 0;
+        }
+
+        setEnemies(enemiesDamage);
+      }, 1000);
+    }
+  }, [currentTurn]);
+
+  useEffect(() => {
+    setTurnDamage(0);
+  }, [generalBattleCount]);
+
+  useEffect(() => {
     setParty(team);
 
     const getRandomEnemies = (enemiesArray, enemyCount) => {
@@ -359,7 +381,7 @@ export default function BattleScreen() {
 
     for(let enemy of randomEnemies) {
       let totalAttributes = Math.floor(((enemy.hp + enemy.attack + enemy.defense) * 20) / 550);
-      enemy.rarity = Math.floor(totalAttributes / 2);
+      enemy.rarity = Math.floor(totalAttributes / 5);
     }
 
     setEnemies(randomEnemies);
@@ -418,6 +440,7 @@ export default function BattleScreen() {
   useEffect(() => {
     //console.log("Estado atualizado do party:", party);
     if (party != undefined && party.length > 0 && party.every(character => character.hp <= 0)) {
+      console.log('###### useEffect handle defeat');
       handleDefeat();
     }
 
@@ -439,6 +462,7 @@ export default function BattleScreen() {
   }
 
   const handleDefeat = () => {
+    console.log('###### handle defeat');
     stopSounds();
     startSlideAnimation(() => {
       router.push({
@@ -528,7 +552,14 @@ export default function BattleScreen() {
         if (attacker.attackType === 'multiTarget') {
             // Dano dividido entre todos os inimigos
             //const splitDamage = Math.floor(damage / updatedEnemies.length);
-            const splitDamage = damage - (damage * 0.1);// Math.floor(damage / updatedEnemies.length);
+            let livingEnemies = enemies.filter(enemy => enemy.hp > 0);
+
+            let splitDamage = damage;
+
+            if(livingEnemies.length > 0) {
+              splitDamage = damage / livingEnemies.length;
+            }
+            
             //let remainingDamage = damage;
     
             let index = 0; // Variável para manter o índice
@@ -552,7 +583,7 @@ export default function BattleScreen() {
             updatedEnemies[selectedTarget] = {
                 ...defender,
                 hp: Math.max(0, defender.hp - damage),
-                damageTaken: enemy.damageTaken + damage
+                damageTaken: updatedEnemies[selectedTarget].damageTaken + damage
             };
 
             totalDamage = damage;
@@ -643,6 +674,24 @@ export default function BattleScreen() {
 
     setTurnNumber(turnNumber + 1);
   };
+
+  const getDamageStyle = (damage) => {
+    if (damage > 20000) {
+      return { color: '#FFD700', fontSize: 36, textShadowColor: '#FFA500', textShadowRadius: 5 };
+    } else if (damage > 10000) {
+      return { color: '#00FFFF', fontSize: 32, textShadowColor: '#00CED1', textShadowRadius: 5 };
+    } else if (damage > 5000) {
+      return { color: '#FF1493', fontSize: 28, textShadowColor: '#FF69B4', textShadowRadius: 5 };
+    } else if (damage > 2000) {
+      return { color: '#8A2BE2', fontSize: 24, textShadowColor: '#9400D3', textShadowRadius: 5 };
+    } else if (damage > 1000) {
+      return { color: '#FF4500', fontSize: 20, textShadowColor: '#DC143C', textShadowRadius: 5 };
+    } else if (damage > 500) {
+      return { color: '#FFD700', fontSize: 18, textShadowColor: '#DAA520', textShadowRadius: 5 };
+    } else {
+      return { color: '#FFFFFF', fontSize: 16, textShadowColor: 'transparent', textShadowRadius: 0 };
+    }
+  };
   
 
   const handleVictory = () => {
@@ -660,7 +709,7 @@ export default function BattleScreen() {
 
       team = team.filter(character => character.hp > 0);
 
-      if(generalBattleCount == 54) {
+      if(generalBattleCount == 154) {
         stopSounds();
         let updatedHistory = team.map(member => ({
           ...member,
@@ -783,11 +832,11 @@ export default function BattleScreen() {
   ];
 
   const characterPositions = [
-    { top: -400, right: -35 },  // Personagem 1
+    { top: -400, right: -25 },  // Personagem 1
     { top: -320, right: 55 }, // Personagem 2
-    { top: -250, right: -35 }, // Personagem 3
+    { top: -250, right: -25 }, // Personagem 3
     { top: -180, right: 55 }, // Personagem 4
-    { top: -100, right: -35 }, // Personagem 5
+    { top: -100, right: -25 }, // Personagem 5
   ];
 
   return (
@@ -821,19 +870,28 @@ export default function BattleScreen() {
           resizeMode="cover" 
         >
           <Animated.View style={[styles.turnMessageContainer, { opacity: fadeAnim }]}>
-            <Text style={styles.turnMessageText}>{turnMessage}</Text>
-            <Text>{turnDamage}</Text>
+
+            <Text style={styles.turnMessageText}>Battle Number: {Math.floor(generalBattleCount)}</Text>
           </Animated.View>
         </ImageBackground>
         {isBossBattle ? (
-          <Image
-            contentFit="none"
-            source={require('../assets/misc/boss-indicator.png')}
-            style={[styles.bossIndicator]}
-          />
+          <View>
+            <Image
+              contentFit="none"
+              source={require('../assets/misc/boss-indicator.png')}
+              style={[styles.bossIndicator]}
+            />
+            
+            {/*<Text>Battle Damage:</Text> <Text>{turnDamage}</Text>*/}
+            <Text style={styles.battleInfo}>
+              <BattleInfo style={styles.positionInfo} turnDamage={turnDamage} />
+            </Text>
+            
+          </View>
         ) : (
           <Text style={styles.battleInfo}>
-            Battle {battleCount} - Level {level}
+            {/*<Text>Battle Damage:</Text> <Text>{turnDamage}</Text>*/}
+            <BattleInfo turnDamage={turnDamage} />
           </Text>
         )}
         
@@ -873,21 +931,21 @@ export default function BattleScreen() {
                 >
                   {
                     isBossBattle ? 
-                    <Image contentFit="none" source={enemy.image} style={[styles.bossImage]} />
+                    <Image contentFit="scale-down" source={enemy.image} style={[styles.bossImage]} />
                     :
-                    <Image contentFit="none" source={enemy.image} style={[styles.enemyImage]} />
+                    <Image contentFit="scale-down" source={enemy.image} style={[styles.enemyImage]} />
                   }
                   <Text style={styles.enemyName}>{enemy.name}</Text>
                   <HealthBar hp={enemy.hp} maxHp={enemy.maxHp} isEnemy={true} />
                   {
-                    //enemy.damageTaken > 0 ?
-                      <Text style={styles.damageTaken}>{Math.floor(enemy.damageTaken)}</Text>
-                    /*:
-                    <Text></Text>*/
+                    enemy.damageTaken > 0 ?
+                      <Text style={[styles.damageTaken, getDamageStyle(enemy.damageTaken)]}>{Math.floor(enemy.damageTaken)}</Text>
+                    :
+                    <Text></Text>
                   }
                   
                 </Pressable>
-                <View style={styles.characterLevel}>
+                <View style={isBossBattle ? styles.enemyLevelboss : styles.enemyLevel}>
                 {Array.from({ length: Math.min(enemy.rarity, 10) }, (_, i) => {
                 let imageSource;
 
@@ -944,7 +1002,7 @@ export default function BattleScreen() {
                   },
                 ]}
               >
-                <View style={styles.upgradeContainer, { zIndex: 9999 }}>
+                <View style={styles.upgradeContainer}>
                   {character.upgrades.map((upgrade, index) => (
                     <Image
                       key={character.id + index}
@@ -980,35 +1038,35 @@ export default function BattleScreen() {
                     onPress={() => { currentTurn === 'player' && setSelectedCharacter(index)}}
                   >
                     <View>
-                    <Image 
-                      source={require('../assets/misc/attack.png')}
-                      style={styles.attackIcon}
-                      contentFit="cover"
-                      pointerEvents="none"
-                    />
-                    <Image 
-                      source={character.isAttacking ? character.attackImage : character.image} 
-                      style={(character.isAttacking && character.image != character.attackImage) ? styles.characterImageAttacking : styles.characterImage}
-                      key={character.isAttacking ? "attacking" : "idle"} 
-                      contentFit="none"
-                      pointerEvents="none"
-                    />
-                    <Text 
-                      style={styles.characterName}
-                      pointerEvents="none">
-                        {character.name}
-                    </Text>
-                    <HealthBar hp={character.hp} maxHp={character.maxHp} isEnemy={false} pointerEvents="none" />
+                      <Image 
+                        source={require('../assets/misc/attack.png')}
+                        style={styles.attackIcon}
+                        contentFit="cover"
+                        pointerEvents="none"
+                      />
+                      <Image 
+                        source={character.isAttacking ? character.attackImage : character.image} 
+                        style={(character.isAttacking && character.image != character.attackImage) ? styles.characterImageAttacking : styles.characterImage}
+                        key={character.isAttacking ? "attacking" : "idle"} 
+                        contentFit="none"
+                        pointerEvents="none"
+                      />
+                      <Text 
+                        style={styles.characterName}
+                        pointerEvents="none">
+                          {character.name}
+                      </Text>
+                      <HealthBar hp={character.hp} maxHp={character.maxHp} isEnemy={false} pointerEvents="none" />
                     </View>
                     <View style={styles.characterLevel}>
-                  {Array.from({ length: (character.currentEvolution+1) }, (_, i) => (
-                    <Image
-                      key={i}
-                      source={require('../assets/misc/star.png')}
-                      style={styles.star}
-                    />
-                  ))}
-                </View>
+                      {Array.from({ length: (character.currentEvolution+1) }, (_, i) => (
+                        <Image
+                          key={i}
+                          source={require('../assets/misc/star.png')}
+                          style={styles.star}
+                        />
+                      ))}
+                    </View>
                   </Pressable>
                   
                 )}
@@ -1064,7 +1122,8 @@ const styles = StyleSheet.create({
     position: 'relative',
   },
   battleInfo: {
-    fontSize: 24,
+    
+    height: 150,
     color: '#fff',
     textAlign: 'center',
     marginBottom: 5,
@@ -1111,10 +1170,13 @@ const styles = StyleSheet.create({
     height: 120,
     alignItems: 'center',
   },
+  positionInfo: {
+    position: 'absolute',
+    marginTop: 300,
+  },
   bossIndicator: {
-    top: '0',
-    left: '40%',
-    right: 0,
+    top: 70,
+    left: '35%',
     alignSelf: 'center',
     position: 'absolute',
     width: 100,
@@ -1122,15 +1184,15 @@ const styles = StyleSheet.create({
     transform: [{ scale: 1.5 }]
   },
   upgradeContainer: {
+    top: '-20',
+    display: 'flex',
     position: 'absolute',
-    //bottom: '-20',
-    top: '-10',
     flexWrap: 'wrap',
     flexDirection: 'row',
     justifyContent: 'flex-start',
     alignItems: 'center',
-    maxWidth: 150,
-    zIndex: 40,
+    maxWidth: 100,
+    zIndex: 9999
   },
   upgradeIcon: {
     width: 15,
@@ -1140,7 +1202,24 @@ const styles = StyleSheet.create({
   },
   characterLevel: {
     position: 'relative',
+    left: -5,
     bottom: 0,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  enemyLevelboss: {
+    position: 'absolute',
+    left: 0,
+    top:  '150%',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  enemyLevel: {
+    position: 'absolute',
+    left: 0,
+    top: '100%',
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
@@ -1153,15 +1232,18 @@ const styles = StyleSheet.create({
   attackIcon: {
     position: 'absolute',
     right: 0,
-    bottom: 0,
+    bottom: 5,
     width: 20,
     height: 20,
     zIndex: 40
   },
+  statsSpacing: {
+    top: 0, 
+  },
   characterImage: {
     marginBottom: 0,
-    width: 50,
-    height: 50,
+    width: 90,
+    height: 80,
     transform: [{ scale: 2.5 }]
   },
   characterImageAttacking: {
@@ -1180,7 +1262,7 @@ const styles = StyleSheet.create({
     marginBottom: '-10',
     width: 100,
     height: 100,
-    transform: [{ scale: 3 }, { scaleX: -1 }]
+    transform: [{ scale: 2 }, { scaleX: -1 }]
   },
   enemyImage: { 
     marginBottom: 0,
@@ -1192,11 +1274,8 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 0,
     right: -20,
-    color: '#fff',
-    fontSize: 18,
     fontWeight: 'bold',
-    zIndex: 9999,
-    textShadowColor: 'rgba(0, 0, 0, 0.75)'
+    zIndex: 9999
   },
   defeated: {
     opacity: 0.5,
