@@ -7,7 +7,7 @@ export default function UpgradeSelectScreen() {
   const router = useRouter();
   const params = useLocalSearchParams();
   const level = Number(params.level);
-  const isWin = Boolean(params.isWin);
+  const isWin = params.isWin === 'true';
   const characterHistory = JSON.parse(decodeURIComponent(params.characterHistory));
   const generalBattleCount = Number(params.generalBattleCount);
 

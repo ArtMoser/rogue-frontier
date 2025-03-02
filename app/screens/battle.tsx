@@ -221,7 +221,7 @@ export default function BattleScreen() {
   const performAttackAnimation = (characterIndex: number) => {
     Animated.timing(characterMoveAnimations[characterIndex], {
       toValue: 1,
-      duration: 200,
+      duration: 500,
       useNativeDriver: true,
     }).start(() => {
       Animated.sequence([
@@ -243,7 +243,7 @@ export default function BattleScreen() {
       ]).start(() => {
         Animated.timing(characterMoveAnimations[characterIndex], {
           toValue: 0,
-          duration: 200,
+          duration: 300,
           useNativeDriver: true,
         }).start();
       });
@@ -440,7 +440,6 @@ export default function BattleScreen() {
   useEffect(() => {
     //console.log("Estado atualizado do party:", party);
     if (party != undefined && party.length > 0 && party.every(character => character.hp <= 0)) {
-      console.log('###### useEffect handle defeat');
       handleDefeat();
     }
 
@@ -448,7 +447,7 @@ export default function BattleScreen() {
         .filter(member => member.hp > 0)
         .every(member => member.attacked);
 
-    if (allCharactersAttacked && turnNumber > 1) {
+    if (allCharactersAttacked && turnNumber > 1 && currentTurn === 'player') {
         setTimeout(enemyTurn, 1000);
         setCurrentTurn('enemy');
     }
@@ -462,7 +461,6 @@ export default function BattleScreen() {
   }
 
   const handleDefeat = () => {
-    console.log('###### handle defeat');
     stopSounds();
     startSlideAnimation(() => {
       router.push({
@@ -611,7 +609,7 @@ export default function BattleScreen() {
           );
   
           //checkEnemyTurn();
-      }, 1000);
+      }, 2000);
 
       setTurnNumber(turnNumber + 1);
   };
@@ -709,7 +707,8 @@ export default function BattleScreen() {
 
       team = team.filter(character => character.hp > 0);
 
-      if(generalBattleCount == 154) {
+      if(generalBattleCount == 94) {
+        console.log('###### final stage');
         stopSounds();
         let updatedHistory = team.map(member => ({
           ...member,
@@ -719,7 +718,9 @@ export default function BattleScreen() {
         let charactersUsed = [...characterHistory];
 
         for(let teamMember of updatedHistory) {
-          charactersUsed.push(teamMember);
+          if(teamMember.hp > 0) {
+            charactersUsed.push(teamMember);
+          }
         }
 
         router.push({
@@ -733,6 +734,7 @@ export default function BattleScreen() {
         });
 
       } else if(isBossBattle) {
+        console.log('###### Boss battle victory');
         const getRandomUpgrades = () => {
           const shuffled = [...upgrades].sort(() => 0.5 - Math.random());
           return shuffled.slice(0, 3);
@@ -768,6 +770,7 @@ export default function BattleScreen() {
           },
         });
       } else if((generalBattleCount + 1) % 10 === 1) {
+        console.log('###### Boss battle');
         for(let teamMember of team) {
           teamMember.hp = teamMember.hp + (teamMember.maxHp * 0.2);
         }
@@ -775,13 +778,14 @@ export default function BattleScreen() {
           pathname: 'screens/battle',
           params: {
             team: encodeURIComponent(JSON.stringify(team)),
-            level: level,
+            level: level + 1,
             battleCount: battleCount + 1,
             generalBattleCount: generalBattleCount + 1,
             isBossBattle: true
           },
         });
       } else if (generalBattleCount % 5 === 0 && team.length < 5) {
+        console.log('###### Character Select');
         router.push({
           pathname: 'screens/character-select',
           params: { 
@@ -793,6 +797,7 @@ export default function BattleScreen() {
           },
         });
       } else if (generalBattleCount % 3 === 0) {
+        console.log('###### Upgrade select');
         router.push({
           pathname: 'screens/upgrade-select',
           params: { 
@@ -804,7 +809,7 @@ export default function BattleScreen() {
           },
         });
       } else {
-
+        console.log('###### Regular battle');
         router.push({
           pathname: 'screens/battle',
           params: {
@@ -993,7 +998,7 @@ export default function BattleScreen() {
                       { 
                         translateX: characterMoveAnimations[index].interpolate({
                           inputRange: [0, 1],
-                          outputRange: [0, -100],
+                          outputRange: [0, -150],
                         }),
                       },
                       { translateX: character.hp > 0 ? characterShakeAnimations[index] : 0 },
@@ -1248,8 +1253,8 @@ const styles = StyleSheet.create({
   },
   characterImageAttacking: {
     marginBottom: 0,
-    width: 100,
-    height: 100,
+    width: 200,
+    height: 200,
     transform: [{ scale: 2.5 }]
   },
   enemyCard: {

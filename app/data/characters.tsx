@@ -325,9 +325,11 @@ export const characters = [
         defense: 45,
         image: require('../assets/characters/blacksteel-baelfyr.gif'),
         attackImage: require('../assets/characters/blacksteel-baelfyr-attacking.gif'),
+        attackType: "multiTarget"
+
       }
     ],
-    attackType: "multiTarget"
+    attackType: "singleTarget"
   },
   {
     id: 9,
@@ -354,9 +356,11 @@ export const characters = [
         defense: 35,
         image: require('../assets/characters/immortal-firewing-blaze.gif'),
         attackImage: require('../assets/characters/immortal-firewing-blaze-attacking.gif'),
+        attackType: "multiTarget"
+
       }
     ],
-    attackType: "multiTarget"
+    attackType: "singleTarget"
   },
   {
     id: 10,
@@ -383,9 +387,11 @@ export const characters = [
         defense: 40,
         image: require('../assets/characters/grandmagos-ceulfan.gif'),
         attackImage: require('../assets/characters/grandmagos-ceulfan-attacking.gif'),
+        attackType: "multiTarget"
+
       }
     ],
-    attackType: "multiTarget"
+    attackType: "singleTarget"
   },
   {
     id: 11,
@@ -552,9 +558,11 @@ export const characters = [
         defense: 55,
         image: require('../assets/characters/Effulgent-Dusk-Grahdens.gif'),
         attackImage: require('../assets/characters/Effulgent-Dusk-Grahdens-attacking.gif'),
+        attackType: "multiTarget"
+
       }
     ],
-    attackType: "multiTarget"
+    attackType: "singleTarget"
   },
   {
     id: 14,
@@ -756,9 +764,11 @@ export const characters = [
         defense: 40,
         image: require('../assets/characters/Heavenly-Rift-Shura.gif'),
         attackImage: require('../assets/characters/Heavenly-Rift-Shura-attacking.gif'),
+        attackType: "multiTarget"
+
       }
     ],
-    attackType: "multiTarget"
+    attackType: "singleTarget"
   },
   {
     id: 19,
@@ -855,9 +865,10 @@ export const characters = [
         defense: 35,
         image: require('../assets/characters/Sir-Sancus-Xenon.gif'),
         attackImage: require('../assets/characters/Sir-Sancus-Xenon.gif'),
+        attackType: "multiTarget"
       }
     ],
-    attackType: "multiTarget"
+    attackType: "singleTarget"
   },
   {
     id: 21,
@@ -884,9 +895,11 @@ export const characters = [
         defense: 100,
         image: require('../assets/characters/Scorching-Fang-Glenn.gif'),
         attackImage: require('../assets/characters/Scorching-Fang-Glenn-attacking.gif'),
+        attackType: "multiTarget"
+
       }
     ],
-    attackType: "multiTarget"
+    attackType: "singleTarget"
   },
   {
     id: 22,
@@ -943,6 +956,125 @@ export const characters = [
         defense: 50,
         image: require('../assets/characters/Storm-Roundhouse-Zeln.gif'),
         attackImage: require('../assets/characters/Storm-Roundhouse-Zeln-attacking.gif'),
+        attackType: "multiTarget"
+      }
+    ],
+    attackType: "singleTarget"
+  },
+  {
+    id: 23,
+    name: "Knight Sergio",
+    hp: 190,
+    maxHp: 190,
+    type: "class",
+    attack: 45,
+    defense: 35,
+    attacked: false,
+    isAttacking: false,
+    image: require('../assets/characters/Knight-Sergio.gif'),
+    attackImage: require('../assets/characters/Knight-Sergio-attacking.gif'),
+    upgrades: [],
+    currentEvolution: -1,
+    sound: 'water',
+    evolutions: [
+      {
+        name: "Ice Ruler Sergio",
+        hp: 90,
+        maxHp: 90,
+        type: "class",
+        attack: 40,
+        defense: 35,
+        image: require('../assets/characters/Ice-Ruler-Sergio.gif'),
+        attackImage: require('../assets/characters/Ice-Ruler-Sergio-attacking.gif'),
+      },
+      {
+        name: "Ice Knight Sergio",
+        hp: 100,
+        maxHp: 100,
+        type: "class",
+        attack: 45,
+        defense: 40,
+        image: require('../assets/characters/Ice-Knight-Sergio.gif'),
+        attackImage: require('../assets/characters/Ice-Knight-Sergio-attacking.gif'),
+      },
+      {
+        name: "Ice Angel Sergio",
+        hp: 100,
+        maxHp: 100,
+        type: "class",
+        attack: 50,
+        defense: 45,
+        image: require('../assets/characters/Ice-Angel-Sergio.gif'),
+        attackImage: require('../assets/characters/Ice-Angel-Sergio-attacking.gif'),
+      }
+    ],
+    attackType: "singleTarget"
+  },
+  {
+    id: 24,
+    name: "Blue Purity Vern",
+    hp: 180,
+    maxHp: 180,
+    type: "class",
+    attack: 40,
+    defense: 30,
+    attacked: false,
+    isAttacking: false,
+    image: require('../assets/characters/Blue-Purity-Vern.gif'),
+    attackImage: require('../assets/characters/Blue-Purity-Vern-attacking.gif'),
+    upgrades: [],
+    currentEvolution: -1,
+    sound: 'water',
+    evolutions: [
+      {
+        name: "Absolute Zero Vern",
+        hp: 150,
+        maxHp: 150,
+        type: "class",
+        attack: 190,
+        defense: 100,
+        image: require('../assets/characters/Absolute-Zer-Vern.gif'),
+        attackImage: require('../assets/characters/Absolute-Zer-Vern-attacking.gif'),
+        attackType: "multiTarget"
+      }
+    ],
+    attackType: "singleTarget"
+  },
+  {
+    id: 25,
+    name: "Ember Elder Fiora",
+    hp: 180,
+    maxHp: 180,
+    type: "class",
+    attack: 90,
+    defense: 50,
+    attacked: false,
+    isAttacking: false,
+    image: require('../assets/characters/Ember-Elder-Fiora.gif'),
+    attackImage: require('../assets/characters/Ember-Elder-Fiora-attacking.gif'),
+    upgrades: [],
+    currentEvolution: -1,
+    sound: 'fire',
+    evolutions: [
+      {
+        name: "Ember Sage Fiora",
+        hp: 50,
+        maxHp: 50,
+        type: "class",
+        attack: 50,
+        defense: 50,
+        image: require('../assets/characters/Ember-Sage-Fiora.gif'),
+        attackImage: require('../assets/characters/Ember-Sage-Fiora-attacking.gif'),
+      },
+      {
+        name: "Ember Charm Fiora",
+        hp: 200,
+        maxHp: 200,
+        type: "class",
+        attack: 200,
+        defense: 200,
+        image: require('../assets/characters/Ember-Charm-Fiora.gif'),
+        attackImage: require('../assets/characters/Ember-Charm-Fiora-attacking.gif'),
         attackType: "multiTarget"
       }
     ],

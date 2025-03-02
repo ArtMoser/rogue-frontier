@@ -24,16 +24,30 @@ debugger;
 
     // Redireciona para a tela de batalha após 2 segundos
     const timeout = setTimeout(() => {
-      router.push({
-        pathname: 'screens/battle',
-        params: {
-          team: JSON.stringify(team),
-          level: level,
-          battleCount: battleCount + 1,
-          generalBattleCount: generalBattleCount + 1,
-          isBossBattle: false
-        },
-      });
+      if(team.length < 5) {
+        router.push({
+          pathname: 'screens/character-select',
+          params: { 
+            team: encodeURIComponent(JSON.stringify(team)),
+            level: level,
+            isFirstBattle: "false",
+            battleCount: battleCount,
+            generalBattleCount: generalBattleCount
+          },
+        });
+      } else {
+        router.push({
+          pathname: 'screens/battle',
+          params: {
+            team: JSON.stringify(team),
+            level: level,
+            battleCount: battleCount + 1,
+            generalBattleCount: generalBattleCount + 1,
+            isBossBattle: false
+          },
+        });
+      }
+      
     }, 2000); // 2 segundos
 
     // Limpa o timeout ao desmontar o componente
