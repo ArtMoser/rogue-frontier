@@ -338,8 +338,8 @@ export default function BattleScreen() {
 
       return {
         ...enemy,
-        hp: Math.round(enemy.hp * hpScaleFactor) > 16000 ? 16000 : Math.round(enemy.hp * hpScaleFactor),
-        maxHp: Math.round(enemy.maxHp * hpScaleFactor) > 16000 ? 16000 : Math.round(enemy.maxHp * hpScaleFactor),
+        hp: Math.round(enemy.hp * hpScaleFactor) > 20000 ? 20000 : Math.round(enemy.hp * hpScaleFactor),
+        maxHp: Math.round(enemy.maxHp * hpScaleFactor) > 20000 ? 20000 : Math.round(enemy.maxHp * hpScaleFactor),
         attack: Math.round(enemy.attack * atkDefScaleFactor),
         defense: Math.round(enemy.defense * atkDefScaleFactor),
       };
@@ -691,25 +691,6 @@ export default function BattleScreen() {
     }
   };
 
-  const getUpgradeStyle = (upgrades) => {
-    console.log(upgrades);
-    if (upgrades > 30) {
-      return { color: '#FFD700', fontSize: 36, textShadowColor: '#ffffff', textShadowRadius: 5 };
-    } else if (upgrades > 20) {
-      return { color: '#00FFFF', fontSize: 32, textShadowColor: '#ffffff', textShadowRadius: 5 };
-    } else if (upgrades > 17) {
-      return { color: '#FF1493', fontSize: 28, textShadowColor: '#ffffff', textShadowRadius: 5 };
-    } else if (upgrades >  15) {
-      return { color: '#8A2BE2', fontSize: 24, textShadowColor: '#ffffff', textShadowRadius: 5 };
-    } else if (upgrades > 13) {
-      return { color: '#FF4500', fontSize: 20, textShadowColor: '#ffffff', textShadowRadius: 5 };
-    } else if (upgrades > 10) {
-      return { color: '#FFD700', fontSize: 18, textShadowColor: '#ffffff', textShadowRadius: 5 };
-    } else {
-      return { color: '#FFFFFF', fontSize: 16, textShadowColor: 'transparent', textShadowRadius: 0 };
-    }
-  }
-
   const handleVictory = () => {
     console.log('###### generalBattleCount:', generalBattleCount);
     setSound(null);
@@ -1025,35 +1006,70 @@ export default function BattleScreen() {
                   },
                 ]}
               >
-                <View style={styles.upgradeContainer}>
-                  {character.upgrades.length < 8 ? (
-                    character.upgrades.map((upgrade, index) => (
-                      <Image
-                        key={character.id + index}
-                        source={upgrade.image}
-                        style={styles.upgradeIcon}
-                      />
-                    ))
-                  ) : (
-                    <Text style={[styles.upgradesNumber, getUpgradeStyle(character.upgrades.length)]}>{character.upgrades.length}</Text>
-                  )}
-                </View>
+                {!character.isAttacking ? (
+                  <View style={styles.upgradeContainer}>
+                    {/*character.upgrades.length < 5 ? (
+                      // Exibe os upgrades individualmente se forem menos de 5
+                      character.upgrades.map((upgrade, index) => (
+                        <Image
+                          key={character.id + index}
+                          source={upgrade.image}
+                          style={styles.upgradeIcon}
+                        />
+                      ))
+                    ) : (*/
+                      // Agrupa os upgrades por atributo e exibe a imagem e a quantidade
+                      Object.entries(
+                        character.upgrades.reduce((grouped, upgrade) => {
+                          // Agrupa os upgrades pelo campo 'attribute'
+                          if (!grouped[upgrade.attribute]) {
+                            grouped[upgrade.attribute] = [];
+                          }
+                          grouped[upgrade.attribute].push(upgrade);
+                          return grouped;
+                        }, {})
+                      ).map(([attribute, upgrades]) => (
+                        <View key={attribute} style={styles.upgradeGroup}>
+                          <Image
+                            source={upgrades[0].image} // Usa a imagem do primeiro upgrade do grupo
+                            style={styles.upgradeIcon}
+                          />
+                          <Text style={styles.upgradeCount}>{upgrades.length}</Text>
+                        </View>
+                      ))
+                    //)
+                    }
+                  </View>
+                ) : (
+                  <></>
+                )}
                 {character.attacked || character.hp <= 0 ? (
                   <View style={[styles.characterCard],{ zIndex: 9998 }}>
-                    <Image 
-                      source={require('../assets/misc/already-attacked.png')}
-                      style={styles.attackIcon}
-                      contentFit="cover"
-                      pointerEvents="none"
-                    />
+                    {!character.isAttacking ?
+                      <Image 
+                        source={require('../assets/misc/already-attacked.png')}
+                        style={styles.attackIcon}
+                        contentFit="cover"
+                        pointerEvents="none"
+                      />
+                    :
+                      <></>
+                    }
                     <Image 
                       source={character.isAttacking ? character.attackImage : character.image}
                       style={(character.isAttacking && character.image != character.attackImage) ? styles.characterImageAttacking : styles.characterImage}
                       contentFit="none"
                       pointerEvents="none"
                     />
-                    <Text style={styles.characterName}>{character.name}</Text>
-                    <HealthBar hp={character.hp} maxHp={character.maxHp} isEnemy={false} />
+                    {!character.isAttacking ?
+                    <>
+                      <Text style={styles.characterName}>{character.name}</Text>
+                      <HealthBar hp={character.hp} maxHp={character.maxHp} isEnemy={false} />
+                    </>
+                    :
+                    <></>
+                    }
+                    
                   </View>
                 ) : (
                   <Pressable
@@ -1220,6 +1236,24 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     maxWidth: 100,
     zIndex: 9999
+  },
+  upgradeGroup: {
+    alignItems: 'center', // Centraliza a imagem e o número
+  },
+  upgradeIcon: {
+    width: 30,
+    height: 30,
+  },
+  upgradeCount: {
+    fontSize: 16,
+    position: 'absolute',
+    color: 'white',
+    top: -8,
+    right: -3,
+    fontWeight: 'bold',
+    textShadowColor: '#000',
+    textShadowRadius: 5
+    
   },
   upgradesNumber: {
     position: 'absolute',
