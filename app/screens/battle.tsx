@@ -338,8 +338,8 @@ export default function BattleScreen() {
 
       return {
         ...enemy,
-        hp: Math.round(enemy.hp * hpScaleFactor),
-        maxHp: Math.round(enemy.maxHp * hpScaleFactor),
+        hp: Math.round(enemy.hp * hpScaleFactor) > 16000 ? 16000 : Math.round(enemy.hp * hpScaleFactor),
+        maxHp: Math.round(enemy.maxHp * hpScaleFactor) > 16000 ? 16000 : Math.round(enemy.maxHp * hpScaleFactor),
         attack: Math.round(enemy.attack * atkDefScaleFactor),
         defense: Math.round(enemy.defense * atkDefScaleFactor),
       };
@@ -690,7 +690,25 @@ export default function BattleScreen() {
       return { color: '#FFFFFF', fontSize: 16, textShadowColor: 'transparent', textShadowRadius: 0 };
     }
   };
-  
+
+  const getUpgradeStyle = (upgrades) => {
+    console.log(upgrades);
+    if (upgrades > 30) {
+      return { color: '#FFD700', fontSize: 36, textShadowColor: '#ffffff', textShadowRadius: 5 };
+    } else if (upgrades > 20) {
+      return { color: '#00FFFF', fontSize: 32, textShadowColor: '#ffffff', textShadowRadius: 5 };
+    } else if (upgrades > 17) {
+      return { color: '#FF1493', fontSize: 28, textShadowColor: '#ffffff', textShadowRadius: 5 };
+    } else if (upgrades >  15) {
+      return { color: '#8A2BE2', fontSize: 24, textShadowColor: '#ffffff', textShadowRadius: 5 };
+    } else if (upgrades > 13) {
+      return { color: '#FF4500', fontSize: 20, textShadowColor: '#ffffff', textShadowRadius: 5 };
+    } else if (upgrades > 10) {
+      return { color: '#FFD700', fontSize: 18, textShadowColor: '#ffffff', textShadowRadius: 5 };
+    } else {
+      return { color: '#FFFFFF', fontSize: 16, textShadowColor: 'transparent', textShadowRadius: 0 };
+    }
+  }
 
   const handleVictory = () => {
     console.log('###### generalBattleCount:', generalBattleCount);
@@ -1008,13 +1026,17 @@ export default function BattleScreen() {
                 ]}
               >
                 <View style={styles.upgradeContainer}>
-                  {character.upgrades.map((upgrade, index) => (
-                    <Image
-                      key={character.id + index}
-                      source={upgrade.image}
-                      style={styles.upgradeIcon}
-                    />
-                  ))}
+                  {character.upgrades.length < 8 ? (
+                    character.upgrades.map((upgrade, index) => (
+                      <Image
+                        key={character.id + index}
+                        source={upgrade.image}
+                        style={styles.upgradeIcon}
+                      />
+                    ))
+                  ) : (
+                    <Text style={[styles.upgradesNumber, getUpgradeStyle(character.upgrades.length)]}>{character.upgrades.length}</Text>
+                  )}
                 </View>
                 {character.attacked || character.hp <= 0 ? (
                   <View style={[styles.characterCard],{ zIndex: 9998 }}>
@@ -1198,6 +1220,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     maxWidth: 100,
     zIndex: 9999
+  },
+  upgradesNumber: {
+    position: 'absolute',
+    top: 20,
+    fontWeight: 'bold',
   },
   upgradeIcon: {
     width: 15,

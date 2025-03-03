@@ -4,7 +4,7 @@ export const upgrades = [
       attribute: "maxHp",
       coAttribute: "hp",
       type: "literal",
-      value: 50,
+      value: 120,
       image: require('../assets/misc/hp-buff.png')
     },
     {
@@ -25,7 +25,7 @@ export const upgrades = [
       label: "Increase Attack",
       attribute: "attack",
       type: "percentage",
-      value: 0.05
+      value: 0.2
       ,
       image: require('../assets/misc/atk-buff.png')
     },
@@ -41,7 +41,7 @@ export const upgrades = [
       label: "Increase Attack",
       attribute: "attack",
       type: "percentage",
-      value: 0.1
+      value: 0.2
       ,
       image: require('../assets/misc/atk-buff.png')
     },
@@ -51,6 +51,14 @@ export const upgrades = [
       coAttribute: "maxHp",
       type: "percentage",
       value: 0.05,
+      image: require('../assets/misc/hp-buff.png')
+    },
+    {
+      label: "Increase HP", 
+      attribute: "hp",
+      coAttribute: "maxHp",
+      type: "percentage",
+      value: 0.3,
       image: require('../assets/misc/hp-buff.png')
     },
     {
@@ -72,7 +80,7 @@ export const upgrades = [
       label: "Increase Defense",
       attribute: "defense",
       type: "percentage",
-      value: 0.05,
+      value: 0.4,
       image: require('../assets/misc/def-buff.png')
-    },
+    }
   ];
