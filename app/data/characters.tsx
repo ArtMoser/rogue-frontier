@@ -1168,23 +1168,13 @@ export const characters = [
       },
       {
         name: "Twin Dragons Eru",
-        hp: 100,
-        maxHp: 100,
+        hp: 120,
+        maxHp: 120,
         type: "class",
-        attack: 45,
+        attack: 80,
         defense: 40,
         image: require('../assets/characters/Twin-Dragons-Eru.gif'),
         attackImage: require('../assets/characters/Twin-Dragons-Eru-attacking.gif'),
-      },
-      {
-        name: "Pumleficent Semira",
-        hp: 100,
-        maxHp: 100,
-        type: "class",
-        attack: 50,
-        defense: 45,
-        image: require('../assets/characters/Pumleficent-Semira.gif'),
-        attackImage: require('../assets/characters/Pumleficent-Semira.gif'),
         attackType: "multiTarget"
       }
     ],
