@@ -443,4 +443,52 @@ export const enemiesTierOne = [
         image: require('../assets/monsters/Lovely-Princess-Alice.gif'),
         difficulty: "Easy"
     },
+    {
+        id: 1038,
+        name: "Assassin Kuda",
+        hp: 70,
+        maxHp: 70,
+        type: "class",
+        attack: 30,
+        defense: 8,
+        attacked: false,
+        image: require('../assets/monsters/Assassin-Kuda.gif'),
+        difficulty: "Easy"
+    },
+    {
+        id: 1040,
+        name: "Black Emperor Bahvel",
+        hp: 90,
+        maxHp: 90,
+        type: "class",
+        attack: 30,
+        defense: 8,
+        attacked: false,
+        image: require('../assets/monsters/Black-Emperor-Bahvel.gif'),
+        difficulty: "Easy"
+    },
+    {
+        id: 1041,
+        name: "Hell King Hades",
+        hp: 50,
+        maxHp: 50,
+        type: "class",
+        attack: 30,
+        defense: 8,
+        attacked: false,
+        image: require('../assets/monsters/Hell-King-Hades.gif'),
+        difficulty: "Easy"
+    },
+    {
+        id: 1042,
+        name: "Duel-GX II",
+        hp: 50,
+        maxHp: 50,
+        type: "class",
+        attack: 30,
+        defense: 8,
+        attacked: false,
+        image: require('../assets/monsters/Duel-GX-II.gif'),
+        difficulty: "Easy"
+    }
 ];

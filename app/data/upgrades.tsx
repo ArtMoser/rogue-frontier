@@ -169,86 +169,6 @@ export const upgrades = [
       image: require('../assets/misc/atk-buff.png')
     },
     {
-      label: "Increase HP", 
-      attribute: "hp",
-      coAttribute: "maxHp",
-      type: "percentage",
-      value: 0.05,
-      image: require('../assets/misc/hp-buff.png')
-    },
-    {
-      label: "Increase HP", 
-      attribute: "hp",
-      coAttribute: "maxHp",
-      type: "percentage",
-      value: 0.05,
-      image: require('../assets/misc/hp-buff.png')
-    },
-    {
-      label: "Increase HP", 
-      attribute: "hp",
-      coAttribute: "maxHp",
-      type: "percentage",
-      value: 0.05,
-      image: require('../assets/misc/hp-buff.png')
-    },
-    {
-      label: "Increase HP", 
-      attribute: "hp",
-      coAttribute: "maxHp",
-      type: "percentage",
-      value: 0.05,
-      image: require('../assets/misc/hp-buff.png')
-    },
-    {
-      label: "Increase HP", 
-      attribute: "hp",
-      coAttribute: "maxHp",
-      type: "percentage",
-      value: 0.05,
-      image: require('../assets/misc/hp-buff.png')
-    },
-    {
-      label: "Increase HP", 
-      attribute: "hp",
-      coAttribute: "maxHp",
-      type: "percentage",
-      value: 0.05,
-      image: require('../assets/misc/hp-buff.png')
-    },
-    {
-      label: "Increase HP", 
-      attribute: "hp",
-      coAttribute: "maxHp",
-      type: "percentage",
-      value: 0.2,
-      image: require('../assets/misc/hp-buff.png')
-    },
-    {
-      label: "Increase HP", 
-      attribute: "hp",
-      coAttribute: "maxHp",
-      type: "percentage",
-      value: 0.1,
-      image: require('../assets/misc/hp-buff.png')
-    },
-    {
-      label: "Increase HP", 
-      attribute: "hp",
-      coAttribute: "maxHp",
-      type: "percentage",
-      value: 0.1,
-      image: require('../assets/misc/hp-buff.png')
-    },
-    {
-      label: "Increase HP", 
-      attribute: "hp",
-      coAttribute: "maxHp",
-      type: "percentage",
-      value: 0.1,
-      image: require('../assets/misc/hp-buff.png')
-    },
-    {
       label: "Increase Defense",
       attribute: "defense",
       type: "percentage",
@@ -289,5 +209,85 @@ export const upgrades = [
       type: "percentage",
       value: 0.2,
       image: require('../assets/misc/def-buff.png')
+    },
+    {
+      label: "Increase HP", 
+      attribute: "maxHp",
+      coAttribute: "hp",
+      type: "percentage",
+      value: 0.05,
+      image: require('../assets/misc/hp-buff.png')
+    },
+    {
+      label: "Increase HP", 
+      attribute: "maxHp",
+      coAttribute: "hp",
+      type: "percentage",
+      value: 0.05,
+      image: require('../assets/misc/hp-buff.png')
+    },
+    {
+      label: "Increase HP", 
+      attribute: "maxHp",
+      coAttribute: "hp",
+      type: "percentage",
+      value: 0.05,
+      image: require('../assets/misc/hp-buff.png')
+    },
+    {
+      label: "Increase HP", 
+      attribute: "maxHp",
+      coAttribute: "hp",
+      type: "percentage",
+      value: 0.05,
+      image: require('../assets/misc/hp-buff.png')
+    },
+    {
+      label: "Increase HP", 
+      attribute: "maxHp",
+      coAttribute: "hp",
+      type: "percentage",
+      value: 0.05,
+      image: require('../assets/misc/hp-buff.png')
+    },
+    {
+      label: "Increase HP", 
+      attribute: "maxHp",
+      coAttribute: "hp",
+      type: "percentage",
+      value: 0.05,
+      image: require('../assets/misc/hp-buff.png')
+    },
+    {
+      label: "Increase HP", 
+      attribute: "maxHp",
+      coAttribute: "hp",
+      type: "percentage",
+      value: 0.2,
+      image: require('../assets/misc/hp-buff.png')
+    },
+    {
+      label: "Increase HP", 
+      attribute: "maxHp",
+      coAttribute: "hp",
+      type: "percentage",
+      value: 0.1,
+      image: require('../assets/misc/hp-buff.png')
+    },
+    {
+      label: "Increase HP", 
+      attribute: "maxHp",
+      coAttribute: "hp",
+      type: "percentage",
+      value: 0.1,
+      image: require('../assets/misc/hp-buff.png')
+    },
+    {
+      label: "Increase HP", 
+      attribute: "maxHp",
+      coAttribute: "hp",
+      type: "percentage",
+      value: 0.1,
+      image: require('../assets/misc/hp-buff.png')
     }
   ];

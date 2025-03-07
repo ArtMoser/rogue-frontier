@@ -320,26 +320,20 @@ export default function BattleScreen() {
     };
 
     const scaleEnemyStats = (enemy, level, isBossBattle) => {
-      let multiplier = 1;
-      if(level <= 9) {
-        multiplier = 1;
-      } else if(level <= 11) {
-        multiplier = 2;
-      } else {
-        multiplier = 2.5;
+      let multiplier = 1 + (level / 10);
+    
+      let hpScaleFactor = multiplier + (level * 0.20);
+      let atkDefScaleFactor = multiplier + (level * 0.1);
+    
+      if (isBossBattle) {
+        hpScaleFactor *= 1.5;
+        hpScaleFactor += Math.pow(level, 0.5);
       }
-
-      let hpScaleFactor = multiplier + (level * 0.2);
-      let atkDefScaleFactor = multiplier + (level * 0.2);
-
-      if(isBossBattle && level > 15) {
-        hpScaleFactor = hpScaleFactor + level;
-      }
-
+    
       return {
         ...enemy,
-        hp: Math.round(enemy.hp * hpScaleFactor) > 20000 ? 20000 : Math.round(enemy.hp * hpScaleFactor),
-        maxHp: Math.round(enemy.maxHp * hpScaleFactor) > 20000 ? 20000 : Math.round(enemy.maxHp * hpScaleFactor),
+        hp: Math.min(Math.round(enemy.hp * hpScaleFactor), 30000),
+        maxHp: Math.min(Math.round(enemy.maxHp * hpScaleFactor), 30000),
         attack: Math.round(enemy.attack * atkDefScaleFactor),
         defense: Math.round(enemy.defense * atkDefScaleFactor),
       };
@@ -366,7 +360,7 @@ export default function BattleScreen() {
 
     if(level <= 9) {
       enemiesFiltered = enemiesTierOne.filter(enemy => enemy.difficulty == "Easy");
-    } else if(level <= 15) {
+    } else if(level <= 20) {
       enemiesFiltered = enemiesTierOne.filter(enemy => enemy.difficulty == "Normal" || enemy.difficulty == "Easy");
     } else {
       enemiesFiltered = enemiesTierOne;
@@ -454,9 +448,14 @@ export default function BattleScreen() {
   }, [party]);
 
   async function stopSounds() {
-    if (sound) {
-      await sound.stopAsync();
-      await sound.unloadAsync();
+    if (soundRef.current) {
+      try {
+        await soundRef.current.stopAsync();
+        await soundRef.current.unloadAsync();
+      } catch (error) {
+        console.log('Erro ao parar/descarregar o som:', error);
+      }
+      soundRef.current = null;
     }
   }
 
@@ -721,7 +720,7 @@ export default function BattleScreen() {
             charactersUsed.push(teamMember);
           }
         }
-
+        stopSounds();
         router.push({
           pathname: 'screens/end-game',
           params: { 
@@ -939,7 +938,7 @@ export default function BattleScreen() {
                     :
                     <Image contentFit="scale-down" source={enemy.image} style={[styles.enemyImage]} />
                   }
-                  <Text style={styles.enemyName}>{enemy.name}</Text>
+                  {/*<Text style={styles.enemyName}>{enemy.name}</Text>*/}
                   <HealthBar hp={enemy.hp} maxHp={enemy.maxHp} isEnemy={true} />
                   {
                     enemy.damageTaken > 0 ?
@@ -972,7 +971,7 @@ export default function BattleScreen() {
                   <Image
                     key={i}
                     source={imageSource}
-                    style={styles.star}
+                    style={styles.starEnemy}
                   />
                 );
               })}
@@ -986,7 +985,7 @@ export default function BattleScreen() {
               <Animated.View
                 key={character.id + '' + index}
                 style={[
-                  styles.characterWrapper,
+                  character.isAttacking ? styles.characterWrapperAttacking : styles.characterWrapper,
                   {
                     position: 'absolute',
                     top: characterPositions[index].top,
@@ -1063,7 +1062,7 @@ export default function BattleScreen() {
                     />
                     {!character.isAttacking ?
                     <>
-                      <Text style={styles.characterName}>{character.name}</Text>
+                      {/*<Text style={styles.characterName}>{character.name}</Text>*/}
                       <HealthBar hp={character.hp} maxHp={character.maxHp} isEnemy={false} />
                     </>
                     :
@@ -1094,11 +1093,11 @@ export default function BattleScreen() {
                         contentFit="none"
                         pointerEvents="none"
                       />
-                      <Text 
+                      {/*<Text 
                         style={styles.characterName}
                         pointerEvents="none">
                           {character.name}
-                      </Text>
+                      </Text>*/}
                       <HealthBar hp={character.hp} maxHp={character.maxHp} isEnemy={false} pointerEvents="none" />
                     </View>
                     <View style={styles.characterLevel}>
@@ -1293,6 +1292,11 @@ const styles = StyleSheet.create({
   star: {
     width: 10,
     height: 10,
+    bottom: -13,
+  },
+  starEnemy: {
+    width: 10,
+    height: 10,
     bottom: 0,
   },
   attackIcon: {
@@ -1316,7 +1320,8 @@ const styles = StyleSheet.create({
     marginBottom: 0,
     width: 200,
     height: 200,
-    transform: [{ scale: 2.5 }]
+    transform: [{ scale: 2.5 }],
+    zIndex: 9999
   },
   enemyCard: {
     borderRadius: 8,
@@ -1354,9 +1359,10 @@ const styles = StyleSheet.create({
   },
   characterName: {
     color: '#ffffff',
-    fontSize: 12,
+    fontSize: 9,
     fontWeight: 'bold',
     marginBottom: 5,
+    position: 'absolute',
   },
   characterHp: {
     color: '#000',
@@ -1444,5 +1450,8 @@ const styles = StyleSheet.create({
     backgroundColor: 'black',
     zIndex: 9999,
     overflow: 'hidden',
+  },
+  characterWrapperAttacking: {
+    zIndex: 9999
   }
 });

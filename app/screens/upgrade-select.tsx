@@ -94,7 +94,7 @@ export default function UpgradeSelectScreen() {
         character.image = selectedUpgrade.evolution.image;
         character.attackImage = selectedUpgrade.evolution.attackImage;
         character.name = selectedUpgrade.evolution.name;
-        character.hp = character.hp + selectedUpgrade.evolution.hp;
+        character.hp = character.maxHp + selectedUpgrade.evolution.maxHp;
         character.maxHp = character.maxHp + selectedUpgrade.evolution.maxHp;
         character.attack = character.attack + selectedUpgrade.evolution.attack;
         character.defense = character.defense + selectedUpgrade.evolution.defense;

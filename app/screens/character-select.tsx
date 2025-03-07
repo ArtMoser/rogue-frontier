@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from 'react'; // Adicione useMemo
+import React, { useCallback, useMemo } from 'react';
 import { View, Text, StyleSheet, Pressable, Image, ImageBackground } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
@@ -50,7 +50,6 @@ export default function CharacterSelectScreen() {
 
   useFocusEffect(
     useCallback(() => {
-      debugger;
       const shuffleList = (array) => {
         let currentIndex = array.length, randomIndex;
 
@@ -58,7 +57,6 @@ export default function CharacterSelectScreen() {
           randomIndex = Math.floor(Math.random() * currentIndex);
           currentIndex--;
       
-          // Troca o elemento atual pelo elemento aleatório
           [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
         }
       
@@ -66,7 +64,6 @@ export default function CharacterSelectScreen() {
       }
 
       const getRandomCharacters = () => {
-
         let filteredCharacters = [...characters];
 
         if (team.length > 0) {
@@ -76,22 +73,27 @@ export default function CharacterSelectScreen() {
         }
 
         const shuffled = shuffleList([...filteredCharacters]);
+
+        if(generalBattleCount > 1) {
+          let scaleFactor = 1 + (Math.pow(level, 0.7) * 0.3);
+          for(let character of shuffled) {
+            character.hp = Math.floor(character.hp * scaleFactor);
+            character.maxHp = Math.floor(character.maxHp * scaleFactor);
+            character.attack = Math.floor(character.attack * scaleFactor);
+            character.defense = Math.floor(character.defense * scaleFactor);
+          }
+        }
+
         return shuffled.slice(0, 3);
       };
 
       setAvailableCharacters(getRandomCharacters());
-    }, [team]) // Dependências do useCallback
+    }, [team])
   );
 
   const handleConfirm = () => {
     playSound();
     if (selectedCharacter) {
-      let scaleFactor = (1 + level * 0.4);
-      selectedCharacter.hp = Math.floor(selectedCharacter.hp * scaleFactor);
-      selectedCharacter.maxHp = Math.floor(selectedCharacter.maxHp * scaleFactor);
-      selectedCharacter.attack = Math.floor(selectedCharacter.attack * scaleFactor);
-      selectedCharacter.defense = Math.floor(selectedCharacter.defense * scaleFactor);
-
       const updatedTeam = [...team];
       updatedTeam.push(selectedCharacter);
 
@@ -111,12 +113,29 @@ export default function CharacterSelectScreen() {
     }
   };
 
+  const handleCancel = () => {
+    playSound();
+    setSelectedCharacter(null);
+
+    router.push({
+      pathname: 'screens/battle',
+      params: {
+        team: encodeURIComponent(JSON.stringify(team)),
+        level: level,
+        battleCount: isFirstBattle ? 1 : (battleCount + 1),
+        generalBattleCount: isFirstBattle ? 1 : (generalBattleCount + 1),
+        isFirstBattle: isFirstBattle,
+        isBossBattle: false
+      }
+    });
+  };
+
   function getTargetType(character) {
     if (character.attackType == 'multiTarget') {
         return "Multi target";
     }
     return "Single target";
-}
+  }
 
   return (
     <ImageBackground
@@ -139,15 +158,10 @@ export default function CharacterSelectScreen() {
             >
               <Image source={character.image} style={styles.characterImage} />
               <Text style={styles.characterName}>{character.name}</Text>
-              {/*<Text style={styles.characterType}>{character.type}</Text>*/}
               <View style={styles.statsContainer}>
                 <Text style={styles.statText}>
-                  { 
-                    getTargetType(character)
-                  }
+                  {getTargetType(character)}
                 </Text>
-                
-                
                 <Text style={styles.statText}>HP: {character.hp}</Text>
                 <Text style={styles.statText}>ATK: {character.attack}</Text>
                 <Text style={styles.statText}>DEF: {character.defense}</Text>
@@ -163,7 +177,17 @@ export default function CharacterSelectScreen() {
               style={styles.okButton}
               resizeMode="cover"
             >
-             
+            </ImageBackground>
+          </Pressable>
+        )}
+
+        {generalBattleCount > 1 && (
+          <Pressable style={styles.cancelButton} onPress={handleCancel}>
+            <ImageBackground
+              source={require('../assets/misc/cancel-button.png')}
+              style={styles.cancelButtonBackground}
+              resizeMode="cover"
+            >
             </ImageBackground>
           </Pressable>
         )}
@@ -181,7 +205,16 @@ const styles = StyleSheet.create({
   okButton: {
     width: 150,
     height: 60,
-    marginTop: 30
+    marginTop: 30,
+  },
+  cancelButton: {
+    position: 'absolute', // Posiciona o botão de forma absoluta
+    bottom: 20, // Coloca o botão no canto inferior da tela
+    alignSelf: 'center', // Centraliza horizontalmente
+  },
+  cancelButtonBackground: {
+    width: 150,
+    height: 60,
   },
   title: {
     fontSize: 32,
@@ -189,11 +222,6 @@ const styles = StyleSheet.create({
     color: '#ffffff',
     marginTop: 40,
     marginBottom: 10,
-  },
-  subtitle: {
-    fontSize: 20,
-    color: '#4CAF50',
-    marginBottom: 30,
   },
   charactersContainer: {
     flexDirection: 'row',
@@ -226,11 +254,6 @@ const styles = StyleSheet.create({
     color: '#ffffff',
     marginBottom: 5,
   },
-  characterType: {
-    fontSize: 14,
-    color: '#4CAF50',
-    marginBottom: 10,
-  },
   statsContainer: {
     alignItems: 'center',
   },
@@ -240,19 +263,7 @@ const styles = StyleSheet.create({
     marginBottom: 2,
   },
   confirmButton: {
-    /*backgroundColor: '#4CAF50',
-    paddingHorizontal: 40,
-    paddingVertical: 15,
-    borderRadius: 25,
-    marginTop: 20,*/
-  },
-  confirmButtonText: {
-    color: '#ffffff',
-    fontSize: 18,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    textShadowColor: '#000',
-    paddingTop: 17,
+    marginTop: 20,
   },
   backgroundImage: {
     flex: 1,
