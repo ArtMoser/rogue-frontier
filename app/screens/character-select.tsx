@@ -65,27 +65,30 @@ export default function CharacterSelectScreen() {
 
       const getRandomCharacters = () => {
         let filteredCharacters = [...characters];
-
+    
         if (team.length > 0) {
-          filteredCharacters = characters.filter(charItem =>
-            !team.some(teamMember => teamMember.id === charItem.id)
-          );
+            filteredCharacters = characters.filter(charItem =>
+                !team.some(teamMember => teamMember.id === charItem.id)
+            );
         }
-
+    
         const shuffled = shuffleList([...filteredCharacters]);
+    
+        if (generalBattleCount > 1) {
+            let scaleFactor = 1 + (Math.log(level + 1) * 0.15);
 
-        if(generalBattleCount > 1) {
-          let scaleFactor = 1 + (Math.pow(level, 0.7) * 0.3);
-          for(let character of shuffled) {
-            character.hp = Math.floor(character.hp * scaleFactor);
-            character.maxHp = Math.floor(character.maxHp * scaleFactor);
-            character.attack = Math.floor(character.attack * scaleFactor);
-            character.defense = Math.floor(character.defense * scaleFactor);
-          }
+            scaleFactor = Math.min(scaleFactor, 7);
+    
+            for (let character of shuffled) {
+                character.hp = Math.floor(character.hp * scaleFactor);
+                character.maxHp = Math.floor(character.maxHp * scaleFactor);
+                character.attack = Math.floor(character.attack * scaleFactor);
+                character.defense = Math.floor(character.defense * scaleFactor);
+            }
         }
-
+    
         return shuffled.slice(0, 3);
-      };
+    };
 
       setAvailableCharacters(getRandomCharacters());
     }, [team])

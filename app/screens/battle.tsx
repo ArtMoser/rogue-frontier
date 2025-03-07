@@ -771,6 +771,9 @@ export default function BattleScreen() {
         console.log('###### Boss battle');
         for(let teamMember of team) {
           teamMember.hp = teamMember.hp + (teamMember.maxHp * 0.2);
+          if(teamMember.hp > teamMember.maxHp) {
+            teamMember.hp = teamMember.maxHp;
+          }
         }
         router.push({
           pathname: 'screens/battle',
