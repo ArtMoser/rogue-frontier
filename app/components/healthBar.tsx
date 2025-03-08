@@ -46,7 +46,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     position: 'absolute',
-    bottom: -20
+    bottom: -40
   },
   healthBarBackground: {
     width: "100%",

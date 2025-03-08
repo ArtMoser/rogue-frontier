@@ -1489,5 +1489,35 @@ export const characters = [
       }
     ],
     attackType: "singleTarget"
+  },
+  {
+    id: 35,
+    name: "Avalon Arthur",
+    hp: 190,
+    maxHp: 190,
+    type: "class",
+    attack: 45,
+    defense: 35,
+    attacked: false,
+    isAttacking: false,
+    image: require('../assets/characters/Avalon-Arthur.gif'),
+    attackImage: require('../assets/characters/Avalon-Arthur-attacking.gif'),
+    upgrades: [],
+    currentEvolution: -1,
+    sound: 'light',
+    evolutions: [
+      {
+        name: "Dark Path Arthur",
+        hp: 150,
+        maxHp: 150,
+        type: "class",
+        attack: 100,
+        defense: 90,
+        image: require('../assets/characters/Dark-Path-Arthur.gif'),
+        attackImage: require('../assets/characters/Dark-Path-Arthur-attacking.gif'),
+        attackType: "multiTarget"
+      }
+    ],
+    attackType: "singleTarget"
   }
 ];

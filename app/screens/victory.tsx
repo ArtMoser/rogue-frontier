@@ -56,7 +56,7 @@ debugger;
 
   return (
       <ImageBackground
-        source={require('../assets/misc/boss-defeat.jpg')}
+        source={require('../assets/misc/base2.jpg')}
         style={styles.container}
         resizeMode="cover" // ou "contain", conforme sua necessidade
       >

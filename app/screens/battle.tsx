@@ -240,6 +240,7 @@ export default function BattleScreen() {
           duration: 50,
           useNativeDriver: true,
         }),
+        Animated.delay(1200),
       ]).start(() => {
         Animated.timing(characterMoveAnimations[characterIndex], {
           toValue: 0,
@@ -360,7 +361,7 @@ export default function BattleScreen() {
 
     if(level <= 9) {
       enemiesFiltered = enemiesTierOne.filter(enemy => enemy.difficulty == "Easy");
-    } else if(level <= 20) {
+    } else if(level <= 18) {
       enemiesFiltered = enemiesTierOne.filter(enemy => enemy.difficulty == "Normal" || enemy.difficulty == "Easy");
     } else {
       enemiesFiltered = enemiesTierOne;
@@ -705,7 +706,7 @@ export default function BattleScreen() {
 
       team = team.filter(character => character.hp > 0);
 
-      if(generalBattleCount == 94) {
+      if(generalBattleCount == 104) {
         console.log('###### final stage');
         stopSounds();
         let updatedHistory = team.map(member => ({
@@ -838,11 +839,11 @@ export default function BattleScreen() {
   ];
 
   const characterPositions = [
-    { top: -400, right: -25 },  // Personagem 1
-    { top: -320, right: 55 }, // Personagem 2
-    { top: -250, right: -25 }, // Personagem 3
+    { top: -400, right: -20 },  // Personagem 1
+    { top: -340, right: 55 }, // Personagem 2
+    { top: -250, right: -20 }, // Personagem 3
     { top: -180, right: 55 }, // Personagem 4
-    { top: -100, right: -25 }, // Personagem 5
+    { top: -100, right: -20 }, // Personagem 5
   ];
 
   return (
@@ -875,10 +876,10 @@ export default function BattleScreen() {
           style={styles.information}
           resizeMode="cover" 
         >
-          <Animated.View style={[styles.turnMessageContainer, { opacity: fadeAnim }]}>
+          {/*<Animated.View style={[styles.turnMessageContainer, { opacity: fadeAnim }]}>
 
             <Text style={styles.turnMessageText}>Battle Number: {Math.floor(generalBattleCount)}</Text>
-          </Animated.View>
+          </Animated.View>*/}
         </ImageBackground>
         {isBossBattle ? (
           <View>
@@ -890,14 +891,14 @@ export default function BattleScreen() {
             
             {/*<Text>Battle Damage:</Text> <Text>{turnDamage}</Text>*/}
             <Text style={styles.battleInfo}>
-              <BattleInfo style={styles.positionInfo} turnDamage={turnDamage} />
+              <BattleInfo style={styles.positionInfo} turnDamage={turnDamage} turnNumber={generalBattleCount} />
             </Text>
             
           </View>
         ) : (
           <Text style={styles.battleInfo}>
             {/*<Text>Battle Damage:</Text> <Text>{turnDamage}</Text>*/}
-            <BattleInfo turnDamage={turnDamage} />
+            <BattleInfo turnDamage={turnDamage} turnNumber={generalBattleCount} />
           </Text>
         )}
         
@@ -1081,6 +1082,7 @@ export default function BattleScreen() {
                       { zIndex: 9998 }
                     ]}
                     onPress={() => { currentTurn === 'player' && setSelectedCharacter(index)}}
+                    hitSlop={{ top: 0, bottom: 0, left: 10, right: 10 }}
                   >
                     <View>
                       <Image 
@@ -1104,13 +1106,20 @@ export default function BattleScreen() {
                       <HealthBar hp={character.hp} maxHp={character.maxHp} isEnemy={false} pointerEvents="none" />
                     </View>
                     <View style={styles.characterLevel}>
-                      {Array.from({ length: (character.currentEvolution+1) }, (_, i) => (
+                      {(character.currentEvolution === character.evolutions.length - 1) || (character.evolutions.length == 0)  ? (
                         <Image
-                          key={i}
-                          source={require('../assets/misc/star.png')}
-                          style={styles.star}
+                          source={require('../assets/misc/lv_max.png')}
+                          style={styles.maxLevel}
                         />
-                      ))}
+                      ) : (
+                        Array.from({ length: character.currentEvolution + 1 }, (_, i) => (
+                          <Image
+                            key={i + '' + character.id}
+                            source={require('../assets/misc/star.png')}
+                            style={styles.star}
+                          />
+                        ))
+                      )}
                     </View>
                   </Pressable>
                   
@@ -1167,13 +1176,13 @@ const styles = StyleSheet.create({
     position: 'relative',
   },
   battleInfo: {
-    
     height: 150,
     color: '#fff',
     textAlign: 'center',
     marginBottom: 5,
     paddingTop: 40,
-    fontWeight: 800
+    fontWeight: 800,
+    left: -10
   },
   battleInfoBoss: {
     fontSize: 24,
@@ -1210,7 +1219,8 @@ const styles = StyleSheet.create({
   characterCard: {
     /*borderColor: '#2a3a2a',
     borderWidth: 10,
-    borderRadius: 8,*/
+    backgroundColor: '#fff',*/
+    borderRadius: 8,
     width: 120,
     height: 120,
     alignItems: 'center',
@@ -1229,25 +1239,25 @@ const styles = StyleSheet.create({
     transform: [{ scale: 1.5 }]
   },
   upgradeContainer: {
-    top: '-20',
+    bottom: 15,
+    right: 20,
     display: 'flex',
     position: 'absolute',
     flexWrap: 'wrap',
     flexDirection: 'row',
     justifyContent: 'flex-start',
     alignItems: 'center',
-    maxWidth: 100,
-    zIndex: 9999
+    maxWidth: 100
   },
   upgradeGroup: {
     alignItems: 'center', // Centraliza a imagem e o número
   },
-  upgradeIcon: {
+  /*upgradeIcon: {
     width: 30,
     height: 30,
-  },
+  },*/
   upgradeCount: {
-    fontSize: 16,
+    fontSize: 10,
     position: 'absolute',
     color: 'white',
     top: -8,
@@ -1260,18 +1270,18 @@ const styles = StyleSheet.create({
   upgradesNumber: {
     position: 'absolute',
     top: 20,
-    fontWeight: 'bold',
+    fontWeight: 'bold'
   },
   upgradeIcon: {
-    width: 15,
-    height: 15,
+    width: 10,
+    height: 10,
     bottom: 0,
     margin: 1
   },
   characterLevel: {
     position: 'relative',
-    left: -5,
-    bottom: 0,
+    left: -15,
+    bottom: -20,
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
@@ -1292,6 +1302,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  maxLevel: {
+    width: 30,
+    height: 10,
+    bottom: -13
+  },
   star: {
     width: 10,
     height: 10,
@@ -1304,8 +1319,8 @@ const styles = StyleSheet.create({
   },
   attackIcon: {
     position: 'absolute',
-    right: 0,
-    bottom: 5,
+    right: -30,
+    bottom: -25,
     width: 20,
     height: 20,
     zIndex: 40
@@ -1315,8 +1330,8 @@ const styles = StyleSheet.create({
   },
   characterImage: {
     marginBottom: 0,
-    width: 90,
-    height: 80,
+    width: 60,
+    height: 50,
     transform: [{ scale: 2.5 }]
   },
   characterImageAttacking: {
@@ -1413,7 +1428,7 @@ const styles = StyleSheet.create({
   information: {
     transform: [{ scale: 0.8 }],
     position: 'absolute',
-    width: '100%',
+    width: '101%',
     height: '40%',
     top: '0%',
     left: '5%'

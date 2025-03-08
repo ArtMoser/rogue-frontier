@@ -490,5 +490,17 @@ export const enemiesTierOne = [
         attacked: false,
         image: require('../assets/monsters/Duel-GX-II.gif'),
         difficulty: "Easy"
-    }
+    },
+    {
+        id: 1043,
+        name: "Duelmex",
+        hp: 100,
+        maxHp: 100,
+        type: "class",
+        attack: 35,
+        defense: 15,
+        attacked: false,
+        image: require('../assets/monsters/Duelmex.gif'),
+        difficulty: "Hard"
+    },
 ];

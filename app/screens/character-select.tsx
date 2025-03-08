@@ -28,6 +28,7 @@ export default function CharacterSelectScreen() {
   const [selectedCharacter, setSelectedCharacter] = useState<Character | null>(null);
   const [availableCharacters, setAvailableCharacters] = useState<Character[]>(characters);
   const [sound, setSound] = useState();
+  const [rerollQuantity, setRerollQuantity] = useState<Number | 0>(3);
 
   const handleCharacterSelect = (character: Character) => {
     setSelectedCharacter(character);
@@ -48,51 +49,60 @@ export default function CharacterSelectScreen() {
     await newSound.playAsync();
   }
 
+  const getRandomCharacters = () => {
+    const shuffleList = (array) => {
+      let currentIndex = array.length, randomIndex;
+
+      while (currentIndex !== 0) {
+        randomIndex = Math.floor(Math.random() * currentIndex);
+        currentIndex--;
+    
+        [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
+      }
+    
+      return array;
+    }
+
+    let filteredCharacters = [...characters];
+
+    if (team.length > 0) {
+        filteredCharacters = characters.filter(charItem =>
+            !team.some(teamMember => teamMember.id === charItem.id)
+        );
+    }
+
+    const shuffled = shuffleList([...filteredCharacters]);
+
+    if (generalBattleCount > 1) {
+        let scaleFactor = 1 + (Math.log(level + 1) * 0.15);
+
+        scaleFactor = Math.min(scaleFactor, 7);
+
+        for (let character of shuffled) {
+            character.hp = Math.floor(character.hp * scaleFactor);
+            character.maxHp = Math.floor(character.maxHp * scaleFactor);
+            character.attack = Math.floor(character.attack * scaleFactor);
+            character.defense = Math.floor(character.defense * scaleFactor);
+        }
+    }
+
+    return shuffled.slice(0, 3);
+};
+
   useFocusEffect(
     useCallback(() => {
-      const shuffleList = (array) => {
-        let currentIndex = array.length, randomIndex;
-
-        while (currentIndex !== 0) {
-          randomIndex = Math.floor(Math.random() * currentIndex);
-          currentIndex--;
-      
-          [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
-        }
-      
-        return array;
-      }
-
-      const getRandomCharacters = () => {
-        let filteredCharacters = [...characters];
-    
-        if (team.length > 0) {
-            filteredCharacters = characters.filter(charItem =>
-                !team.some(teamMember => teamMember.id === charItem.id)
-            );
-        }
-    
-        const shuffled = shuffleList([...filteredCharacters]);
-    
-        if (generalBattleCount > 1) {
-            let scaleFactor = 1 + (Math.log(level + 1) * 0.15);
-
-            scaleFactor = Math.min(scaleFactor, 7);
-    
-            for (let character of shuffled) {
-                character.hp = Math.floor(character.hp * scaleFactor);
-                character.maxHp = Math.floor(character.maxHp * scaleFactor);
-                character.attack = Math.floor(character.attack * scaleFactor);
-                character.defense = Math.floor(character.defense * scaleFactor);
-            }
-        }
-    
-        return shuffled.slice(0, 3);
-    };
-
+      setRerollQuantity(3);
       setAvailableCharacters(getRandomCharacters());
     }, [team])
   );
+
+  const handleReroll = () => {    
+    let currentRerollQuantity = rerollQuantity;
+
+    setSelectedCharacter(null);
+    setRerollQuantity(currentRerollQuantity - 1);
+    setAvailableCharacters(getRandomCharacters());
+  }
 
   const handleConfirm = () => {
     playSound();
@@ -173,6 +183,18 @@ export default function CharacterSelectScreen() {
           ))}
         </View>
 
+        {rerollQuantity >= 1 && (
+          <Pressable style={styles.rerollButton} onPress={handleReroll}>
+              <ImageBackground
+                source={require('../assets/misc/sub_sss_arrow_right_btn1.png')}
+                style={styles.reroll}
+                resizeMode="cover"
+              >
+                <Text style={styles.rerollButtonText}>Reroll ({rerollQuantity}) </Text>
+              </ImageBackground>
+          </Pressable>
+        )}
+
         {selectedCharacter && (
           <Pressable style={styles.confirmButton} onPress={handleConfirm}>
             <ImageBackground
@@ -204,6 +226,22 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     padding: 20,
+  },
+  rerollButton: {
+    position: 'absolute',
+    top: 150,
+    right: 0,
+  },
+  reroll: {
+    width: 90,
+    height: 50,
+    justifyContent: 'center'
+  },
+  rerollButtonText: {
+    width: '80%',
+    textAlign: 'center',
+    color: '#ffffff',
+    fontWeight: 'bold'
   },
   okButton: {
     width: 150,

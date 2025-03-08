@@ -1,10 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, StyleSheet, Animated } from 'react-native';
 
-const BattleInfo = ({ turnDamage }) => {
+const BattleInfo = ({ turnDamage, turnNumber }) => {
   const [color, setColor] = useState('#FFFFFF');
   const [fontSize, setFontSize] = useState(16);
   const [shadowColor, setShadowColor] = useState('transparent');
+
+  const [turnNumberColor, setTurnNumberColor] = useState('#FFFFFF');
+  const [turnNumberFontSize, setTurnNumberFontSize] = useState(16);
+  const [turnNumberShadowColor, setTurnNumberShadowColor] = useState('transparent');
 
   const scaleValue = useRef(new Animated.Value(1)).current;
   const shakeValue = useRef(new Animated.Value(0)).current;
@@ -46,6 +50,39 @@ const BattleInfo = ({ turnDamage }) => {
       startShakeAnimation();
     }
   }, [turnDamage]);
+
+  useEffect(() => {
+    // Define cor e efeitos com base no dano
+    if (turnNumber > 85) {
+      setTurnNumberColor('#FFD700'); // Dourado neon
+      setTurnNumberShadowColor('#FFA500'); // Sombra laranja
+      setTurnNumberFontSize(36);
+    } else if (turnNumber > 75) {
+      setTurnNumberColor('#00FFFF'); // Ciano neon
+      setTurnNumberShadowColor('#00CED1'); // Sombra azul-claro
+      setTurnNumberFontSize(32);
+    } else if (turnNumber > 65) {
+      setTurnNumberColor('#FF1493'); // Rosa neon
+      setTurnNumberShadowColor('#FF69B4'); // Sombra rosa-claro
+      setTurnNumberFontSize(28);
+    } else if (turnNumber > 45) {
+      setTurnNumberColor('#8A2BE2'); // Roxo intenso
+      setTurnNumberShadowColor('#9400D3'); // Roxo escuro
+      setTurnNumberFontSize(24);
+    } else if (turnNumber > 25) {
+      setTurnNumberColor('#FF4500'); // Vermelho forte
+      setTurnNumberShadowColor('#DC143C'); // Vermelho escuro
+      setTurnNumberFontSize(20);
+    } else if (turnNumber > 15) {
+      setTurnNumberColor('#FFD700'); // Amarelo ouro
+      setTurnNumberShadowColor('#DAA520'); // Amarelo escuro
+      setTurnNumberFontSize(18);
+    } else {
+      setTurnNumberColor('#FFFFFF'); // Branco normal
+      setTurnNumberShadowColor('transparent'); // Sem sombra
+      setTurnNumberFontSize(16);
+    }
+  }, [turnNumber]);
 
   const startScaleAnimation = () => {
     scaleValue.setValue(1);
@@ -91,17 +128,31 @@ const BattleInfo = ({ turnDamage }) => {
           </Text>
         </Animated.View>
       </View>
+      <View style={styles.turnNumberPositioning}>
+        <Text style={[{color: '#ffffff', fontSize: turnNumberFontSize}]}>Battle Number: </Text>
+        <Text style={[styles.turnNumber, styles.damageText, { color: turnNumberColor, fontSize: turnNumberFontSize, textShadowColor: turnNumberShadowColor, textShadowRadius: 5 }]}>
+          {Math.floor(turnNumber)}
+        </Text>
+      </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
+    position: 'absolute',
     alignItems: 'center',
   },
   row: {
     flexDirection: 'row',
     alignItems: 'center',
+  },
+  turnNumberPositioning: {
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+  },
+  turnNumber: {
+    paddingTop: 10
   },
   battleInfo: {
     fontSize: 16,
