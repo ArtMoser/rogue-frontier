@@ -79,10 +79,12 @@ export default function CharacterSelectScreen() {
         scaleFactor = Math.min(scaleFactor, 7);
 
         for (let character of shuffled) {
-            character.hp = Math.floor(character.hp * scaleFactor);
-            character.maxHp = Math.floor(character.maxHp * scaleFactor);
-            character.attack = Math.floor(character.attack * scaleFactor);
-            character.defense = Math.floor(character.defense * scaleFactor);
+
+
+            character.hp = Math.floor(character.hp * scaleFactor) > character.hp * 7 ? character.hp * 7 : Math.floor(character.hp * scaleFactor);
+            character.maxHp = Math.floor(character.maxHp * scaleFactor) > character.maxHp * 7 ? character.maxHp * 7 : Math.floor(character.maxHp * scaleFactor);
+            character.attack = Math.floor(character.attack * scaleFactor) > character.attack * 7 ? character.attack * 7 : Math.floor(character.attack * scaleFactor);
+            character.defense = Math.floor(character.defense * scaleFactor) > character.defense * 7 ? character.defense * 7 : Math.floor(character.defense * scaleFactor);;
         }
     }
 

@@ -323,8 +323,8 @@ export default function BattleScreen() {
     const scaleEnemyStats = (enemy, level, isBossBattle) => {
       let multiplier = 1 + (level / 10);
     
-      let hpScaleFactor = multiplier + (level * 0.20);
-      let atkDefScaleFactor = multiplier + (level * 0.1);
+      let hpScaleFactor = multiplier + (level * 0.3);
+      let atkDefScaleFactor = multiplier + (level * 0.2);
     
       if (isBossBattle) {
         hpScaleFactor *= 1.5;
@@ -1047,7 +1047,7 @@ export default function BattleScreen() {
                   <></>
                 )}
                 {character.attacked || character.hp <= 0 ? (
-                  <View style={[styles.characterCard],{ zIndex: 9998 }}>
+                  <View style={[styles.characterCard],{ zIndex: 9998, right: 40 }}>
                     {!character.isAttacking ?
                       <Image 
                         source={require('../assets/misc/already-attacked.png')}
