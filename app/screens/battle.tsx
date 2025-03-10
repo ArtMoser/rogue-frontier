@@ -1068,6 +1068,23 @@ export default function BattleScreen() {
                     <>
                       {/*<Text style={styles.characterName}>{character.name}</Text>*/}
                       <HealthBar hp={character.hp} maxHp={character.maxHp} isEnemy={false} />
+                    
+                      <View style={styles.characterLevelDisabled}>
+                        {( !character.evolutions || character.currentEvolution === character.evolutions.length - 1) || (character.evolutions.length == 0)  ? (
+                          <Image
+                            source={require('../assets/misc/lv_max.png')}
+                            style={styles.maxLevel}
+                          />
+                        ) : (
+                          Array.from({ length: character.currentEvolution + 1 }, (_, i) => (
+                            <Image
+                              key={i + '' + character.id}
+                              source={require('../assets/misc/star.png')}
+                              style={styles.star}
+                            />
+                          ))
+                        )}
+                      </View>
                     </>
                     :
                     <></>
@@ -1106,7 +1123,7 @@ export default function BattleScreen() {
                       <HealthBar hp={character.hp} maxHp={character.maxHp} isEnemy={false} pointerEvents="none" />
                     </View>
                     <View style={styles.characterLevel}>
-                      {(character.currentEvolution === character.evolutions.length - 1) || (character.evolutions.length == 0)  ? (
+                      {( !character.evolutions || character.currentEvolution === character.evolutions.length - 1) || (character.evolutions.length == 0)  ? (
                         <Image
                           source={require('../assets/misc/lv_max.png')}
                           style={styles.maxLevel}
@@ -1277,6 +1294,14 @@ const styles = StyleSheet.create({
     height: 10,
     bottom: 0,
     margin: 1
+  },
+  characterLevelDisabled: {
+    position: 'relative',
+    left: -15,
+    bottom: -30,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   characterLevel: {
     position: 'relative',
