@@ -26,7 +26,7 @@ export default function CharacterSelectScreen() {
   const battleCount = Number(params.battleCount);
 
   const [selectedCharacter, setSelectedCharacter] = useState<Character | null>(null);
-  const [availableCharacters, setAvailableCharacters] = useState<Character[]>(characters);
+  const [availableCharacters, setAvailableCharacters] = useState<Character[]>([]);
   const [sound, setSound] = useState();
   const [rerollQuantity, setRerollQuantity] = useState<Number | 0>(3);
 
@@ -63,10 +63,20 @@ export default function CharacterSelectScreen() {
       return array;
     }
 
-    let filteredCharacters = [...characters];
+    const deepCopyCharacters = (characters) => {
+      return characters.map(character => ({
+        ...character,
+        hp: character.hp,
+        maxHp: character.maxHp,
+        attack: character.attack,
+        defense: character.defense,
+      }));
+    };
+
+    let filteredCharacters = deepCopyCharacters(characters); 
 
     if (team.length > 0) {
-        filteredCharacters = characters.filter(charItem =>
+        filteredCharacters = filteredCharacters.filter(charItem =>
             !team.some(teamMember => teamMember.id === charItem.id)
         );
     }
@@ -74,15 +84,13 @@ export default function CharacterSelectScreen() {
     const shuffled = shuffleList([...filteredCharacters]);
 
     if (generalBattleCount > 1) {
-        let scaleFactor = 1 + (Math.log(level + 1) * 0.15);
-
-        scaleFactor = Math.min(scaleFactor, 7);
+        let scaleFactor = 1 + Math.pow(50, 0.6) * 0.50;
 
         for (let character of shuffled) {
-            character.hp = Math.floor(character.hp * scaleFactor) > character.hp * 7 ? character.hp * 7 : Math.floor(character.hp * scaleFactor);
-            character.maxHp = Math.floor(character.maxHp * scaleFactor) > character.maxHp * 7 ? character.maxHp * 7 : Math.floor(character.maxHp * scaleFactor);
-            character.attack = Math.floor(character.attack * scaleFactor) > character.attack * 7 ? character.attack * 7 : Math.floor(character.attack * scaleFactor);
-            character.defense = Math.floor(character.defense * scaleFactor) > character.defense * 7 ? character.defense * 7 : Math.floor(character.defense * scaleFactor);;
+            character.hp = Math.floor(character.hp * scaleFactor);
+            character.maxHp = Math.floor(character.maxHp * scaleFactor);
+            character.attack = Math.floor(character.attack * scaleFactor);
+            character.defense = Math.floor(character.defense * scaleFactor);
         }
     }
 

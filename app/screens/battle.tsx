@@ -812,6 +812,12 @@ export default function BattleScreen() {
         });
       } else {
         console.log('###### Regular battle');
+        for(let teamMember of team) {
+          teamMember.attack = teamMember.attack + 5;
+          teamMember.defense = teamMember.defense + 3
+          teamMember.maxHp = teamMember.maxHp + 3;
+        }
+
         router.push({
           pathname: 'screens/battle',
           params: {
@@ -1011,17 +1017,7 @@ export default function BattleScreen() {
               >
                 {!character.isAttacking ? (
                   <View style={styles.upgradeContainer}>
-                    {/*character.upgrades.length < 5 ? (
-                      // Exibe os upgrades individualmente se forem menos de 5
-                      character.upgrades.map((upgrade, index) => (
-                        <Image
-                          key={character.id + index}
-                          source={upgrade.image}
-                          style={styles.upgradeIcon}
-                        />
-                      ))
-                    ) : (*/
-                      // Agrupa os upgrades por atributo e exibe a imagem e a quantidade
+                    {
                       Object.entries(
                         character.upgrades.reduce((grouped, upgrade) => {
                           // Agrupa os upgrades pelo campo 'attribute'
@@ -1040,7 +1036,6 @@ export default function BattleScreen() {
                           <Text style={styles.upgradeCount}>{upgrades.length}</Text>
                         </View>
                       ))
-                    //)
                     }
                   </View>
                 ) : (
