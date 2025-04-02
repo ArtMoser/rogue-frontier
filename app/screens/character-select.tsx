@@ -84,7 +84,7 @@ export default function CharacterSelectScreen() {
     const shuffled = shuffleList([...filteredCharacters]);
 
     if (generalBattleCount > 1) {
-        let scaleFactor = 1 + Math.pow(50, 0.6) * 0.50;
+        let scaleFactor = 1 + Math.log(generalBattleCount + 1) * 0.6;
 
         for (let character of shuffled) {
             character.hp = Math.floor(character.hp * scaleFactor);
