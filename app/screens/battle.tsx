@@ -949,7 +949,7 @@ export default function BattleScreen() {
                     <Image contentFit="scale-down" source={enemy.image} style={[styles.enemyImage]} />
                   }
                   {/*<Text style={styles.enemyName}>{enemy.name}</Text>*/}
-                  <HealthBar hp={enemy.hp} maxHp={enemy.maxHp} isEnemy={true} />
+                  <HealthBar hp={enemy.hp} maxHp={enemy.maxHp} isEnemy={true} isBoss={isBossBattle} />
                   {
                     enemy.damageTaken > 0 ?
                       <Text style={[styles.damageTaken, getDamageStyle(enemy.damageTaken)]}>{Math.floor(enemy.damageTaken)}</Text>
@@ -1251,8 +1251,7 @@ const styles = StyleSheet.create({
     transform: [{ scale: 1.5 }]
   },
   upgradeContainer: {
-    bottom: 15,
-    right: 20,
+    left: 0,
     display: 'flex',
     position: 'absolute',
     flexWrap: 'wrap',
@@ -1292,16 +1291,14 @@ const styles = StyleSheet.create({
   },
   characterLevelDisabled: {
     position: 'relative',
-    left: -15,
-    bottom: -30,
+    bottom: -10,
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
   },
   characterLevel: {
     position: 'relative',
-    left: -15,
-    bottom: -20,
+    bottom: 0,
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
@@ -1309,7 +1306,7 @@ const styles = StyleSheet.create({
   enemyLevelboss: {
     position: 'absolute',
     left: 0,
-    top:  '150%',
+    top:  '130%',
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
@@ -1339,10 +1336,10 @@ const styles = StyleSheet.create({
   },
   attackIcon: {
     position: 'absolute',
-    right: -30,
-    bottom: -25,
-    width: 20,
-    height: 20,
+    right: 0,
+    bottom: -30,
+    width: 15,
+    height: 15,
     zIndex: 40
   },
   statsSpacing: {
@@ -1350,8 +1347,8 @@ const styles = StyleSheet.create({
   },
   characterImage: {
     marginBottom: 0,
-    width: 60,
-    height: 50,
+    width: 80,
+    height: 70,
     transform: [{ scale: 2.5 }]
   },
   characterImageAttacking: {
@@ -1377,7 +1374,7 @@ const styles = StyleSheet.create({
     marginBottom: 0,
     width: 50,
     height: 50,
-    transform: [{ scale: 2 }, { scaleX: -1 }]
+    transform: [{ scale: 2.5 }, { scaleX: -1 }]
   },
   damageTaken: {
     position: 'absolute',

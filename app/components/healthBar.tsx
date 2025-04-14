@@ -1,12 +1,13 @@
 import { View, Text, StyleSheet } from "react-native";
 
-const HealthBar = ({ hp, maxHp, isEnemy }) => {
+const HealthBar = ({ hp, maxHp, isEnemy, isBoss }) => {
   const hpPercentage = (hp / maxHp) * 100;
   const roundedHp = Math.floor(hp);
   const roundedMaxHp = Math.floor(maxHp);
+  const isBossBattle = isBoss && isEnemy;
 
   return (
-    <View style={isEnemy ? styles.containerEnemy : styles.container}>
+    <View style={isEnemy ? (isBossBattle ? styles.containerEnemyBoss : styles.containerEnemy) : styles.container}>
       <View style={styles.healthBarBackground}>
         <View
           style={[
@@ -32,6 +33,14 @@ const HealthBar = ({ hp, maxHp, isEnemy }) => {
 };
 
 const styles = StyleSheet.create({
+  containerEnemyBoss: {
+    width: 80,
+    height: 25, // Aumentei a altura para acomodar o texto
+    justifyContent: "center",
+    alignItems: "center",
+    position: 'absolute',
+    bottom: -30
+  },
   containerEnemy: {
     width: 80,
     height: 25, // Aumentei a altura para acomodar o texto
@@ -46,7 +55,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     position: 'absolute',
-    bottom: -40
+    bottom: -20
   },
   healthBarBackground: {
     width: "100%",
